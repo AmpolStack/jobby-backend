@@ -1,0 +1,15 @@
+spring:
+  config:
+    import: classpath:application-secrets.yml
+  application:
+    name: authorization
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+#      username: yourUsername
+#      password: yourPassword
+      authentication-database: admin
+      database: jobby
+server:
+  port: 8080
