@@ -1,6 +1,7 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.application.ports.out.EncryptionService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.*;
@@ -14,8 +15,9 @@ import java.util.Base64;
 
 @Component
 public class AESEncryptionService implements EncryptionService {
+
     @Override
-    public String encrypt(String plainText, SecretKey key)
+    public String encrypt(String plainText, SecretKey key, GCMParameterSpec iv)
             throws NoSuchPaddingException,
             NoSuchAlgorithmException,
             InvalidAlgorithmParameterException,
@@ -23,7 +25,7 @@ public class AESEncryptionService implements EncryptionService {
             IllegalBlockSizeException,
             BadPaddingException {
         var cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        var iv = AESGenerators.generateIv();
+
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
         var cipherText = cipher.doFinal(plainText.getBytes());
 
@@ -51,7 +53,7 @@ public class AESEncryptionService implements EncryptionService {
         var iv = new GCMParameterSpec(128, rawIv);
         cipher.init(Cipher.DECRYPT_MODE, key, iv);
 
-        var plainText = cipher.doFinal(Base64.getDecoder().decode(rawData));
+        var plainText = cipher.doFinal(rawData);
         return new String(plainText);
     }
 }
