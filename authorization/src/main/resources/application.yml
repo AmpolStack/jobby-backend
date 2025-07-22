@@ -13,3 +13,12 @@ spring:
       database: jobby
 server:
   port: 8080
+encrypt:
+  instance:
+    simpleName: AES
+    complex-name: AES/GCM/NoPadding
+  iv:
+    length: 12
+  secret-key:
+  # value: yourKey
+    length: 128
