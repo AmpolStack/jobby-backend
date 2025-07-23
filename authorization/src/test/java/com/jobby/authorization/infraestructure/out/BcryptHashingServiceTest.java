@@ -35,7 +35,6 @@ public class BcryptHashingServiceTest {
         random.nextBytes(bytePadding);
         var padding = Base64.getEncoder().encodeToString(bytePadding);
 
-
         var resp = this.bcryptHashingService.matches(input + padding, hash);
 
         // Assert
