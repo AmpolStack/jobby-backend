@@ -1,9 +1,11 @@
 package com.jobby.authorization.domain.result;
 
-import java.util.Optional;
+public final class Success<T, E> implements Result<T,E>{
+    private final T data;
 
-public final class Success<T, E> implements Result<T, E> {
-    private T result;
+    public Success(final T data) {
+        this.data = data;
+    }
 
     @Override
     public boolean isSuccess() {
@@ -11,12 +13,12 @@ public final class Success<T, E> implements Result<T, E> {
     }
 
     @Override
-    public Optional<T> getValue() {
-        return Optional.of(result);
+    public T getData() {
+        return this.data;
     }
 
     @Override
-    public Optional<E> getError() {
-        return Optional.empty();
+    public E getError() {
+        return null;
     }
 }
