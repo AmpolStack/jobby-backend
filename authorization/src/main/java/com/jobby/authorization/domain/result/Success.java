@@ -2,7 +2,7 @@ package com.jobby.authorization.domain.result;
 
 import java.util.Optional;
 
-public class Success<T, E> implements Result<T, E> {
+public final class Success<T, E> implements Result<T, E> {
     private T result;
 
     @Override
