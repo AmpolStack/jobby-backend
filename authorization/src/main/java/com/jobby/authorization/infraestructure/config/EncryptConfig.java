@@ -1,5 +1,6 @@
-package com.jobby.authorization.infraestructure.custom;
+package com.jobby.authorization.infraestructure.config;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,6 +18,7 @@ public class EncryptConfig {
 
     @Getter
     @Setter
+    @AllArgsConstructor
     public static class Instance{
         private String simpleName;
         private String complexName;
@@ -24,12 +26,14 @@ public class EncryptConfig {
 
     @Getter
     @Setter
+    @AllArgsConstructor
     public static class Iv {
         private int length;
     }
 
     @Getter
     @Setter
+    @AllArgsConstructor
     public static class SecretKey {
         private String value;
         private int length;
