@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class Field {
+    @Setter
     private String instance;
     private String reason;
 }

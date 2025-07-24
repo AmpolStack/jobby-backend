@@ -1,6 +1,8 @@
 package com.jobby.authorization.domain.result;
 
-import java.util.List;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public sealed interface Result<T,E> permits Success, Failure {
 
@@ -22,12 +24,35 @@ public sealed interface Result<T,E> permits Success, Failure {
         return new Failure<>(error);
     }
 
+
+
     static <T> Result<T, Error> failure(ErrorType errorCode, Field[] field) {
         return new Failure<>(new Error(errorCode, field));
     }
 
     static <T> Result<T, Error> failure(ErrorType errorCode, Field field) {
         return new Failure<>(new Error(errorCode, new Field[]{field}));
+    }
+
+    static <T,U,E> Result<U, E> renewFailure(Result<T, E> result) {
+        return new Failure<>(result.getError());
+    }
+
+    static <T,U> Result<U, Error> renewFailure(Result<T, Error> result, String fieldName) {
+        Error oldErr = result.getError();
+
+        Field[] updated = Arrays.stream(oldErr.getFields())
+                .map(f -> {
+                    if (!oldErr.getCode().name().startsWith("ITN_")) {
+                        return new Field(fieldName, f.getReason());
+                    } else {
+                        return f;
+                    }
+                })
+                .toArray(Field[]::new);
+
+        Error newErr = new Error(oldErr.getCode(), updated);
+        return Result.failure(newErr);
     }
 
     static <T,U,E> Result<U, E> mapError(Result<T, E> result) {
