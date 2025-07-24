@@ -45,6 +45,15 @@ public class AESEncryptionService implements EncryptionService {
         }
     }
 
+    private static byte[] copyOfRange(byte[] original, int from, int to){
+        try{
+            return Arrays.copyOfRange(original, from, to);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            return null;
+        }
+    }
+
     private static boolean initCipher(Cipher cipher, int mode,
                                       SecretKeySpec key, GCMParameterSpec iv) {
         try {
@@ -59,6 +68,15 @@ public class AESEncryptionService implements EncryptionService {
     private static byte[] doFinal(Cipher cipher, String plainText){
         try{
             return cipher.doFinal(plainText.getBytes());
+        }
+        catch (IllegalBlockSizeException | BadPaddingException e){
+            return null;
+        }
+    }
+
+    private static byte[] doFinal(Cipher cipher, byte[] data){
+        try{
+            return cipher.doFinal(data);
         }
         catch (IllegalBlockSizeException | BadPaddingException e){
             return null;
@@ -97,7 +115,7 @@ public class AESEncryptionService implements EncryptionService {
         // Should never return an exception
         var iv = AESGenerators.generateIv(config.getIv().getLength(), config.getSecretKey().getLength());
 
-        if(!initCipher(cipher, Cipher.ENCRYPT_MODE, key, iv)){
+        if(initCipher(cipher, Cipher.ENCRYPT_MODE, key, iv)){
             return Result.failure(
                     ErrorType.ITN_OPERATION_ERROR,
                     new Field[]{
@@ -146,11 +164,8 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        byte[] combined;
-        try{
-            combined = Base64.getDecoder().decode(cipherText);
-        }
-        catch (IllegalArgumentException e){
+        var combined = decode(cipherText);
+        if(combined == null){
             return Result.failure(
                     ErrorType.INVALID_INPUT,
                     new Field(
@@ -171,11 +186,8 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        byte[] rawIv;
-        try{
-            rawIv = Arrays.copyOfRange(combined, 0, ivLength);
-        }
-        catch (ArrayIndexOutOfBoundsException e){
+        var rawIv = copyOfRange(combined, 0, ivLength);
+        if(rawIv == null){
             return Result.failure(
                     ErrorType.ITN_OPERATION_ERROR,
                     new Field(
@@ -185,11 +197,8 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        byte[] rawData;
-        try{
-            rawData = Arrays.copyOfRange(combined, config.getIv().getLength(), combined.length);
-        }
-        catch (ArrayIndexOutOfBoundsException e){
+        var rawData = copyOfRange(combined, ivLength, combined.length);
+        if(rawData == null){
             return Result.failure(
                     ErrorType.ITN_OPERATION_ERROR,
                     new Field(
@@ -199,12 +208,9 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        Cipher cipher;
         var complexName = this.config.getInstance().getComplexName();
-        try{
-            cipher = Cipher.getInstance(complexName);
-        }
-        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
+        var cipher = getCipher(complexName);
+        if(cipher == null){
             return Result.failure(
                     ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
@@ -214,14 +220,10 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-
         var iv = new GCMParameterSpec(config.getSecretKey().getLength(), rawIv);
 
-        byte[] keyRaw;
-        try{
-            keyRaw = Base64.getDecoder().decode(config.getSecretKey().getValue());
-        }
-        catch (IllegalArgumentException e){
+        var keyRaw = decode(config.getSecretKey().getValue());
+        if(keyRaw == null){
             return Result.failure(
                     ErrorType.INVALID_INPUT,
                     new Field(
@@ -233,10 +235,7 @@ public class AESEncryptionService implements EncryptionService {
 
         var key = new SecretKeySpec(keyRaw, config.getInstance().getSimpleName());
 
-        try {
-            cipher.init(Cipher.DECRYPT_MODE, key, iv);
-        }
-        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
+        if(initCipher(cipher, Cipher.DECRYPT_MODE, key, iv)){
             return Result.failure(
                     ErrorType.ITN_OPERATION_ERROR,
                     new Field[]{
@@ -252,11 +251,8 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        byte[] cipherBytes;
-        try{
-            cipherBytes = cipher.doFinal(rawData);
-        }
-        catch (IllegalBlockSizeException | BadPaddingException e){
+        byte[] cipherBytes = doFinal(cipher, rawData);
+        if(cipherBytes == null){
             return Result.failure(
                     ErrorType.INVALID_INPUT,
                     new Field(
