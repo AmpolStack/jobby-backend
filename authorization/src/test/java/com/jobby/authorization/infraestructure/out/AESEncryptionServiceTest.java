@@ -48,7 +48,7 @@ public class AESEncryptionServiceTest {
     public void encryptAndDecrypt_oneInput_WhenInputIsValid(String value) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
         // Act
         var encryptText = this.aesEncryptionService.encrypt(value);
-        var decryptText = this.aesEncryptionService.decrypt(encryptText);
+        var decryptText = this.aesEncryptionService.decrypt(encryptText.getData());
 
         // Assert
         Assertions.assertEquals(value, decryptText);
