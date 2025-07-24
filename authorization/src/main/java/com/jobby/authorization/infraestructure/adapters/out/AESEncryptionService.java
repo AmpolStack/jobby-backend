@@ -21,17 +21,17 @@ import java.util.Base64;
 @Component
 public class AESEncryptionService implements EncryptionService {
 
-    private final EncryptConfig encryptConfig;
+    private final EncryptConfig config;
 
     public AESEncryptionService(EncryptConfig config) {
-        this.encryptConfig = config;
+        this.config = config;
     }
 
     @Override
     public Result<String, Error> encrypt(String plainText) {
 
         Cipher cipher;
-        var complexName = this.encryptConfig.getInstance().getComplexName();
+        var complexName = this.config.getInstance().getComplexName();
         try{
             cipher = Cipher.getInstance(complexName);
         }
@@ -40,13 +40,13 @@ public class AESEncryptionService implements EncryptionService {
                     ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
                             "encrypt.instance.complex-name",
-                            "the value: [ " + complexName + " ] complex-name are invalid or null"
+                            "the value: [ " + complexName + " ] are invalid or null"
                     )
             );
         }
 
         byte[] keyRaw;
-        var keyValue = this.encryptConfig.getSecretKey().getValue();
+        var keyValue = this.config.getSecretKey().getValue();
         try{
             keyRaw = Base64.getDecoder().decode(keyValue);
         }
@@ -55,15 +55,15 @@ public class AESEncryptionService implements EncryptionService {
                     ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
                             "encrypt.key.value",
-                            "the value: [ " + keyValue + " ] value are invalid or null"
+                            "the value: [ " + keyValue + " ] are invalid or null"
                     )
             );
         }
 
-        var key = new SecretKeySpec(keyRaw, encryptConfig.getInstance().getSimpleName());
+        var key = new SecretKeySpec(keyRaw, config.getInstance().getSimpleName());
 
         // Should never return an exception
-        var iv = AESGenerators.generateIv(encryptConfig.getIv().getLength(), encryptConfig.getSecretKey().getLength());
+        var iv = AESGenerators.generateIv(config.getIv().getLength(), config.getSecretKey().getLength());
 
         try {
             cipher.init(Cipher.ENCRYPT_MODE, key, iv);
@@ -74,11 +74,11 @@ public class AESEncryptionService implements EncryptionService {
                     new Field[]{
                             new Field(
                                     "encrypt.key.value",
-                                    "the value : [ " + key + " ] key are probably incompatible or null, AES encryption failed"
+                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
                             ),
                             new Field(
                                     "iv",
-                                    "the value : [ " + key + " ] iv are probably incompatible or null, AES encryption failed"
+                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
                             ),
                     }
             );
@@ -90,9 +90,9 @@ public class AESEncryptionService implements EncryptionService {
         }
         catch (IllegalBlockSizeException | BadPaddingException e){
             return Result.failure(
-                    ErrorType.ITN_OPERATION_ERROR,
+                    ErrorType.INVALID_INPUT,
                     new Field(
-                            "cipher.doFinal",
+                            "plainText",
                             "The operation returned an error, probably because one byte are invalid or corrupted"
                     )
             );
@@ -109,24 +109,140 @@ public class AESEncryptionService implements EncryptionService {
 
     @Override
     public Result<String, Error> decrypt(String cipherText)
-            throws NoSuchPaddingException,
-            NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException,
-            InvalidKeyException,
+            throws
             IllegalBlockSizeException,
             BadPaddingException {
-        var combined = Base64.getDecoder().decode(cipherText);
-        var rawIv = Arrays.copyOfRange(combined, 0, encryptConfig.getIv().getLength());
-        var rawData = Arrays.copyOfRange(combined, encryptConfig.getIv().getLength(), combined.length);
 
-        var cipher = Cipher.getInstance(encryptConfig.getInstance().getComplexName());
-        var iv = new GCMParameterSpec(encryptConfig.getSecretKey().getLength(), rawIv);
+        if(cipherText.isBlank()){
+            return Result.failure(
+                    ErrorType.INVALID_INPUT,
+                    new Field(
+                            "cipherText",
+                            "the input are null"
+                    )
+            );
+        }
 
-        var keyRaw = Base64.getDecoder().decode(encryptConfig.getSecretKey().getValue());
-        var key = new SecretKeySpec(keyRaw, encryptConfig.getInstance().getSimpleName());
-        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        byte[] combined;
+        try{
+            combined = Base64.getDecoder().decode(cipherText);
+        }
+        catch (IllegalArgumentException e){
+            return Result.failure(
+                    ErrorType.INVALID_INPUT,
+                    new Field(
+                            "cipherText",
+                            "the value [ " + cipherText + " ] are invalid for decode in Base64 format"
+                    )
+            );
+        }
 
-        var plainText = cipher.doFinal(rawData);
-        return new String(plainText);
+        var ivLength = this.config.getIv().getLength();
+        if(ivLength > combined.length){
+            return Result.failure(
+                    ErrorType.VALIDATION_ERROR,
+                    new Field(
+                            "cipherText",
+                            "the value: [" + cipherText + "] are invalid or null"
+                    )
+            );
+        }
+
+        byte[] rawIv;
+        try{
+            rawIv = Arrays.copyOfRange(combined, 0, ivLength);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            return Result.failure(
+                    ErrorType.ITN_OPERATION_ERROR,
+                    new Field(
+                            "rawIv.length",
+                            "the value [" + ivLength + "] are invalid"
+                    )
+            );
+        }
+
+        byte[] rawData;
+        try{
+            rawData = Arrays.copyOfRange(combined, config.getIv().getLength(), combined.length);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            return Result.failure(
+                    ErrorType.ITN_OPERATION_ERROR,
+                    new Field(
+                            "rawIv.length",
+                            "the value [" + ivLength + "] are invalid"
+                    )
+            );
+        }
+
+        Cipher cipher;
+        var complexName = this.config.getInstance().getComplexName();
+        try{
+            cipher = Cipher.getInstance(complexName);
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
+            return Result.failure(
+                    ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "encrypt.instance.complex-name",
+                            "the value: [ " + complexName + " ] are invalid or null"
+                    )
+            );
+        }
+
+
+        var iv = new GCMParameterSpec(config.getSecretKey().getLength(), rawIv);
+
+        byte[] keyRaw;
+        try{
+            keyRaw = Base64.getDecoder().decode(config.getSecretKey().getValue());
+        }
+        catch (IllegalArgumentException e){
+            return Result.failure(
+                    ErrorType.INVALID_INPUT,
+                    new Field(
+                            "keyRaw",
+                            "the value [ " + cipherText + " ] are invalid for decode in Base64 format"
+                    )
+            );
+        }
+
+        var key = new SecretKeySpec(keyRaw, config.getInstance().getSimpleName());
+
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        }
+        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
+            return Result.failure(
+                    ErrorType.ITN_OPERATION_ERROR,
+                    new Field[]{
+                            new Field(
+                                    "encrypt.key.value",
+                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
+                            ),
+                            new Field(
+                                    "iv",
+                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
+                            ),
+                    }
+            );
+        }
+
+        byte[] cipherBytes;
+        try{
+            cipherBytes = cipher.doFinal(rawData);
+        }
+        catch (IllegalBlockSizeException | BadPaddingException e){
+            return Result.failure(
+                    ErrorType.INVALID_INPUT,
+                    new Field(
+                            "plainText",
+                            "The operation returned an error, probably because one byte are invalid or corrupted"
+                    )
+            );
+        }
+
+        return Result.success(new String(cipherBytes));
     }
 }
