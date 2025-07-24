@@ -27,63 +27,6 @@ public class AESEncryptionService implements EncryptionService {
         this.config = config;
     }
 
-    private static Cipher getCipher(String complexName) {
-        try{
-            return Cipher.getInstance(complexName);
-        }
-        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
-            return null;
-        }
-    }
-
-    private static byte[] decode(String keyValue){
-        try{
-            return Base64.getDecoder().decode(keyValue);
-        }
-        catch (IllegalArgumentException e){
-            return null;
-        }
-    }
-
-    private static byte[] copyOfRange(byte[] original, int from, int to){
-        try{
-            return Arrays.copyOfRange(original, from, to);
-        }
-        catch (ArrayIndexOutOfBoundsException e){
-            return null;
-        }
-    }
-
-    private static boolean initCipher(Cipher cipher, int mode,
-                                      SecretKeySpec key, GCMParameterSpec iv) {
-        try {
-            cipher.init(mode, key, iv);
-            return true;
-        }
-        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
-            return false;
-        }
-    }
-
-    private static byte[] doFinal(Cipher cipher, String plainText){
-        try{
-            return cipher.doFinal(plainText.getBytes());
-        }
-        catch (IllegalBlockSizeException | BadPaddingException e){
-            return null;
-        }
-    }
-
-    private static byte[] doFinal(Cipher cipher, byte[] data){
-        try{
-            return cipher.doFinal(data);
-        }
-        catch (IllegalBlockSizeException | BadPaddingException e){
-            return null;
-        }
-    }
-
-
     @Override
     public Result<String, Error> encrypt(String plainText) {
 
@@ -225,7 +168,7 @@ public class AESEncryptionService implements EncryptionService {
         var keyRaw = decode(config.getSecretKey().getValue());
         if(keyRaw == null){
             return Result.failure(
-                    ErrorType.INVALID_INPUT,
+                    ErrorType.ITN_OPERATION_ERROR,
                     new Field(
                             "keyRaw",
                             "the value [ " + cipherText + " ] are invalid for decode in Base64 format"
@@ -263,5 +206,61 @@ public class AESEncryptionService implements EncryptionService {
         }
 
         return Result.success(new String(cipherBytes));
+    }
+
+    private static Cipher getCipher(String complexName) {
+        try{
+            return Cipher.getInstance(complexName);
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
+            return null;
+        }
+    }
+
+    private static byte[] decode(String keyValue){
+        try{
+            return Base64.getDecoder().decode(keyValue);
+        }
+        catch (IllegalArgumentException e){
+            return null;
+        }
+    }
+
+    private static byte[] copyOfRange(byte[] original, int from, int to){
+        try{
+            return Arrays.copyOfRange(original, from, to);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            return null;
+        }
+    }
+
+    private static boolean initCipher(Cipher cipher, int mode,
+                                      SecretKeySpec key, GCMParameterSpec iv) {
+        try {
+            cipher.init(mode, key, iv);
+            return true;
+        }
+        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
+            return false;
+        }
+    }
+
+    private static byte[] doFinal(Cipher cipher, String plainText){
+        try{
+            return cipher.doFinal(plainText.getBytes());
+        }
+        catch (IllegalBlockSizeException | BadPaddingException e){
+            return null;
+        }
+    }
+
+    private static byte[] doFinal(Cipher cipher, byte[] data){
+        try{
+            return cipher.doFinal(data);
+        }
+        catch (IllegalBlockSizeException | BadPaddingException e){
+            return null;
+        }
     }
 }
