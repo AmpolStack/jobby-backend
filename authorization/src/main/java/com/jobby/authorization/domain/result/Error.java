@@ -4,6 +4,6 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class Error {
-    private String message;
-    private ErrorCode code;
+    private ErrorType code;
+    private Field[] fields;
 }

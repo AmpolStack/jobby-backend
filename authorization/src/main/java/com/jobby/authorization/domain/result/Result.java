@@ -1,5 +1,7 @@
 package com.jobby.authorization.domain.result;
 
+import java.util.List;
+
 public sealed interface Result<T,E> permits Success, Failure {
 
     boolean isSuccess();
@@ -20,8 +22,12 @@ public sealed interface Result<T,E> permits Success, Failure {
         return new Failure<>(error);
     }
 
-    static <T> Result<T, Error> failure(String message, ErrorCode errorCode) {
-        return new Failure<>(new Error(message, errorCode));
+    static <T> Result<T, Error> failure(ErrorType errorCode, Field[] field) {
+        return new Failure<>(new Error(errorCode, field));
+    }
+
+    static <T> Result<T, Error> failure(ErrorType errorCode, Field field) {
+        return new Failure<>(new Error(errorCode, new Field[]{field}));
     }
 
     static <T,U,E> Result<U, E> mapError(Result<T, E> result) {
