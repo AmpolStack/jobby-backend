@@ -27,15 +27,51 @@ public class AESEncryptionService implements EncryptionService {
         this.config = config;
     }
 
+    private static Cipher getCipher(String complexName) {
+        try{
+            return Cipher.getInstance(complexName);
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
+            return null;
+        }
+    }
+
+    private static byte[] decode(String keyValue){
+        try{
+            return Base64.getDecoder().decode(keyValue);
+        }
+        catch (IllegalArgumentException e){
+            return null;
+        }
+    }
+
+    private static boolean initCipher(Cipher cipher, int mode,
+                                      SecretKeySpec key, GCMParameterSpec iv) {
+        try {
+            cipher.init(mode, key, iv);
+            return true;
+        }
+        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
+            return false;
+        }
+    }
+
+    private static byte[] doFinal(Cipher cipher, String plainText){
+        try{
+            return cipher.doFinal(plainText.getBytes());
+        }
+        catch (IllegalBlockSizeException | BadPaddingException e){
+            return null;
+        }
+    }
+
+
     @Override
     public Result<String, Error> encrypt(String plainText) {
 
-        Cipher cipher;
         var complexName = this.config.getInstance().getComplexName();
-        try{
-            cipher = Cipher.getInstance(complexName);
-        }
-        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
+        var cipher = getCipher(complexName);
+        if(cipher == null){
             return Result.failure(
                     ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
@@ -45,12 +81,9 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        byte[] keyRaw;
         var keyValue = this.config.getSecretKey().getValue();
-        try{
-            keyRaw = Base64.getDecoder().decode(keyValue);
-        }
-        catch (IllegalArgumentException e){
+        var keyRaw = decode(keyValue);
+        if(keyRaw == null){
             return Result.failure(
                     ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
@@ -61,14 +94,10 @@ public class AESEncryptionService implements EncryptionService {
         }
 
         var key = new SecretKeySpec(keyRaw, config.getInstance().getSimpleName());
-
         // Should never return an exception
         var iv = AESGenerators.generateIv(config.getIv().getLength(), config.getSecretKey().getLength());
 
-        try {
-            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-        }
-        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
+        if(!initCipher(cipher, Cipher.ENCRYPT_MODE, key, iv)){
             return Result.failure(
                     ErrorType.ITN_OPERATION_ERROR,
                     new Field[]{
@@ -84,11 +113,8 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        byte[] cipherBytes;
-        try{
-            cipherBytes = cipher.doFinal(plainText.getBytes());
-        }
-        catch (IllegalBlockSizeException | BadPaddingException e){
+        var cipherBytes = doFinal(cipher, plainText);
+        if(cipherBytes == null){
             return Result.failure(
                     ErrorType.INVALID_INPUT,
                     new Field(
@@ -108,10 +134,7 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     @Override
-    public Result<String, Error> decrypt(String cipherText)
-            throws
-            IllegalBlockSizeException,
-            BadPaddingException {
+    public Result<String, Error> decrypt(String cipherText) {
 
         if(cipherText.isBlank()){
             return Result.failure(
