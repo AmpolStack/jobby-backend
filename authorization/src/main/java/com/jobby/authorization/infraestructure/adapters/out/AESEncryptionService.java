@@ -1,6 +1,10 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.application.ports.out.EncryptionService;
+import com.jobby.authorization.domain.result.Error;
+import com.jobby.authorization.domain.result.ErrorType;
+import com.jobby.authorization.domain.result.Field;
+import com.jobby.authorization.domain.result.Result;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import org.springframework.stereotype.Component;
 
@@ -23,35 +27,88 @@ public class AESEncryptionService implements EncryptionService {
         this.encryptConfig = config;
     }
 
-
     @Override
-    public String encrypt(String plainText)
-            throws NoSuchPaddingException,
-            NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException,
-            InvalidKeyException,
-            IllegalBlockSizeException,
-            BadPaddingException {
-        var cipher = Cipher.getInstance(encryptConfig.getInstance().getComplexName());
+    public Result<String, Error> encrypt(String plainText) {
 
-        var keyRaw = Base64.getDecoder().decode(encryptConfig.getSecretKey().getValue());
+        Cipher cipher;
+        var complexName = this.encryptConfig.getInstance().getComplexName();
+        try{
+            cipher = Cipher.getInstance(complexName);
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
+            return Result.failure(
+                    ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "encrypt.instance.complex-name",
+                            "the value: [ " + complexName + " ] complex-name are invalid or null"
+                    )
+            );
+        }
+
+        byte[] keyRaw;
+        var keyValue = this.encryptConfig.getSecretKey().getValue();
+        try{
+            keyRaw = Base64.getDecoder().decode(keyValue);
+        }
+        catch (IllegalArgumentException e){
+            return Result.failure(
+                    ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "encrypt.key.value",
+                            "the value: [ " + keyValue + " ] value are invalid or null"
+                    )
+            );
+        }
+
         var key = new SecretKeySpec(keyRaw, encryptConfig.getInstance().getSimpleName());
 
+        // Should never return an exception
         var iv = AESGenerators.generateIv(encryptConfig.getIv().getLength(), encryptConfig.getSecretKey().getLength());
 
-        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-        var cipherText = cipher.doFinal(plainText.getBytes());
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+        }
+        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
+            return Result.failure(
+                    ErrorType.ITN_OPERATION_ERROR,
+                    new Field[]{
+                            new Field(
+                                    "encrypt.key.value",
+                                    "the value : [ " + key + " ] key are probably incompatible or null, AES encryption failed"
+                            ),
+                            new Field(
+                                    "iv",
+                                    "the value : [ " + key + " ] iv are probably incompatible or null, AES encryption failed"
+                            ),
+                    }
+            );
+        }
 
-        var buffer = ByteBuffer.allocate(iv.getIV().length + cipherText.length);
+        byte[] cipherBytes;
+        try{
+            cipherBytes = cipher.doFinal(plainText.getBytes());
+        }
+        catch (IllegalBlockSizeException | BadPaddingException e){
+            return Result.failure(
+                    ErrorType.ITN_OPERATION_ERROR,
+                    new Field(
+                            "cipher.doFinal",
+                            "The operation returned an error, probably because one byte are invalid or corrupted"
+                    )
+            );
+        }
+
+        var buffer = ByteBuffer.allocate(iv.getIV().length + cipherBytes.length);
         buffer.put(iv.getIV());
-        buffer.put(cipherText);
+        buffer.put(cipherBytes);
         var combined = buffer.array();
 
-        return Base64.getEncoder().encodeToString(combined);
+        var response = Base64.getEncoder().encodeToString(combined);
+        return Result.success(response);
     }
 
     @Override
-    public String decrypt(String cipherText)
+    public Result<String, Error> decrypt(String cipherText)
             throws NoSuchPaddingException,
             NoSuchAlgorithmException,
             InvalidAlgorithmParameterException,
