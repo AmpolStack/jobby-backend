@@ -5,86 +5,80 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
-import com.jobby.authorization.infraestructure.config.EncryptConfig;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.ByteBuffer;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
-@Component
+@Service
 public class AESEncryptionService implements EncryptionService {
+    private static final String ALGORITHM = "AES";
+    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
 
-    private final EncryptConfig config;
+    private final EncryptGenerators encryptGenerators;
 
-    public AESEncryptionService(EncryptConfig config) {
-        this.config = config;
+    public AESEncryptionService(EncryptGenerators encryptGenerators) {
+        this.encryptGenerators = encryptGenerators;
     }
 
     @Override
-    public Result<String, Error> encrypt(String plainText) {
+    public Result<String, Error> encrypt(String data, String keyBase64, int ivLength) {
 
-        var complexName = this.config.getInstance().getComplexName();
-        var cipher = getCipher(complexName);
-        if(cipher == null){
-            return Result.failure(
-                    ErrorType.ITN_INVALID_OPTION_PARAMETER,
+        if(keyBase64.isEmpty()) {
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
-                            "encrypt.instance.complex-name",
-                            "the value: [ " + complexName + " ] are invalid or null"
+                            "keyBase64",
+                            "Encryption key cannot be empty"
                     )
             );
         }
 
-        var keyValue = this.config.getSecretKey().getValue();
-        var keyRaw = decode(keyValue);
-        if(keyRaw == null){
-            return Result.failure(
-                    ErrorType.ITN_INVALID_OPTION_PARAMETER,
+        if(ivLength <= 0 || ivLength > 16){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
-                            "encrypt.key.value",
-                            "the value: [ " + keyValue + " ] are invalid or null"
+                            "ivLength",
+                            "IV length must be between 1 and 16 bytes"
                     )
             );
         }
 
-        var key = new SecretKeySpec(keyRaw, config.getInstance().getSimpleName());
-        // Should never return an exception
-        var iv = AESGenerators.generateIv(config.getIv().getLength(), config.getSecretKey().getLength());
+        var key = this.encryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
 
-        if(initCipher(cipher, Cipher.ENCRYPT_MODE, key, iv)){
-            return Result.failure(
-                    ErrorType.ITN_OPERATION_ERROR,
-                    new Field[]{
-                            new Field(
-                                    "encrypt.key.value",
-                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
-                            ),
-                            new Field(
-                                    "iv",
-                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
-                            ),
-                    }
-            );
-        }
-
-        var cipherBytes = doFinal(cipher, plainText);
-        if(cipherBytes == null){
-            return Result.failure(
-                    ErrorType.INVALID_INPUT,
+        if(key == null){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
-                            "plainText",
-                            "The operation returned an error, probably because one byte are invalid or corrupted"
+                            "keyBase64",
+                            "Invalid Base64 encoded key or incompatible key format"
                     )
             );
         }
 
+
+        if (key.getEncoded().length < 16 || key.getEncoded().length > 32) {
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "keyBase64",
+                            "Key length must be between 16 and 32 bytes for AES encryption"
+                    )
+            );
+        }
+
+        var iv = this.encryptGenerators.generateIv(key.getEncoded().length * 8, ivLength);
+        var executionResult = this.encryptGenerators.runAlgorithm(
+                data.getBytes(StandardCharsets.UTF_8),
+                key, iv,
+                Cipher.ENCRYPT_MODE, TRANSFORMATION
+        );
+
+        if(executionResult.isFailure()){
+            return Result.renewFailure(executionResult);
+        }
+
+        var cipherBytes = executionResult.getData();
         var buffer = ByteBuffer.allocate(iv.getIV().length + cipherBytes.length);
         buffer.put(iv.getIV());
         buffer.put(cipherBytes);
@@ -95,172 +89,86 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     @Override
-    public Result<String, Error> decrypt(String cipherText) {
+    public Result<String, Error> decrypt(String cipherText, String keyBase64, int ivLength) {
 
-        if(cipherText.isBlank()){
-            return Result.failure(
-                    ErrorType.INVALID_INPUT,
+        if(keyBase64.isEmpty()) {
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "keyBase64",
+                            "Decryption key cannot be empty"
+                    )
+            );
+        }
+
+        if(cipherText.isEmpty()){
+            return Result.failure(ErrorType.INVALID_INPUT,
                     new Field(
                             "cipherText",
-                            "the input are null"
+                            "Cipher text cannot be empty"
                     )
             );
         }
 
-        var combined = decode(cipherText);
-        if(combined == null){
-            return Result.failure(
-                    ErrorType.INVALID_INPUT,
-                    new Field(
-                            "cipherText",
-                            "the value [ " + cipherText + " ] are invalid for decode in Base64 format"
-                    )
-            );
-        }
-
-        var ivLength = this.config.getIv().getLength();
-        if(ivLength > combined.length){
-            return Result.failure(
-                    ErrorType.VALIDATION_ERROR,
-                    new Field(
-                            "cipherText",
-                            "the value: [" + cipherText + "] are invalid or null"
-                    )
-            );
-        }
-
-        var rawIv = copyOfRange(combined, 0, ivLength);
-        if(rawIv == null){
-            return Result.failure(
-                    ErrorType.ITN_OPERATION_ERROR,
-                    new Field(
-                            "rawIv.length",
-                            "the value [" + ivLength + "] are invalid"
-                    )
-            );
-        }
-
-        var rawData = copyOfRange(combined, ivLength, combined.length);
-        if(rawData == null){
-            return Result.failure(
-                    ErrorType.ITN_OPERATION_ERROR,
-                    new Field(
-                            "rawIv.length",
-                            "the value [" + ivLength + "] are invalid"
-                    )
-            );
-        }
-
-        var complexName = this.config.getInstance().getComplexName();
-        var cipher = getCipher(complexName);
-        if(cipher == null){
-            return Result.failure(
-                    ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                    new Field(
-                            "encrypt.instance.complex-name",
-                            "the value: [ " + complexName + " ] are invalid or null"
-                    )
-            );
-        }
-
-        var iv = new GCMParameterSpec(config.getSecretKey().getLength(), rawIv);
-
-        var keyRaw = decode(config.getSecretKey().getValue());
-        if(keyRaw == null){
-            return Result.failure(
-                    ErrorType.ITN_OPERATION_ERROR,
-                    new Field(
-                            "keyRaw",
-                            "the value [ " + cipherText + " ] are invalid for decode in Base64 format"
-                    )
-            );
-        }
-
-        var key = new SecretKeySpec(keyRaw, config.getInstance().getSimpleName());
-
-        if(initCipher(cipher, Cipher.DECRYPT_MODE, key, iv)){
-            return Result.failure(
-                    ErrorType.ITN_OPERATION_ERROR,
-                    new Field[]{
-                            new Field(
-                                    "encrypt.key.value",
-                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
-                            ),
-                            new Field(
-                                    "iv",
-                                    "the value : [ " + key + " ] are probably incompatible or null, AES encryption failed"
-                            ),
-                    }
-            );
-        }
-
-        byte[] cipherBytes = doFinal(cipher, rawData);
-        if(cipherBytes == null){
-            return Result.failure(
-                    ErrorType.INVALID_INPUT,
-                    new Field(
-                            "plainText",
-                            "The operation returned an error, probably because one byte are invalid or corrupted"
-                    )
-            );
-        }
-
-        return Result.success(new String(cipherBytes));
-    }
-
-    private static Cipher getCipher(String complexName) {
+        byte[] combined;
         try{
-            return Cipher.getInstance(complexName);
-        }
-        catch (NoSuchAlgorithmException | NoSuchPaddingException e){
-            return null;
-        }
-    }
-
-    private static byte[] decode(String keyValue){
-        try{
-            return Base64.getDecoder().decode(keyValue);
+            combined = Base64.getDecoder().decode(cipherText);
         }
         catch (IllegalArgumentException e){
-            return null;
+            return Result.failure(ErrorType.INVALID_INPUT,
+                    new Field(
+                            "cipherText",
+                            "Invalid Base64 encoded cipher text"
+                    )
+            );
         }
-    }
 
-    private static byte[] copyOfRange(byte[] original, int from, int to){
-        try{
-            return Arrays.copyOfRange(original, from, to);
+        if(ivLength > combined.length){
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field(
+                            "cipherText",
+                            "Cipher text is too short to contain valid data (expected at least " + ivLength + " bytes)"
+                    )
+            );
         }
-        catch (ArrayIndexOutOfBoundsException e){
-            return null;
-        }
-    }
 
-    private static boolean initCipher(Cipher cipher, int mode,
-                                      SecretKeySpec key, GCMParameterSpec iv) {
-        try {
-            cipher.init(mode, key, iv);
-            return true;
-        }
-        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
-            return false;
-        }
-    }
+        var key = this.encryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
 
-    private static byte[] doFinal(Cipher cipher, String plainText){
-        try{
-            return cipher.doFinal(plainText.getBytes());
+        if(key == null){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "keyBase64",
+                            "Invalid Base64 encoded key or incompatible key format"
+                    )
+            );
         }
-        catch (IllegalBlockSizeException | BadPaddingException e){
-            return null;
-        }
-    }
 
-    private static byte[] doFinal(Cipher cipher, byte[] data){
-        try{
-            return cipher.doFinal(data);
+        if (key.getEncoded().length < 16 || key.getEncoded().length > 32) {
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "keyBase64",
+                            "Key length must be between 16 and 32 bytes for AES decryption"
+                    )
+            );
         }
-        catch (IllegalBlockSizeException | BadPaddingException e){
-            return null;
+
+        var rawIv = Arrays.copyOfRange(combined, 0, ivLength);
+        var rawData = Arrays.copyOfRange(combined, ivLength, combined.length);
+
+        var iv = new GCMParameterSpec(key.getEncoded().length * 8, rawIv);
+
+        var executionResult = this.encryptGenerators.runAlgorithm(
+                rawData,
+                key,
+                iv,
+                Cipher.DECRYPT_MODE,
+                TRANSFORMATION
+        );
+
+        if(executionResult.isFailure()){
+            return Result.renewFailure(executionResult);
         }
+
+        var resp = new String(executionResult.getData(), StandardCharsets.UTF_8);
+        return Result.success(resp);
     }
 }
