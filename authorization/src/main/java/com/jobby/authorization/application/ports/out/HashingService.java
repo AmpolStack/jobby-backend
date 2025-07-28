@@ -1,6 +1,9 @@
 package com.jobby.authorization.application.ports.out;
 
+import com.jobby.authorization.domain.result.Error;
+import com.jobby.authorization.domain.result.Result;
+
 public interface HashingService {
-    String hash(String input);
-    boolean matches(String input, String hash);
+    Result<String, Error> hash(String input);
+    Result<Boolean, Error> matches(String plain, String hash);
 }
