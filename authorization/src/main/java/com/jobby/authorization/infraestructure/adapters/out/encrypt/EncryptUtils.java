@@ -10,7 +10,7 @@ import java.util.Base64;
 public class EncryptUtils {
     public static SecretKey generateKey(String algorithm, int size) throws NoSuchAlgorithmException {
         var keyGenerator = KeyGenerator.getInstance(algorithm);
-        // normally 128, 192 or 256 bits
+        // normally 128, 192 or 256 (ideal) bits
         keyGenerator.init(size);
         return keyGenerator.generateKey();
     }
