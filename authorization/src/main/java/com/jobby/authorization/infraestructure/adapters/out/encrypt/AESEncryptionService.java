@@ -1,6 +1,6 @@
-package com.jobby.authorization.infraestructure.adapters.out;
+package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 
-import com.jobby.authorization.application.ports.out.EncryptionService;
+import com.jobby.authorization.application.ports.out.encrypt.EncryptionService;
 import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
@@ -46,7 +46,7 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        var key = EncryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
+        var key = EncryptUtils.ParseKeySpec(ALGORITHM, keyBase64);
 
         if(key == null){
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
@@ -67,7 +67,7 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        var iv = EncryptGenerators.generateIv(key.getEncoded().length * 8, ivLength);
+        var iv = EncryptUtils.generateIv(key.getEncoded().length * 8, ivLength);
 
         var executionResult = this.encryptBuilder
                 .setData(data.getBytes(StandardCharsets.UTF_8))
@@ -134,7 +134,7 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        var key = EncryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
+        var key = EncryptUtils.ParseKeySpec(ALGORITHM, keyBase64);
 
         if(key == null){
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
