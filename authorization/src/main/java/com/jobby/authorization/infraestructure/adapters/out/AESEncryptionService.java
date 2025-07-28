@@ -19,10 +19,10 @@ public class AESEncryptionService implements EncryptionService {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
 
-    private final EncryptGenerators encryptGenerators;
+    private final DefaultEncryptBuilder encryptBuilder;
 
-    public AESEncryptionService(EncryptGenerators encryptGenerators) {
-        this.encryptGenerators = encryptGenerators;
+    public AESEncryptionService(DefaultEncryptBuilder defaultEncryptBuilder) {
+        this.encryptBuilder = defaultEncryptBuilder;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        var key = this.encryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
+        var key = EncryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
 
         if(key == null){
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
@@ -67,12 +67,15 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        var iv = this.encryptGenerators.generateIv(key.getEncoded().length * 8, ivLength);
-        var executionResult = this.encryptGenerators.runAlgorithm(
-                data.getBytes(StandardCharsets.UTF_8),
-                key, iv,
-                Cipher.ENCRYPT_MODE, TRANSFORMATION
-        );
+        var iv = EncryptGenerators.generateIv(key.getEncoded().length * 8, ivLength);
+
+        var executionResult = this.encryptBuilder
+                .setData(data.getBytes(StandardCharsets.UTF_8))
+                .setIv(iv)
+                .setKey(key)
+                .setMode(Cipher.ENCRYPT_MODE)
+                .setTransformation(TRANSFORMATION)
+                .build();
 
         if(executionResult.isFailure()){
             return Result.renewFailure(executionResult);
@@ -131,7 +134,7 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        var key = this.encryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
+        var key = EncryptGenerators.ParseKeySpec(ALGORITHM, keyBase64);
 
         if(key == null){
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
@@ -152,17 +155,17 @@ public class AESEncryptionService implements EncryptionService {
         }
 
         var rawIv = Arrays.copyOfRange(combined, 0, ivLength);
-        var rawData = Arrays.copyOfRange(combined, ivLength, combined.length);
+        var data = Arrays.copyOfRange(combined, ivLength, combined.length);
 
         var iv = new GCMParameterSpec(key.getEncoded().length * 8, rawIv);
 
-        var executionResult = this.encryptGenerators.runAlgorithm(
-                rawData,
-                key,
-                iv,
-                Cipher.DECRYPT_MODE,
-                TRANSFORMATION
-        );
+        var executionResult = this.encryptBuilder
+                .setData(data)
+                .setIv(iv)
+                .setKey(key)
+                .setMode(Cipher.DECRYPT_MODE)
+                .setTransformation(TRANSFORMATION)
+                .build();
 
         if(executionResult.isFailure()){
             return Result.renewFailure(executionResult);
