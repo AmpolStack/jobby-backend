@@ -2,6 +2,7 @@ package com.jobby.authorization.domain.result;
 
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public sealed interface Result<T,E> permits Success, Failure {
@@ -53,6 +54,23 @@ public sealed interface Result<T,E> permits Success, Failure {
 
         Error newErr = new Error(oldErr.getCode(), updated);
         return Result.failure(newErr);
+    }
+
+
+    default  <U> Result<U, E> map(Function<T, U> fn) {
+        if (this.isSuccess()) {
+            return Result.success(fn.apply(this.getData()));
+        } else {
+            return Result.failure(this.getError());
+        }
+    }
+
+    default <U> Result<U, E> flatMap(Function<T, Result<U, E>> fn) {
+        if (this.isSuccess()) {
+            return fn.apply(this.getData());
+        } else {
+            return Result.failure(this.getError());
+        }
     }
 
     static <T,U,E> Result<U, E> mapError(Result<T, E> result) {
