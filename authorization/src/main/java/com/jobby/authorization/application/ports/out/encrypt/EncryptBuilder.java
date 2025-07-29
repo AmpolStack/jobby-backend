@@ -2,6 +2,7 @@ package com.jobby.authorization.application.ports.out.encrypt;
 
 import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.infraestructure.adapters.out.encrypt.DefaultEncryptBuilder;
 
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;

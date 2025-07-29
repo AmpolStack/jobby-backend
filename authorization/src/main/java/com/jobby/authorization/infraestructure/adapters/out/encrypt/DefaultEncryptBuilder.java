@@ -11,10 +11,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.spec.AlgorithmParameterSpec;
 
 @Component
@@ -73,12 +70,12 @@ public class DefaultEncryptBuilder implements EncryptBuilder {
         try {
             cipher.init(this.mode, this.key, this.iv);
         }
-        catch (InvalidKeyException | InvalidAlgorithmParameterException e){
+        catch (InvalidKeyException | InvalidAlgorithmParameterException | InvalidParameterException e){
             return Result.failure(ErrorType.ITN_OPERATION_ERROR,
                     new Field[]{
                             new Field(
                                     "this.key",
-                                    "Possible invalid Key mode: " + iv
+                                    "Possible invalid Key: " + key.toString()
                             ),
                             new Field(
                                     "this.mode",
@@ -86,7 +83,7 @@ public class DefaultEncryptBuilder implements EncryptBuilder {
                             ),
                             new Field(
                                     "this.Iv",
-                                    "Possible invalid cipher iv: " + mode
+                                    "Possible invalid cipher iv: " + iv.toString()
                             )
                     }
             );
