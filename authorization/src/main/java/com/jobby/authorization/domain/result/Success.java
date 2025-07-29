@@ -1,5 +1,8 @@
 package com.jobby.authorization.domain.result;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public final class Success<T, E> implements Result<T,E>{
     private final T data;
 
