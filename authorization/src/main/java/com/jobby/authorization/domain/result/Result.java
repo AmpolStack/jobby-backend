@@ -1,9 +1,9 @@
 package com.jobby.authorization.domain.result;
 
 
+
 import java.util.Arrays;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public sealed interface Result<T,E> permits Success, Failure {
 
