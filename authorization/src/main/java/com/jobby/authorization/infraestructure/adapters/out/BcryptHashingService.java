@@ -14,9 +14,20 @@ import java.nio.charset.StandardCharsets;
 public class BcryptHashingService implements HashingService {
     @Override
     public Result<String, Error> hash(String input) {
+        if(input == null || input.isBlank()){
+            return Result.failure(
+                    ErrorType.VALIDATION_ERROR,
+                    new Field(
+                            "input",
+                            "the input are null or blank"
+                    )
+            );
+        }
+
         var bytes = input.getBytes(StandardCharsets.UTF_8);
-        if(bytes.length == 0 || bytes.length > 72) {
-            Result.failure(
+
+        if(bytes.length > 72) {
+            return Result.failure(
                     ErrorType.VALIDATION_ERROR,
                     new Field(
                             "input",
@@ -24,6 +35,7 @@ public class BcryptHashingService implements HashingService {
                     )
             );
         }
+
         var encoder = new BCryptPasswordEncoder();
         var resp = encoder.encode(input);
         return Result.success(resp);
@@ -31,7 +43,7 @@ public class BcryptHashingService implements HashingService {
 
     @Override
     public Result<Boolean, Error> matches(String plain, String hash) {
-        if(plain.isBlank()) {
+        if(plain == null || plain.isBlank()) {
             return Result.failure(
                     ErrorType.VALIDATION_ERROR,
                     new Field(
@@ -41,7 +53,7 @@ public class BcryptHashingService implements HashingService {
             );
         }
 
-        if(hash.isBlank()) {
+        if(hash == null || hash.isBlank()) {
             return Result.failure(
                     ErrorType.VALIDATION_ERROR,
                     new Field(
