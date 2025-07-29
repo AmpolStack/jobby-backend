@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Base64;
-import java.util.Objects;
 import java.util.Random;
 
 public class BcryptHashingServiceTest {
@@ -19,6 +18,9 @@ public class BcryptHashingServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"12345678", "password", "my-name+year"})
     public void matches_whenEquals(String input) {
+        // Arrange
+        Result<Boolean, Error> expectedResult =  Result.success(true);
+
         // Act
         var matchesResult = this.bcryptHashingService.hash(input)
                 .flatMap((hash) -> this.bcryptHashingService.matches(input, hash));
@@ -26,11 +28,16 @@ public class BcryptHashingServiceTest {
         // Assert
         Assertions.assertTrue(matchesResult.isSuccess());
         Assertions.assertTrue(matchesResult.getData());
+        Assertions.assertEquals(expectedResult, matchesResult);
+
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"12345678", "password", "my-name+year", "a"})
     public void matches_whenNotEquals(String input){
+        // Arrange
+        Result<Boolean, Error> expectedResult =  Result.success(false);
+
         // Act
         var hashResult = this.bcryptHashingService.hash(input)
                 .flatMap( hash -> {
@@ -44,22 +51,13 @@ public class BcryptHashingServiceTest {
         // Assert
         Assertions.assertTrue(hashResult.isSuccess());
         Assertions.assertFalse(hashResult.getData());
+        Assertions.assertEquals(expectedResult, hashResult);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", "  ", "\n", "\r", "\r\n", " "})
     public void hash_WhenInputAreBlank(String input) {
-        // Act
-        var hashResult = this.bcryptHashingService.hash(input);
-
-        // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-    }
-
-    @Test
-    public void hash_WhenInputIsNull() {
-        // Act
-        var hashResult = this.bcryptHashingService.hash(null);
+        // Arrange
         Result<String, Error> expectedResult = Result.failure(
                 ErrorType.VALIDATION_ERROR,
                 new Field(
@@ -67,6 +65,29 @@ public class BcryptHashingServiceTest {
                         "the input are null or blank"
                 )
         );
+
+        // Act
+        var hashResult = this.bcryptHashingService.hash(input);
+
+        // Assert
+        Assertions.assertFalse(hashResult.isSuccess());
+        Assertions.assertEquals(expectedResult, hashResult);
+    }
+
+    @Test
+    public void hash_WhenInputIsNull() {
+        // Arrange
+        Result<String, Error> expectedResult = Result.failure(
+                ErrorType.VALIDATION_ERROR,
+                new Field(
+                        "input",
+                        "the input are null or blank"
+                )
+        );
+
+        // Act
+        var hashResult = this.bcryptHashingService.hash(null);
+
 
         // Assert
         Assertions.assertFalse(hashResult.isSuccess());
@@ -79,8 +100,7 @@ public class BcryptHashingServiceTest {
         var bytes = new byte[73];
         new Random().nextBytes(bytes);
         var input = new String(bytes);
-        // Act
-        var hashResult = this.bcryptHashingService.hash(input);
+
         Result<String, Error> expectedResult = Result.failure(
                 ErrorType.VALIDATION_ERROR,
                 new Field(
@@ -88,6 +108,9 @@ public class BcryptHashingServiceTest {
                         "the input are invalid, because exceeds the 72 bytes of length"
                 )
         );
+
+        // Act
+        var hashResult = this.bcryptHashingService.hash(input);
 
         // Assert
         Assertions.assertFalse(hashResult.isSuccess());
@@ -97,24 +120,83 @@ public class BcryptHashingServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"", "  ", "\n", "\r", "\r\n", " "})
-    public void matches_WhenInputAreBlank(String input) {
-        // Act
+    public void matches_WhenInputAreBlank_FirstInput(String input) {
+        // Arrange
+        Result<Boolean, Error> expectedOne = Result.failure(
+                ErrorType.VALIDATION_ERROR,
+                new Field(
+                        "plain",
+                        "The input are null or blank"
+                )
+        );
 
-        var hashResult = this.bcryptHashingService.matches(input, input);
+        // Act
+        var hashResult = this.bcryptHashingService.matches(input, "exampleHash");
 
         // Assert
         Assertions.assertFalse(hashResult.isSuccess());
         Assertions.assertNull(hashResult.getData());
+        Assertions.assertEquals(expectedOne, hashResult);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "  ", "\n", "\r", "\r\n", " "})
+    public void matches_WhenInputAreBlank_SecondInput(String input) {
+        // Arrange
+        Result<Boolean, Error> expectedTwo = Result.failure(
+                ErrorType.VALIDATION_ERROR,
+                new Field(
+                        "hash",
+                        "The input are null or blank"
+                )
+        );
+
+        // Act
+        var hashResult = this.bcryptHashingService.matches("examplePlain", input);
+
+        // Assert
+        Assertions.assertFalse(hashResult.isSuccess());
+        Assertions.assertNull(hashResult.getData());
+        Assertions.assertEquals(expectedTwo, hashResult);
     }
 
     @Test
-    public void matches_WhenInputAreNull() {
+    public void matches_WhenInputAreNull_FirstInput() {
+        // Arrange
+        Result<Boolean, Error> expectedOne = Result.failure(
+                ErrorType.VALIDATION_ERROR,
+                new Field(
+                        "plain",
+                        "The input are null or blank"
+                )
+        );
+
         // Act
-        var hashResult = this.bcryptHashingService.matches(null, null);
+        var hashResult = this.bcryptHashingService.matches(null, "exampleHash");
 
         // Assert
         Assertions.assertFalse(hashResult.isSuccess());
         Assertions.assertNull(hashResult.getData());
+        Assertions.assertEquals(expectedOne, hashResult);
     }
 
+    @Test
+    public void matches_WhenInputAreNull_SecondInput() {
+        // Arrange
+        Result<Boolean, Error> expectedTwo = Result.failure(
+                ErrorType.VALIDATION_ERROR,
+                new Field(
+                        "hash",
+                        "The input are null or blank"
+                )
+        );
+
+        // Act
+        var hashResult = this.bcryptHashingService.matches("examplePlain", null);
+
+        // Assert
+        Assertions.assertFalse(hashResult.isSuccess());
+        Assertions.assertNull(hashResult.getData());
+        Assertions.assertEquals(expectedTwo, hashResult);
+    }
 }
