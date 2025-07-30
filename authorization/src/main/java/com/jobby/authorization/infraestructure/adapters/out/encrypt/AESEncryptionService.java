@@ -27,7 +27,7 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     private Result<Key, Error> validateAndParseKey(String keyBase64){
-        if(keyBase64.isEmpty()) {
+        if(keyBase64 == null || keyBase64.isBlank()) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
                             "keyBase64",

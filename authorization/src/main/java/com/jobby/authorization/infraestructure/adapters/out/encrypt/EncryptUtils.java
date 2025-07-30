@@ -24,10 +24,6 @@ public class EncryptUtils {
             return null;
         }
 
-        if (bytes.length < 16 || bytes.length > 32) {
-            return null;
-        }
-
         return new SecretKeySpec(bytes, algorithm);
     }
 
