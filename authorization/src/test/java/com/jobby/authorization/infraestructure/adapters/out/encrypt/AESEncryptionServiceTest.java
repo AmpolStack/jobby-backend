@@ -11,11 +11,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.Cipher;
 import java.util.Base64;
 import java.util.Random;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AESEncryptionServiceTest {
@@ -151,12 +151,12 @@ public class AESEncryptionServiceTest {
 
         Result<byte[], Error> expectedResult = Result.failure(ErrorType.VALIDATION_ERROR, new Field("expectedInstance", "expectedReason"));
 
-        Mockito.when(this.defaultEncryptBuilder.setData(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setIv(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setKey(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setMode(Cipher.ENCRYPT_MODE)).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setTransformation(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
+        when(this.defaultEncryptBuilder.setData(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setIv(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setKey(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setMode(Cipher.ENCRYPT_MODE)).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setTransformation(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
         // Act
         var result = this.aesEncryptionService.encrypt(data, key, ivLength);
@@ -183,24 +183,24 @@ public class AESEncryptionServiceTest {
         new Random().nextBytes(expectedResultResponse);
         Result<byte[], Error> expectedResult = Result.success(expectedResultResponse);
 
-        Mockito.when(this.defaultEncryptBuilder.setData(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setIv(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setKey(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setMode(Cipher.ENCRYPT_MODE)).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.setTransformation(Mockito.any())).thenReturn(defaultEncryptBuilder);
-        Mockito.when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
+        when(this.defaultEncryptBuilder.setData(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setIv(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setKey(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setMode(Cipher.ENCRYPT_MODE)).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setTransformation(any())).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
         // Act
         var result = this.aesEncryptionService.encrypt(data, key, ivLength);
 
         // Assert
         Assertions.assertTrue(result.isSuccess());
-        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setData(Mockito.any());
-        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setMode(Cipher.ENCRYPT_MODE);
-        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setIv(Mockito.any());
-        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setKey(Mockito.any());
-        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setTransformation(Mockito.any());
-        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).build();
+        verify(defaultEncryptBuilder, times(1)).setData(any());
+        verify(defaultEncryptBuilder, times(1)).setMode(Cipher.ENCRYPT_MODE);
+        verify(defaultEncryptBuilder, times(1)).setIv(any());
+        verify(defaultEncryptBuilder, times(1)).setKey(any());
+        verify(defaultEncryptBuilder, times(1)).setTransformation(any());
+        verify(defaultEncryptBuilder, times(1)).build();
     }
 
 
