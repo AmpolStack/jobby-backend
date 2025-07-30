@@ -8,12 +8,13 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Random;
 
 public class DecryptEncryptBuilderTest {
@@ -173,7 +174,7 @@ public class DecryptEncryptBuilderTest {
 
     }
 
-    @RepeatedTest(1)
+    @RepeatedTest(10)
     public void build_whenTransitionBlockSizeAreInvalid() throws NoSuchAlgorithmException {
         // Arrange
         var key = EncryptUtils.generateKey("AES", 128);
@@ -201,7 +202,91 @@ public class DecryptEncryptBuilderTest {
         // Asserts
         Assertions.assertFalse(build.isSuccess());
         Assertions.assertEquals(build, resp);
+    }
 
+    @RepeatedTest(100)
+    public void build_whenTransitionPaddingAreBad() throws NoSuchAlgorithmException {
+        // Arrange
+        var key = EncryptUtils.generateKey("AES", 128);
+        var iv = new IvParameterSpec(new byte[16]);
+        var data = new byte[32];
+        new Random().nextBytes(data);
+
+        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                new Field(
+                        "this.data",
+                        "Cipher operation failed - data may be corrupted or incompatible"
+                )
+        );
+
+        // Act
+        var build = this.defaultEncryptBuilder
+                .setTransformation("AES/CBC/PKCS5Padding")
+                // In this mode the data has to be multiple of the key length, if not it returns error
+                .setKey(key)
+                .setIv(iv)
+                // This mode not use iv
+                .setMode(Cipher.DECRYPT_MODE)
+                .setData(data)
+                .build();
+
+        // Asserts
+        Assertions.assertFalse(build.isSuccess());
+        Assertions.assertEquals(build, resp);
+    }
+
+    @RepeatedTest(100)
+    public void build_whenAllAreCorrect_Encrypt() throws NoSuchAlgorithmException {
+        // Arrange
+        var key = EncryptUtils.generateKey("AES", 256);
+        var iv = EncryptUtils.generateIv(12, 128);
+        var data = new byte[32];
+        new Random().nextBytes(data);
+
+        // Act
+        var build = this.defaultEncryptBuilder
+                .setTransformation("AES/GCM/NoPadding")
+                .setKey(key)
+                .setIv(iv)
+                .setMode(Cipher.ENCRYPT_MODE)
+                .setData(data)
+                .build();
+
+        // Asserts
+        Assertions.assertTrue(build.isSuccess());
+    }
+
+    @RepeatedTest(1)
+    public void build_whenAllAreCorrect_Decrypt_Equals() throws NoSuchAlgorithmException {
+        // Arrange
+        var key = EncryptUtils.generateKey("AES", 256);
+        var iv = EncryptUtils.generateIv(12, 128);
+        var data = new byte[32];
+        new Random().nextBytes(data);
+        var initValue = Base64.getEncoder().encodeToString(data);
+        String finalValue;
+        // Act
+        var build = this.defaultEncryptBuilder
+                .setTransformation("AES/GCM/NoPadding")
+                .setKey(key)
+                .setIv(iv)
+                .setMode(Cipher.ENCRYPT_MODE)
+                .setData(data)
+                .build()
+                .flatMap((cipherBytes) ->
+                    this.defaultEncryptBuilder
+                            .setTransformation("AES/GCM/NoPadding")
+                            .setKey(key)
+                            .setIv(iv)
+                            .setMode(Cipher.DECRYPT_MODE)
+                            .setData(cipherBytes)
+                            .build()
+                );
+
+        finalValue = Base64.getEncoder().encodeToString(build.getData());
+        // Asserts
+        Assertions.assertTrue(build.isSuccess());
+        Assertions.assertEquals(finalValue, initValue);
     }
 
 }
