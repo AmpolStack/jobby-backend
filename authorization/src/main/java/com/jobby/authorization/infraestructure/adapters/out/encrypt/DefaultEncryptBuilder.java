@@ -75,7 +75,7 @@ public class DefaultEncryptBuilder implements EncryptBuilder {
                     new Field[]{
                             new Field(
                                     "this.key",
-                                    "Possible invalid Key: " + key.toString()
+                                    "Possible invalid Key: " + key
                             ),
                             new Field(
                                     "this.mode",
@@ -83,7 +83,7 @@ public class DefaultEncryptBuilder implements EncryptBuilder {
                             ),
                             new Field(
                                     "this.Iv",
-                                    "Possible invalid cipher iv: " + iv.toString()
+                                    "Possible invalid cipher iv: " + iv
                             )
                     }
             );
