@@ -8,10 +8,13 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 public class DecryptEncryptBuilderTest {
 
@@ -162,6 +165,37 @@ public class DecryptEncryptBuilderTest {
                 .setIv(iv)
                 .setMode(100)
                 .setData("Compose".getBytes(StandardCharsets.UTF_8))
+                .build();
+
+        // Asserts
+        Assertions.assertFalse(build.isSuccess());
+        Assertions.assertEquals(build, resp);
+
+    }
+
+    @RepeatedTest(1)
+    public void build_whenTransitionBlockSizeAreInvalid() throws NoSuchAlgorithmException {
+        // Arrange
+        var key = EncryptUtils.generateKey("AES", 128);
+        var data = new byte[10];
+        new Random().nextBytes(data);
+
+        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                new Field(
+                        "this.data",
+                        "Cipher operation failed - data may be corrupted or incompatible"
+                )
+        );
+
+        // Act
+        var build = this.defaultEncryptBuilder
+                .setTransformation("AES/ECB/NoPadding")
+                // In this mode the data has to be multiple of the key length, if not it returns error
+                .setKey(key)
+                .setIv(null)
+                // This mode not use iv
+                .setMode(Cipher.ENCRYPT_MODE)
+                .setData(data)
                 .build();
 
         // Asserts
