@@ -1,5 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 
+import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
@@ -10,9 +11,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.security.NoSuchAlgorithmException;
+import javax.crypto.Cipher;
 import java.util.Base64;
 import java.util.Random;
 
@@ -118,7 +119,7 @@ public class AESEncryptionServiceTest {
 
     @ParameterizedTest
     @ValueSource(ints = {  1, 2, 15, 33, 45 })
-    public void encrypt_whenKeyLengthIsInvalid(int keyLength) throws NoSuchAlgorithmException {
+    public void encrypt_whenKeyLengthIsInvalid(int keyLength) {
         // Arrange
         var data = "example_data";
         var ivLength= 12;
@@ -139,8 +140,31 @@ public class AESEncryptionServiceTest {
         // Assert
         Assertions.assertTrue(result.isFailure());
         Assertions.assertEquals(expectedResult, result);
-
-
     }
+
+    @Test
+    public void encrypt_whenBuildReturnsFailure() {
+        // Arrange
+        var data = "example_data";
+        var ivLength= 12;
+        var key = "p652zw20jx/Bvg/4I7Mrdg==";
+
+        Result<byte[], Error> expectedResult = Result.failure(ErrorType.VALIDATION_ERROR, new Field("expectedInstance", "expectedReason"));
+
+        Mockito.when(this.defaultEncryptBuilder.setData(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setIv(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setKey(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setMode(Cipher.ENCRYPT_MODE)).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setTransformation(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
+
+        // Act
+        var result = this.aesEncryptionService.encrypt(data, key, ivLength);
+
+        // Assert
+        Assertions.assertTrue(result.isFailure());
+        Assertions.assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
 
 }
