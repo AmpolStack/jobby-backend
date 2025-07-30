@@ -7,17 +7,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 
 public class DecryptEncryptBuilderTest {
 
-    private DefaultEncryptBuilder defaultEncryptBuilder = new DefaultEncryptBuilder();
+    private final DefaultEncryptBuilder defaultEncryptBuilder = new DefaultEncryptBuilder();
 
     @Test
     public void build_whenInstanceIsNull() {
@@ -62,13 +60,13 @@ public class DecryptEncryptBuilderTest {
 
 
     @Test
-    public void build_whenKeyOrIvIsNull_Encrypt() throws NoSuchAlgorithmException {
+    public void build_whenKeyOrIvIsNull_Encrypt() {
         // Arrange
         var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
                 new Field[]{
                         new Field(
                                 "this.key",
-                                "Possible invalid Key mode: " + null
+                                "Possible invalid Key: " + null
                         ),
                         new Field(
                                 "this.mode",
@@ -76,7 +74,7 @@ public class DecryptEncryptBuilderTest {
                         ),
                         new Field(
                                 "this.Iv",
-                                "Possible invalid cipher iv: " + 0
+                                "Possible invalid cipher iv: " + null
                         )
                 }
         );
@@ -98,24 +96,24 @@ public class DecryptEncryptBuilderTest {
         Assertions.assertEquals(buildWithOutIv, resp);
     }
 
-    @RepeatedTest(5)
-    public void build_whenKeyIsInvalid_Encrypt() throws NoSuchAlgorithmException {
+    @RepeatedTest(100)
+    public void build_whenKeyIsInvalid_Encrypt() {
         // Arrange
-        var key = EncryptUtils.generateKey("AES", 192);
+        var key = new SecretKeySpec(new byte[5], "AES"); // 5 bytes, invalid key
         var iv = EncryptUtils.generateIv(12, 128);
         var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
                 new Field[]{
                         new Field(
                                 "this.key",
-                                "Possible invalid Key: " + key.toString()
+                                "Possible invalid Key: " + key
                         ),
                         new Field(
                                 "this.mode",
-                                "Possible invalid cipher mode: " + Cipher.ENCRYPT_MODE
+                                "Possible invalid cipher mode: " + 100
                         ),
                         new Field(
                                 "this.Iv",
-                                "Possible invalid cipher iv: " + iv.toString()
+                                "Possible invalid cipher iv: " + iv
                         )
                 }
         );
@@ -125,7 +123,44 @@ public class DecryptEncryptBuilderTest {
                 .setTransformation("AES/GCM/NoPadding")
                 .setKey(key)
                 .setIv(iv)
-                .setMode(Cipher.ENCRYPT_MODE)
+                .setMode(100)
+                .setData("Compose".getBytes(StandardCharsets.UTF_8))
+                .build();
+
+        // Asserts
+        Assertions.assertFalse(build.isSuccess());
+        Assertions.assertEquals(build, resp);
+
+    }
+
+    @RepeatedTest(100)
+    public void build_whenKeyIvInvalid_Encrypt() throws NoSuchAlgorithmException {
+        // Arrange
+        var key = EncryptUtils.generateKey("AES", 256);
+        var iv = new GCMParameterSpec(128, new byte[0]); // invalid iv with empty length
+        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                new Field[]{
+                        new Field(
+                                "this.key",
+                                "Possible invalid Key: " + key
+                        ),
+                        new Field(
+                                "this.mode",
+                                "Possible invalid cipher mode: " + 100
+                        ),
+                        new Field(
+                                "this.Iv",
+                                "Possible invalid cipher iv: " + iv
+                        )
+                }
+        );
+
+        // Act
+        var build = this.defaultEncryptBuilder
+                .setTransformation("AES/GCM/NoPadding")
+                .setKey(key)
+                .setIv(iv)
+                .setMode(100)
                 .setData("Compose".getBytes(StandardCharsets.UTF_8))
                 .build();
 
