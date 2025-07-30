@@ -4,7 +4,6 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.Cipher;
 import java.util.Base64;
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,8 +44,8 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(data, key, ivLength);
 
         // Assert
-        Assertions.assertTrue(result.isFailure());
-        Assertions.assertEquals(expectedResult, result);
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
     }
 
 
@@ -65,8 +66,8 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(data, null, ivLength);
 
         // Assert
-        Assertions.assertTrue(result.isFailure());
-        Assertions.assertEquals(expectedResult, result);
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
 
     }
 
@@ -89,8 +90,8 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(data, key, ivLength);
 
         // Assert
-        Assertions.assertTrue(result.isFailure());
-        Assertions.assertEquals(expectedResult, result);
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
 
     }
 
@@ -112,8 +113,8 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(data, key, ivLength);
 
         // Assert
-        Assertions.assertTrue(result.isFailure());
-        Assertions.assertEquals(expectedResult, result);
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
 
     }
 
@@ -138,8 +139,8 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(data, keyBase64, ivLength);
 
         // Assert
-        Assertions.assertTrue(result.isFailure());
-        Assertions.assertEquals(expectedResult, result);
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
     }
 
     @Test
@@ -162,8 +163,8 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(data, key, ivLength);
 
         // Assert
-        Assertions.assertTrue(result.isFailure());
-        Assertions.assertEquals(Result.renewFailure(expectedResult), result);
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
     }
 
     @ParameterizedTest
@@ -194,7 +195,7 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(data, key, ivLength);
 
         // Assert
-        Assertions.assertTrue(result.isSuccess());
+        assertTrue(result.isSuccess());
         verify(defaultEncryptBuilder, times(1)).setData(any());
         verify(defaultEncryptBuilder, times(1)).setMode(Cipher.ENCRYPT_MODE);
         verify(defaultEncryptBuilder, times(1)).setIv(any());

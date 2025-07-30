@@ -3,7 +3,6 @@ package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DecryptEncryptBuilderTest {
 
@@ -37,8 +38,8 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Assert
-        Assertions.assertFalse(build.isSuccess());
-        Assertions.assertEquals(build, resp);
+        assertFalse(build.isSuccess());
+        assertEquals(build, resp);
     }
 
     @ParameterizedTest
@@ -58,8 +59,8 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Assert
-        Assertions.assertFalse(build.isSuccess());
-        Assertions.assertEquals(build, resp);
+        assertFalse(build.isSuccess());
+        assertEquals(build, resp);
     }
 
 
@@ -94,10 +95,10 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Assert
-        Assertions.assertFalse(buildWithOutIv.isSuccess());
-        Assertions.assertFalse(buildWithOutKey.isSuccess());
-        Assertions.assertEquals(buildWithOutIv, buildWithOutKey);
-        Assertions.assertEquals(buildWithOutIv, resp);
+        assertFalse(buildWithOutIv.isSuccess());
+        assertFalse(buildWithOutKey.isSuccess());
+        assertEquals(buildWithOutIv, buildWithOutKey);
+        assertEquals(buildWithOutIv, resp);
     }
 
     @RepeatedTest(100)
@@ -132,8 +133,8 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Asserts
-        Assertions.assertFalse(build.isSuccess());
-        Assertions.assertEquals(build, resp);
+        assertFalse(build.isSuccess());
+        assertEquals(build, resp);
 
     }
 
@@ -169,8 +170,8 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Asserts
-        Assertions.assertFalse(build.isSuccess());
-        Assertions.assertEquals(build, resp);
+        assertFalse(build.isSuccess());
+        assertEquals(build, resp);
 
     }
 
@@ -200,8 +201,8 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Asserts
-        Assertions.assertFalse(build.isSuccess());
-        Assertions.assertEquals(build, resp);
+        assertFalse(build.isSuccess());
+        assertEquals(build, resp);
     }
 
     @RepeatedTest(100)
@@ -231,8 +232,8 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Asserts
-        Assertions.assertFalse(build.isSuccess());
-        Assertions.assertEquals(build, resp);
+        assertFalse(build.isSuccess());
+        assertEquals(build, resp);
     }
 
     @RepeatedTest(100)
@@ -253,7 +254,7 @@ public class DecryptEncryptBuilderTest {
                 .build();
 
         // Asserts
-        Assertions.assertTrue(build.isSuccess());
+        assertTrue(build.isSuccess());
     }
 
     @RepeatedTest(1)
@@ -285,8 +286,8 @@ public class DecryptEncryptBuilderTest {
 
         finalValue = Base64.getEncoder().encodeToString(build.getData());
         // Asserts
-        Assertions.assertTrue(build.isSuccess());
-        Assertions.assertEquals(finalValue, initValue);
+        assertTrue(build.isSuccess());
+        assertEquals(finalValue, initValue);
     }
 
 }
