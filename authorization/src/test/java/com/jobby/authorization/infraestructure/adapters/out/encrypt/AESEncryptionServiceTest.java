@@ -166,5 +166,42 @@ public class AESEncryptionServiceTest {
         Assertions.assertEquals(Result.renewFailure(expectedResult), result);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "secret-name",
+            "compose.key.username.password.pattern",
+            "email@example.com",
+            "secret-info",
+            "most-info",
+            "secret-name2"})
+    public void encrypt_whenAllIsCorrect(String data){
+        // Arrange
+        var ivLength= 12;
+        var key = "p652zw20jx/Bvg/4I7Mrdg==";
+
+        var expectedResultResponse = new byte[16];
+        new Random().nextBytes(expectedResultResponse);
+        Result<byte[], Error> expectedResult = Result.success(expectedResultResponse);
+
+        Mockito.when(this.defaultEncryptBuilder.setData(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setIv(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setKey(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setMode(Cipher.ENCRYPT_MODE)).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.setTransformation(Mockito.any())).thenReturn(defaultEncryptBuilder);
+        Mockito.when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
+
+        // Act
+        var result = this.aesEncryptionService.encrypt(data, key, ivLength);
+
+        // Assert
+        Assertions.assertTrue(result.isSuccess());
+        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setData(Mockito.any());
+        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setMode(Cipher.ENCRYPT_MODE);
+        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setIv(Mockito.any());
+        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setKey(Mockito.any());
+        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).setTransformation(Mockito.any());
+        Mockito.verify(defaultEncryptBuilder, Mockito.times(1)).build();
+    }
+
 
 }
