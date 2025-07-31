@@ -4,12 +4,13 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Base64;
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BcryptHashingServiceTest {
 
@@ -26,9 +27,9 @@ public class BcryptHashingServiceTest {
                 .flatMap((hash) -> this.bcryptHashingService.matches(input, hash));
 
         // Assert
-        Assertions.assertTrue(matchesResult.isSuccess());
-        Assertions.assertTrue(matchesResult.getData());
-        Assertions.assertEquals(expectedResult, matchesResult);
+        assertTrue(matchesResult.isSuccess());
+        assertTrue(matchesResult.getData());
+        assertEquals(expectedResult, matchesResult);
 
     }
 
@@ -49,9 +50,9 @@ public class BcryptHashingServiceTest {
                 });
 
         // Assert
-        Assertions.assertTrue(hashResult.isSuccess());
-        Assertions.assertFalse(hashResult.getData());
-        Assertions.assertEquals(expectedResult, hashResult);
+        assertTrue(hashResult.isSuccess());
+        assertFalse(hashResult.getData());
+        assertEquals(expectedResult, hashResult);
     }
 
     @ParameterizedTest
@@ -70,8 +71,8 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.hash(input);
 
         // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-        Assertions.assertEquals(expectedResult, hashResult);
+        assertFalse(hashResult.isSuccess());
+        assertEquals(expectedResult, hashResult);
     }
 
     @Test
@@ -90,8 +91,8 @@ public class BcryptHashingServiceTest {
 
 
         // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-        Assertions.assertEquals(hashResult, expectedResult);
+        assertFalse(hashResult.isSuccess());
+        assertEquals(hashResult, expectedResult);
     }
 
     @Test
@@ -113,8 +114,8 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.hash(input);
 
         // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-        Assertions.assertEquals(hashResult, expectedResult);
+        assertFalse(hashResult.isSuccess());
+        assertEquals(hashResult, expectedResult);
     }
 
 
@@ -134,9 +135,9 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches(input, "exampleHash");
 
         // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-        Assertions.assertNull(hashResult.getData());
-        Assertions.assertEquals(expectedOne, hashResult);
+        assertFalse(hashResult.isSuccess());
+        assertNull(hashResult.getData());
+        assertEquals(expectedOne, hashResult);
     }
 
     @ParameterizedTest
@@ -155,9 +156,9 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches("examplePlain", input);
 
         // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-        Assertions.assertNull(hashResult.getData());
-        Assertions.assertEquals(expectedTwo, hashResult);
+        assertFalse(hashResult.isSuccess());
+        assertNull(hashResult.getData());
+        assertEquals(expectedTwo, hashResult);
     }
 
     @Test
@@ -175,9 +176,9 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches(null, "exampleHash");
 
         // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-        Assertions.assertNull(hashResult.getData());
-        Assertions.assertEquals(expectedOne, hashResult);
+        assertFalse(hashResult.isSuccess());
+        assertNull(hashResult.getData());
+        assertEquals(expectedOne, hashResult);
     }
 
     @Test
@@ -195,8 +196,8 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches("examplePlain", null);
 
         // Assert
-        Assertions.assertFalse(hashResult.isSuccess());
-        Assertions.assertNull(hashResult.getData());
-        Assertions.assertEquals(expectedTwo, hashResult);
+        assertFalse(hashResult.isSuccess());
+        assertNull(hashResult.getData());
+        assertEquals(expectedTwo, hashResult);
     }
 }

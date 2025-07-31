@@ -24,16 +24,13 @@ public class EncryptUtils {
             return null;
         }
 
-        if (bytes.length < 16 || bytes.length > 32) {
-            return null;
-        }
-
         return new SecretKeySpec(bytes, algorithm);
     }
 
-    public static GCMParameterSpec generateIv(int ivSize, int keySize){
+    public static GCMParameterSpec generateIv(int ivSize, int tLen){
         var iv = new byte[ivSize];
         new SecureRandom().nextBytes(iv);
-        return new GCMParameterSpec(keySize, iv);
+        // Between 98, 112, 120, or 128 (most popular and recommended for NIST)
+        return new GCMParameterSpec(tLen, iv);
     }
 }

@@ -18,6 +18,7 @@ import java.util.Base64;
 public class AESEncryptionService implements EncryptionService {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final int T_LEN = 128;
 
     private final DefaultEncryptBuilder encryptBuilder;
 
@@ -26,7 +27,7 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     private Result<Key, Error> validateAndParseKey(String keyBase64){
-        if(keyBase64.isEmpty()) {
+        if(keyBase64 == null || keyBase64.isBlank()) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
                             "keyBase64",
@@ -75,7 +76,7 @@ public class AESEncryptionService implements EncryptionService {
         return validateIvLength(ivLength)
                 .flatMap(x -> validateAndParseKey(keyBase64))
                 .flatMap((key -> {
-                    var iv = EncryptUtils.generateIv(key.getEncoded().length * 8, ivLength);
+                    var iv = EncryptUtils.generateIv(ivLength, T_LEN);
                     return this.encryptBuilder
                             .setData(data.getBytes(StandardCharsets.UTF_8))
                             .setIv(iv)
@@ -94,11 +95,11 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     private Result<byte[], Error> validateAndParseCipherText(String cipherText){
-        if(cipherText.isEmpty()){
+        if(cipherText == null ||  cipherText.isBlank()){
             return Result.failure(ErrorType.INVALID_INPUT,
                     new Field(
                             "cipherText",
-                            "Cipher text cannot be empty"
+                            "Cipher text cannot be null or blank"
                     )
             );
         }
@@ -139,7 +140,7 @@ public class AESEncryptionService implements EncryptionService {
 
                             var rawIv = Arrays.copyOfRange(combined, 0, ivLength);
                             var data = Arrays.copyOfRange(combined, ivLength, combined.length);
-                            var iv = new GCMParameterSpec(key.getEncoded().length * 8, rawIv);
+                            var iv = new GCMParameterSpec(T_LEN, rawIv);
                             return this.encryptBuilder
                                     .setData(data)
                                     .setIv(iv)
