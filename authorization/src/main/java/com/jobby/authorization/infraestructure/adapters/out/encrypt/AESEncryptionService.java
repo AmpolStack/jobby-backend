@@ -95,11 +95,11 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     private Result<byte[], Error> validateAndParseCipherText(String cipherText){
-        if(cipherText.isEmpty()){
+        if(cipherText == null ||  cipherText.isBlank()){
             return Result.failure(ErrorType.INVALID_INPUT,
                     new Field(
                             "cipherText",
-                            "Cipher text cannot be empty"
+                            "Cipher text cannot be null or blank"
                     )
             );
         }
