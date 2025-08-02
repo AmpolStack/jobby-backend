@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class EmployeeRepositoryImpl implements EmployeeRepository {
+public class DefaultEmployeeRepository implements EmployeeRepository {
 
     private final MongoEmployeeEntityMapper mongoMapper;
     private final SpringDataMongoEmployeeRepository mongoRepository;
 
-    public EmployeeRepositoryImpl(MongoEmployeeEntityMapper mongoMapper, SpringDataMongoEmployeeRepository mongoRepository) {
+    public DefaultEmployeeRepository(MongoEmployeeEntityMapper mongoMapper, SpringDataMongoEmployeeRepository mongoRepository) {
         this.mongoMapper = mongoMapper;
         this.mongoRepository = mongoRepository;
     }
