@@ -57,6 +57,45 @@ public class AESEncryptionServiceTest {
         assertEquals(expectedResult, result);
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {-2, -200, 0, 17, 200})
+    public void encrypt_whenTLengthIsInvalid(int tLength) {
+        // Arrange
+        var data = "example_data";
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, tLength)
+        );
+
+        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                new Field("tLen", "TLen are invalid"));
+        // Act
+        var result = this.aesEncryptionService.encrypt(data, config);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-2, -200, 0, 17, 200})
+    public void decrypt_whenTLengthIsInvalid(int tLength) {
+        // Arrange
+        var data = "example_data";
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, tLength)
+        );
+
+        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                new Field("tLen", "TLen are invalid"));
+        // Act
+        var result = this.aesEncryptionService.decrypt(data, config);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
+    }
 
     @Test
     public void encrypt_whenKeyAreNull() {
