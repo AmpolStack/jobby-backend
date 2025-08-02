@@ -4,6 +4,8 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.infraestructure.config.EncryptConfig;
+import com.jobby.authorization.infraestructure.config.EncryptConfig.Iv;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.Cipher;
 import java.util.Base64;
 import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.*;
 public class AESEncryptionServiceTest {
 
     private final static String VALID_KEY = "p652zw20jx/Bvg/4I7Mrdg==";
+    private final static int VALID_IV_LENGTH = 12;
+    private final static int VALID_T_LENGTH = 128;
 
     @Mock
     private DefaultEncryptBuilder defaultEncryptBuilder;
@@ -35,7 +38,10 @@ public class AESEncryptionServiceTest {
     public void encrypt_whenIvLengthAreInvalid(int ivLength) {
         // Arrange
         var data = "example_data";
-        var key = "p652zw20jx/Bvg/4I7Mrdg==";
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(ivLength, VALID_T_LENGTH)
+        );
 
         var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                 new Field(
@@ -44,7 +50,7 @@ public class AESEncryptionServiceTest {
                 )
         );
         // Act
-        var result = this.aesEncryptionService.encrypt(data, key, ivLength);
+        var result = this.aesEncryptionService.encrypt(data, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -56,7 +62,10 @@ public class AESEncryptionServiceTest {
     public void encrypt_whenKeyAreNull() {
         // Arrange
         var data = "example_data";
-        var ivLength = 12;
+        var config = new EncryptConfig(
+                null,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
 
         var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                 new Field(
@@ -66,7 +75,7 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, null, ivLength);
+        var result = this.aesEncryptionService.encrypt(data, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -80,7 +89,10 @@ public class AESEncryptionServiceTest {
     public void encrypt_whenKeyAreBlank(String key) {
         // Arrange
         var data = "example_data";
-        var ivLength = 12;
+        var config = new EncryptConfig(
+                key,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
 
         var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                 new Field(
@@ -90,7 +102,7 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, key, ivLength);
+        var result = this.aesEncryptionService.encrypt(data, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -102,8 +114,11 @@ public class AESEncryptionServiceTest {
     public void encrypt_whenKeyAreInvalid() {
         // Arrange
         var data = "example_data";
-        var ivLength = 12;
         var key = "invalid_base64_key";
+        var config = new EncryptConfig(
+                key,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
 
         var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                 new Field(
@@ -113,12 +128,11 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, key, ivLength);
+        var result = this.aesEncryptionService.encrypt(data, config);
 
         // Assert
         assertTrue(result.isFailure());
         assertEquals(expectedResult, result);
-
     }
 
     @ParameterizedTest
@@ -126,10 +140,14 @@ public class AESEncryptionServiceTest {
     public void encrypt_whenKeyLengthIsInvalid(int keyLength) {
         // Arrange
         var data = "example_data";
-        var ivLength = 12;
         var keyBytes = new byte[keyLength];
         new Random().nextBytes(keyBytes);
         var keyBase64 = Base64.getEncoder().encodeToString(keyBytes);
+
+        var config = new EncryptConfig(
+                keyBase64,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
 
         var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                 new Field(
@@ -139,7 +157,7 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, keyBase64, ivLength);
+        var result = this.aesEncryptionService.encrypt(data, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -150,7 +168,11 @@ public class AESEncryptionServiceTest {
     public void encrypt_whenBuildReturnsFailure() {
         // Arrange
         var data = "example_data";
-        var ivLength = 12;
+
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
 
         Result<byte[], Error> expectedResult = Result.failure(ErrorType.VALIDATION_ERROR, new Field("expectedInstance", "expectedReason"));
 
@@ -162,7 +184,7 @@ public class AESEncryptionServiceTest {
         when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.encrypt(data, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -179,7 +201,10 @@ public class AESEncryptionServiceTest {
             "secret-name2"})
     public void encrypt_whenAllIsCorrect(String data) {
         // Arrange
-        var ivLength = 12;
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
 
         var expectedResultResponse = new byte[16];
         new Random().nextBytes(expectedResultResponse);
@@ -193,7 +218,7 @@ public class AESEncryptionServiceTest {
         when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.encrypt(data, config);
 
         // Assert
         assertTrue(result.isSuccess());
@@ -208,7 +233,11 @@ public class AESEncryptionServiceTest {
     @Test
     public void decrypt_WhenCipherTextAreNull() {
         // Arrange
-        var ivLength = 12;
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
+
         var expectedResult = Result.failure(ErrorType.INVALID_INPUT,
                 new Field(
                         "cipherText",
@@ -217,7 +246,7 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.decrypt(null, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.decrypt(null, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -228,7 +257,11 @@ public class AESEncryptionServiceTest {
     @ValueSource(strings = {"", " ", "  ", "         "})
     public void decrypt_whenCipherTextAreBlank(String cipherText) {
         // Arrange
-        var ivLength = 12;
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
+
         var expectedResult = Result.failure(ErrorType.INVALID_INPUT,
                 new Field(
                         "cipherText",
@@ -237,7 +270,7 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.decrypt(cipherText, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -248,7 +281,12 @@ public class AESEncryptionServiceTest {
     @ValueSource(strings = {"example1-invalid", "cfowfm233", "words-connected", "example2example3###"})
     public void decrypt_whenCipherTextAreBase64Invalid(String cipherText) {
         // Arrange
-        var ivLength = 12;
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
+
+
         var expectedResult = Result.failure(ErrorType.INVALID_INPUT,
                 new Field(
                         "cipherText",
@@ -257,7 +295,7 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.decrypt(cipherText, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -267,20 +305,24 @@ public class AESEncryptionServiceTest {
     @RepeatedTest(100)
     public void decrypt_whenCipherTextLengthAreInvalid(){
         // Arrange
-        int ivLength = 12;
-        var cipherBytes = new byte[ivLength-1]; // It has to be bigger than the iv length
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
+
+        var cipherBytes = new byte[VALID_IV_LENGTH-1]; // It has to be bigger than the iv length
         new Random().nextBytes(cipherBytes);
         var cipherText = Base64.getEncoder().encodeToString(cipherBytes);
 
         var expectedResult = Result.failure(ErrorType.VALIDATION_ERROR,
                 new Field(
                         "cipherText",
-                        "Cipher text is too short to contain valid data (expected at least " + ivLength + " bytes)"
+                        "Cipher text is too short to contain valid data (expected at least " + VALID_IV_LENGTH + " bytes)"
                 )
         );
 
         // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.decrypt(cipherText, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -291,7 +333,11 @@ public class AESEncryptionServiceTest {
     @ValueSource(ints = {12,34,100})
     public void decrypt_WhenEncryptBuilderReturnsFailed(int cipherTextLength) {
         // Arrange
-        int ivLength = 12;
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
+
         var cipherBytes = new byte[cipherTextLength];
         new Random().nextBytes(cipherBytes);
         var cipherText = Base64.getEncoder().encodeToString(cipherBytes);
@@ -311,7 +357,7 @@ public class AESEncryptionServiceTest {
         when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
         // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.decrypt(cipherText, config);
 
         // Assert
         assertTrue(result.isFailure());
@@ -328,7 +374,10 @@ public class AESEncryptionServiceTest {
     @RepeatedTest(1)
     public void decrypt_whenAllIsCorrect() {
         // Arrange
-        var ivLength = 12;
+        var config = new EncryptConfig(
+                VALID_KEY,
+                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
+        );
         var cipherBytes = new byte[15];
         new Random().nextBytes(cipherBytes);
         var cipherText = Base64.getEncoder().encodeToString(cipherBytes);
@@ -342,7 +391,7 @@ public class AESEncryptionServiceTest {
         when(this.defaultEncryptBuilder.setTransformation(any())).thenReturn(defaultEncryptBuilder);
         when(this.defaultEncryptBuilder.build()).thenReturn(encryptBuildResult);
         // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, VALID_KEY, ivLength);
+        var result = this.aesEncryptionService.decrypt(cipherText, config);
 
         // Assert
         assertTrue(result.isSuccess());
