@@ -3,9 +3,8 @@ package com.jobby.authorization.infraestructure.adapters.in.rest;
 import com.jobby.authorization.application.useCases.ObtainEmployeesUseCase;
 import com.jobby.authorization.domain.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -18,11 +17,11 @@ public class ObtainDataController {
         this.obtainEmployeesUseCase = obtainEmployeesUseCase;
     }
 
-    @GetMapping("/employee")
-    public List<Employee> ObtainEmployees() {
-        var result = this.obtainEmployeesUseCase.getEmployees();
-        return result;
+    @PostMapping("/employee")
+    public Employee ObtainEmployees(
+            @RequestHeader String email,
+            @RequestHeader String password) {
+        return this.obtainEmployeesUseCase.getEmployee(email, password);
     }
-
 }
 

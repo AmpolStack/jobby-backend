@@ -1,24 +1,20 @@
 package com.jobby.authorization.application.useCases;
 
 import com.jobby.authorization.domain.model.Employee;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.jobby.authorization.domain.ports.EmployeeRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ObtainEmployeesUseCase {
 
-    private final MongoRepository<Employee, Integer> employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
-    @Autowired
-    public ObtainEmployeesUseCase(MongoRepository<Employee, Integer> employeeRepository) {
+    public ObtainEmployeesUseCase(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
-    public List<Employee> getEmployees() {
-        var employees = employeeRepository.findAll();
-        return employees;
+    public Employee getEmployee(String email, String password) {
+        return this.employeeRepository.findByEmailAndPassword(email, password).orElse(null);
     }
+
 }
