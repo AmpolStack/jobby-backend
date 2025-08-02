@@ -1,0 +1,10 @@
+package com.jobby.authorization.infraestructure.persistence;
+
+import com.jobby.authorization.infraestructure.persistence.entities.MongoEmployeeEntity;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.Optional;
+
+public interface MongoEmployeeRepository extends MongoRepository<MongoEmployeeEntity, Integer> {
+    Optional<MongoEmployeeEntity> findByEmailAndPassword(String email, String password);
+}

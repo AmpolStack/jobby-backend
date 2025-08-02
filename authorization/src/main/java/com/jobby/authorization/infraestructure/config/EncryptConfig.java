@@ -17,9 +17,10 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EncryptConfig {
-
     @NotNull(message = "encrypt.secret-key.value is required")
     @NotEmpty(message = "encrypt.secret-key.value must not be empty")
+    @Min(value = 128, message = "encrypt.secret-key must be at least 128")
+    @Max(value = 256, message = "encrypt.secret-key must be at most 256")
     private String secretKey;
 
     @Valid
