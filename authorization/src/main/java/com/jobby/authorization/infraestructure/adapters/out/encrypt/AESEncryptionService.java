@@ -5,6 +5,7 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -18,7 +19,8 @@ import java.util.Base64;
 public class AESEncryptionService implements EncryptionService {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
-    private static final int T_LEN = 128;
+    private static final int[] VALID_T_LENGTHS_BITS = new int[] {98, 112, 120, 128};
+    private static final int[] VALID_KEY_LENGTHS_BITS = new int[] {128, 192, 256};
 
     private final DefaultEncryptBuilder encryptBuilder;
 
@@ -47,7 +49,8 @@ public class AESEncryptionService implements EncryptionService {
             );
         }
 
-        if (key.getEncoded().length < 16 || key.getEncoded().length > 32) {
+        var keyLengthInBytes = key.getEncoded().length * 8;
+        if (Arrays.stream(VALID_KEY_LENGTHS_BITS).noneMatch(length -> length == keyLengthInBytes)) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field(
                             "keyBase64",
@@ -71,12 +74,36 @@ public class AESEncryptionService implements EncryptionService {
         return Result.success(null);
     }
 
+    private Result<Void, Error> validateTLen(int tLen){
+        if(Arrays.stream(VALID_T_LENGTHS_BITS).noneMatch(length -> length == tLen)){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field("tLen", "TLen are invalid"));
+        }
+        return Result.success(null);
+    }
+
+    private Result<Void, Error> validateConfig(EncryptConfig encryptConfig){
+        if(encryptConfig == null){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field("encryptConfig", "Encryption config cannot be null")
+            );
+        }
+        if(encryptConfig.getIv() == null){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field("encryptConfig", "Iv cannot be null")
+            );
+        }
+        return Result.success(null);
+    }
+
     @Override
-    public Result<String, Error> encrypt(String data, String keyBase64, int ivLength) {
-        return validateIvLength(ivLength)
-                .flatMap(x -> validateAndParseKey(keyBase64))
+    public Result<String, Error> encrypt(String data, EncryptConfig config) {
+        return validateConfig(config)
+                .flatMap(x -> validateIvLength(config.getIv().getLength()))
+                .flatMap(x -> validateTLen(config.getIv().getTLen()))
+                .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap((key -> {
-                    var iv = EncryptUtils.generateIv(ivLength, T_LEN);
+                    var iv = EncryptUtils.generateIv(config.getIv().getLength(), config.getIv().getTLen());
                     return this.encryptBuilder
                             .setData(data.getBytes(StandardCharsets.UTF_8))
                             .setIv(iv)
@@ -132,15 +159,17 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     @Override
-    public Result<String, Error> decrypt(String cipherText, String keyBase64, int ivLength) {
-        return validateAndParseCipherText(cipherText)
-                .flatMap(combined -> validateCombinedAndIvLength(ivLength, combined.length)
-                        .flatMap(n -> validateAndParseKey(keyBase64))
+    public Result<String, Error> decrypt(String cipherText, EncryptConfig config) {
+        return  validateConfig(config)
+                .flatMap(x -> validateTLen(config.getIv().getTLen()))
+                .flatMap(x -> validateAndParseCipherText(cipherText))
+                .flatMap(combined -> validateCombinedAndIvLength(config.getIv().getLength(), combined.length)
+                        .flatMap(n -> validateAndParseKey(config.getSecretKey()))
                         .flatMap( key -> {
 
-                            var rawIv = Arrays.copyOfRange(combined, 0, ivLength);
-                            var data = Arrays.copyOfRange(combined, ivLength, combined.length);
-                            var iv = new GCMParameterSpec(T_LEN, rawIv);
+                            var rawIv = Arrays.copyOfRange(combined, 0, config.getIv().getLength());
+                            var data = Arrays.copyOfRange(combined, config.getIv().getLength(), combined.length);
+                            var iv = new GCMParameterSpec(config.getIv().getTLen(), rawIv);
                             return this.encryptBuilder
                                     .setData(data)
                                     .setIv(iv)

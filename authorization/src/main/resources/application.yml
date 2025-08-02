@@ -14,7 +14,7 @@ spring:
 server:
   port: 8080
 encrypt:
-  iv-length: 12
-  secret-key:
-  # value: yourKey
-    length: 128
+  iv:
+    length: 12
+    t-len: 128
+#  secret-key: yourSecretBase64Key
