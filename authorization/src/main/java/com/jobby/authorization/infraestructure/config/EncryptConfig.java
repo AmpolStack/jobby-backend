@@ -14,29 +14,30 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class EncryptConfig {
-    @NotNull(message = "encrypt.iv.length is required")
-    @Min(value = 8, message = "encrypt.iv.length must be at least 8")
-    @Max(value = 16, message = "encrypt.iv.length must be at most 16")
-    private Integer ivLength;
+
+    @NotNull(message = "encrypt.secret-key.value is required")
+    @NotEmpty(message = "encrypt.secret-key.value must not be empty")
+    private String secretKey;
 
     @Valid
     @NotNull(message = "encrypt.secret-key is required")
-    private SecretKey secretKey = new SecretKey();
-
+    private Iv iv = new Iv();
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class SecretKey {
-        @NotNull(message = "encrypt.secret-key.value is required")
-        @NotEmpty(message = "encrypt.secret-key.value must not be empty")
-        private String value;
-
-        @NotNull(message = "encrypt.secret-key.length is required")
-        @Min(value = 128, message = "encrypt.secret-key.length must be at least 128")
-        @Max(value = 256, message = "encrypt.secret-key.length must be at least 128")
-        private Integer length;
+    public static class Iv {
+        @NotNull(message = "encrypt.iv.length is required")
+        @Min(value = 8, message = "encrypt.iv.length must be at least 8")
+        @Max(value = 16, message = "encrypt.iv.length must be at most 16")
+        private int length;
+        @NotNull(message = "encrypt.iv.length is required")
+        @Min(value = 98, message = "encrypt.iv.t-len must be at least 98")
+        @Max(value = 128, message = "encrypt.iv.t-len must be at most 128")
+        private int tLen;
     }
 }
