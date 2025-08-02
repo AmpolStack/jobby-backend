@@ -1,4 +1,4 @@
-package com.jobby.authorization.application;
+package com.jobby.authorization.application.useCases;
 
 import com.jobby.authorization.domain.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;

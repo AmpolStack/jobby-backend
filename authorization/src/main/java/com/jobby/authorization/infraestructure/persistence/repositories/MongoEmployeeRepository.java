@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.persistence;
+package com.jobby.authorization.infraestructure.persistence.repositories;
 
 import com.jobby.authorization.infraestructure.persistence.entities.MongoEmployeeEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
