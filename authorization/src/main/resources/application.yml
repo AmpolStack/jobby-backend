@@ -4,6 +4,10 @@ spring:
   application:
     name: authorization
   data:
+    redis:
+      host: localhost
+      port: 6379
+#      password: yourPassword
     mongodb:
       host: localhost
       port: 27017
