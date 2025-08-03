@@ -5,4 +5,5 @@ import java.util.Optional;
 
 public interface EmployeeRepository {
     Optional<Employee> findByEmailAndPassword(String email, String password);
+    Optional<Employee> findById(int id);
 }
