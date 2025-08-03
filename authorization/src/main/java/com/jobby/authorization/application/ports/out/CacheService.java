@@ -1,9 +1,12 @@
 package com.jobby.authorization.application.ports.out;
 
-import java.util.Optional;
+import com.jobby.authorization.domain.result.Error;
+import com.jobby.authorization.domain.result.Result;
+
+import java.time.Duration;
 
 public interface CacheService {
-    <T> void put(String key, T value, long ttlInSeconds);
-    <T> Optional<T> get(String key, Class<T> type);
-    void evict(String key);
+    <T> Result<Void, Error> put(String key, T value, Duration ttl);
+    <T> Result<T, Error> get(String key, Class<T> type);
+    Result<Void, Error> evict(String key);
 }
