@@ -245,4 +245,78 @@ public class RedisCacheServiceTest {
         assertEquals(expectedResult, result);
     }
 
+    @Test
+    public void evict_whenKeyIsNull(){
+        // Arrange
+        var expectedResult = Result.failure(
+                ErrorType.VALIDATION_ERROR,
+                new Field(
+                        "key",
+                        "the cache key is required"
+                )
+        );
+
+        // Act
+        var result = this.redisCacheService.evict(null);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "  ", "     "})
+    public void evict_whenKeyIsBlank(String key){
+        // Arrange
+        var expectedResult = Result.failure(
+                ErrorType.VALIDATION_ERROR,
+                new Field(
+                        "key",
+                        "the cache key is required"
+                )
+        );
+
+        // Act
+        var result = this.redisCacheService.evict(key);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void evict_whenThrowsRedisConnectionException(){
+        // Arrange
+        var expectedResult = Result.failure(
+                ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
+                new Field(
+                        "redis",
+                        "Error connection with redis"
+                )
+        );
+
+        doThrow(RedisConnectionFailureException.class).when(this.redisTemplate).delete(anyString());
+
+        // Act
+        var result = this.redisCacheService.evict("thing");
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void evict_whenAllIsCorrect() {
+        // Arrange
+        var expectedResult = Result.success(null);
+
+        doReturn(null).when(this.redisTemplate).delete(anyString());
+
+        // Act
+        var result = this.redisCacheService.evict("thing");
+
+        assertTrue(result.isSuccess());
+        assertEquals(expectedResult, result);
+    }
+
 }
