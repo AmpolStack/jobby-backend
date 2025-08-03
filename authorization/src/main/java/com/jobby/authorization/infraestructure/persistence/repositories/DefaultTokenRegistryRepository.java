@@ -1,0 +1,33 @@
+package com.jobby.authorization.infraestructure.persistence.repositories;
+
+import com.jobby.authorization.application.ports.out.CacheService;
+import com.jobby.authorization.domain.model.TokenRegistry;
+import com.jobby.authorization.domain.ports.TokenRegistryRepository;
+import com.jobby.authorization.domain.result.Error;
+import com.jobby.authorization.domain.result.Result;
+import org.springframework.stereotype.Service;
+
+@Service
+public class DefaultTokenRegistryRepository implements TokenRegistryRepository {
+
+    private final CacheService cacheService;
+
+    public DefaultTokenRegistryRepository(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
+
+    @Override
+    public Result<TokenRegistry, Error> getTokenRegistry(String token, String refreshToken, int id) {
+        return null;
+    }
+
+    @Override
+    public Result<Void, Error> saveTokenRegistry(TokenRegistry tokenRegistry) {
+        return null;
+    }
+
+    @Override
+    public Result<Void, Error> deleteTokenRegistry(String token, String refreshToken, int id) {
+        return null;
+    }
+}
