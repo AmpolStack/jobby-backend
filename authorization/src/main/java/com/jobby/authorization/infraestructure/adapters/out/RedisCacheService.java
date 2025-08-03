@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.persistence.cache;
+package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.application.ports.out.CacheService;
 import com.jobby.authorization.domain.result.Error;
@@ -40,8 +40,6 @@ public class RedisCacheService implements CacheService {
         }
         return Result.success(null);
     }
-
-
 
     @Override
     public <T> Result<Void, Error> put(String key, T value, Duration ttl) {
