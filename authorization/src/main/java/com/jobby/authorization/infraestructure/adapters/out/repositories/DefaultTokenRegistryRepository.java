@@ -7,6 +7,8 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.Result;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+
 @Service
 public class DefaultTokenRegistryRepository implements TokenRegistryRepository {
 
@@ -23,7 +25,8 @@ public class DefaultTokenRegistryRepository implements TokenRegistryRepository {
 
     @Override
     public Result<Void, Error> saveTokenRegistry(TokenRegistry tokenRegistry) {
-        return null;
+        var stringId = Integer.toString(tokenRegistry.getId());
+        return this.cacheService.put(stringId, tokenRegistry, Duration.ofMinutes(2));
     }
 
     @Override

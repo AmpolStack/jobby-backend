@@ -14,7 +14,7 @@ public class ObtainEmployeesUseCase {
     }
 
     public Employee getEmployee(String email, String password) {
-        return this.employeeRepository.findByEmailAndPassword(email, password).orElse(null);
+        return this.employeeRepository.findByEmailAndPassword(email, password);
     }
 
 }
