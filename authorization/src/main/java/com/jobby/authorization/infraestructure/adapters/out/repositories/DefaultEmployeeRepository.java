@@ -1,9 +1,9 @@
-package com.jobby.authorization.infraestructure.persistence.repositories;
+package com.jobby.authorization.infraestructure.adapters.out;
 
-import com.jobby.authorization.application.ports.out.CacheService;
 import com.jobby.authorization.domain.model.Employee;
-import com.jobby.authorization.domain.ports.out.EmployeeRepository;
+import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import com.jobby.authorization.infraestructure.persistence.mappers.MongoEmployeeEntityMapper;
+import com.jobby.authorization.infraestructure.persistence.repositories.SpringDataMongoEmployeeRepository;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ public class DefaultEmployeeRepository implements EmployeeRepository {
     private final MongoEmployeeEntityMapper mongoMapper;
     private final SpringDataMongoEmployeeRepository mongoRepository;
 
-    public DefaultEmployeeRepository(MongoEmployeeEntityMapper mongoMapper, SpringDataMongoEmployeeRepository mongoRepository, CacheService cacheService) {
+    public DefaultEmployeeRepository(MongoEmployeeEntityMapper mongoMapper, SpringDataMongoEmployeeRepository mongoRepository) {
         this.mongoMapper = mongoMapper;
         this.mongoRepository = mongoRepository;
     }
