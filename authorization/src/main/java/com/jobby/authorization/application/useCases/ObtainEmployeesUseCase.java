@@ -1,7 +1,7 @@
 package com.jobby.authorization.application.useCases;
 
 import com.jobby.authorization.domain.model.Employee;
-import com.jobby.authorization.domain.ports.out.EmployeeRepository;
+import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 @Service
