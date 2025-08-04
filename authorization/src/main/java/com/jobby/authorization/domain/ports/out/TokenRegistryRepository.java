@@ -1,4 +1,4 @@
-package com.jobby.authorization.domain.ports;
+package com.jobby.authorization.domain.ports.out;
 
 import com.jobby.authorization.domain.model.TokenRegistry;
 import com.jobby.authorization.domain.result.Error;

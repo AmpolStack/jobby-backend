@@ -2,7 +2,7 @@ package com.jobby.authorization.infraestructure.persistence.repositories;
 
 import com.jobby.authorization.application.ports.out.CacheService;
 import com.jobby.authorization.domain.model.Employee;
-import com.jobby.authorization.domain.ports.EmployeeRepository;
+import com.jobby.authorization.domain.ports.out.EmployeeRepository;
 import com.jobby.authorization.infraestructure.persistence.mappers.MongoEmployeeEntityMapper;
 import org.springframework.stereotype.Service;
 import java.util.Optional;

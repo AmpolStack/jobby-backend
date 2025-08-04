@@ -2,7 +2,7 @@ package com.jobby.authorization.infraestructure.persistence.repositories;
 
 import com.jobby.authorization.application.ports.out.CacheService;
 import com.jobby.authorization.domain.model.TokenRegistry;
-import com.jobby.authorization.domain.ports.TokenRegistryRepository;
+import com.jobby.authorization.domain.ports.out.TokenRegistryRepository;
 import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.Result;
 import org.springframework.stereotype.Service;
