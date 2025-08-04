@@ -1,6 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
-import com.jobby.authorization.application.ports.out.CacheService;
+import com.jobby.authorization.domain.ports.out.CacheService;
 import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;

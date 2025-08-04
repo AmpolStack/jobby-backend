@@ -1,6 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 
-import com.jobby.authorization.application.ports.out.encrypt.EncryptBuilder;
+import com.jobby.authorization.domain.ports.out.encrypt.EncryptBuilder;
 import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;

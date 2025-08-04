@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.adapters.out;
+package com.jobby.authorization.infraestructure.adapters.out.repositories;
 
 import com.jobby.authorization.domain.model.Employee;
 import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
