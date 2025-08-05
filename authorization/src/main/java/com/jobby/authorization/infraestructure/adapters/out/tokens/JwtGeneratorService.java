@@ -6,18 +6,18 @@ import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Date;
+import java.util.*;
 
 @Service
 public class JwtGeneratorService implements TokenGeneratorService {
 
     private final static int[] VALID_SECRET_KEY_LENGTHS_BITS = { 256, 384, 512 };
+    private final static String PHONE_CLAIM_NAME = "com.jobby.employee.phone";
+    private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
 
     private Result<Void, Error> validateTokenData(TokenData data){
 
@@ -35,6 +35,13 @@ public class JwtGeneratorService implements TokenGeneratorService {
             );
         }
 
+        if(data.getMsExpirationTime() <= 0){
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("tokenData.msExpirationTime",
+                            "The Expiration time in token data is less than 0")
+            );
+        }
+
         if(data.getPhone() == null){
             return Result.failure(ErrorType.VALIDATION_ERROR,
                     new Field("tokenData.phone",
@@ -45,8 +52,8 @@ public class JwtGeneratorService implements TokenGeneratorService {
         return Result.success(null);
     }
 
-    private Result<SecretKey, Error> validateAndParseKey(String key){
-        if(key == null || key.isBlank()){
+    private Result<SecretKey, Error> validateAndParseKey(String base64Key){
+        if(base64Key == null || base64Key.isBlank()){
             return Result.failure(ErrorType.VALIDATION_ERROR,
                     new Field("key",
                             "The token key is null or empty")
@@ -55,7 +62,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
         byte[] keyBytes;
         try {
-            keyBytes = Base64.getDecoder().decode(key);
+            keyBytes = Base64.getDecoder().decode(base64Key);
         } catch (IllegalArgumentException e) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field("key", "The key is not valid base64"));
@@ -73,33 +80,88 @@ public class JwtGeneratorService implements TokenGeneratorService {
         return Result.success(keyParsed);
     }
 
-    private Result<Void, Error> validateExpirationTime(int expirationTime){
-        if(expirationTime <= 0){
-            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                    new Field("expirationTime",
-                            "The expiration time are invalid")
+    @Override
+    public Result<String, Error> generate(TokenData data, String base64Key) {
+        return validateTokenData(data)
+                .flatMap(x -> validateAndParseKey(base64Key))
+                .map(secretKey ->
+                    Jwts.builder()
+                            .subject(Integer.toString(data.getId()))
+                            .issuer(data.getIssuer())
+                            .audience()
+                            .add(data.getAudience())
+                            .and()
+                            .claim(PHONE_CLAIM_NAME, data.getPhone())
+                            .issuedAt(new Date())
+                            .expiration(new Date(new Date().getTime() + data.getMsExpirationTime()))
+                            .signWith(secretKey)
+                            .compact()
+                );
+    }
+
+    private Result<Void, Error> validateToken(String token){
+        if(token == null || token.isBlank()){
+            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                    new Field("token",
+                            "The provided token is null or blank")
             );
         }
 
         return Result.success(null);
     }
 
-    @Override
-    public Result<String, Error> generateToken(TokenData data, String key, int expirationTime) {
-        return validateTokenData(data)
-                .flatMap(x -> validateExpirationTime(expirationTime))
-                .flatMap(x -> validateAndParseKey(key))
-                .map(secretKey ->
-                    Jwts.builder()
-                            .subject(Integer.toString(data.getId()))
-                            .claim("email", data.getEmail())
-                            .claim("phone", data.getPhone())
-                            .issuedAt(new Date())
-                            .expiration(new Date(new Date().getTime() + expirationTime))
-                            .signWith(secretKey)
-                            .compact()
-                );
+    private Result<TokenData, Error> mapClaimsToTokenData(Claims claims) {
+        int id;
+        try {
+            id = Integer.parseInt(claims.getSubject());
+        } catch (NumberFormatException e) {
+            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                    new Field("sub", "The subject is not a valid integer"));
+        }
+
+        long expiration = claims.getExpiration() != null
+                ? claims.getExpiration().getTime()
+                : 0L;
+
+        String issuer = Optional.ofNullable(claims.getIssuer()).orElse("");
+        String audience = claims.getAudience().stream().findFirst().orElse("");
+        String email = claims.get(EMAIL_CLAIM_NAME, String.class);
+        String phone = claims.get(PHONE_CLAIM_NAME, String.class);
+
+        TokenData tokenData = new TokenData(id, issuer, audience, email, phone, expiration);
+        return Result.success(tokenData);
     }
 
 
+    private Result<Claims, Error> parseClaims(SecretKey secretKey, String token){
+        var parser = Jwts.parser()
+                .verifyWith(secretKey)
+                .build();
+
+        Jws<Claims> claims;
+        try{
+            claims = parser.parseSignedClaims(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                    new Field("token", "The provided token is invalid")
+            );
+        }
+        return Result.success(claims.getPayload());
+    }
+
+    @Override
+    public Result<TokenData, Error> obtainData(String token, String base64Key) {
+        return validateToken(token)
+                .flatMap(x -> validateAndParseKey(base64Key))
+                .flatMap(secretKey -> parseClaims(secretKey, token))
+                .flatMap(this::mapClaimsToTokenData);
+    }
+
+    @Override
+    public Result<Boolean, Error> isValid(String token, String base64Key) {
+        return validateToken(token)
+                .flatMap(x -> validateAndParseKey(base64Key))
+                .flatMap(secretKey -> parseClaims(secretKey, token))
+                .map(claims -> claims.getExpiration().after(new Date()));
+    }
 }
