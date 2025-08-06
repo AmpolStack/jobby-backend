@@ -11,4 +11,10 @@ public class Injections {
     public EncryptConfig getEncryptConfig(){
         return new EncryptConfig();
     }
+
+    @Bean
+    @ConfigurationProperties(prefix = "token")
+    public TokenConfig getTokenConfig(){
+        return new TokenConfig();
+    }
 }
