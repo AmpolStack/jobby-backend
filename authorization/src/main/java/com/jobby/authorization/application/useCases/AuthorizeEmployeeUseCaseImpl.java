@@ -6,14 +6,12 @@ import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
 import com.jobby.authorization.domain.result.Error;
+import com.jobby.authorization.domain.result.ErrorType;
+import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
 import com.jobby.authorization.infraestructure.config.TokenConfig;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import java.util.Base64;
 import java.util.Date;
 
 @Service
@@ -31,10 +29,33 @@ public class AuthorizeEmployeeUseCaseImpl implements AuthorizeEmployeeUseCase {
         this.tokenConfig = tokenConfig;
     }
 
+    private Result<Void, Error> validateTokenConfig(TokenConfig tokenConfig) {
+        if(tokenConfig == null){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field("tokenConfig", "is required"));
+        }
+
+        if(tokenConfig.getExpirationMs() <= 0){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field("tokenConfig.expirationMs", "is must be at least 0"));
+        }
+
+        if(tokenConfig.getRefreshExpirationMs() <= 0){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field("tokenConfig.refresh-expiration-ms", "is must be at least 0"));
+        }
+
+        if(tokenConfig.getSecretKey() == null || tokenConfig.getSecretKey().isBlank()){
+            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                    new Field("tokenConfig.secret-key", "the secret key is required or blank"));
+        }
+        return Result.success(null);
+    }
+
     @Override
     public Result<TokenRegistry, Error> byCredentials(String email, String password) {
-        return this.employeeRepository
-                .findByEmailAndPassword(email, password)
+        return validateTokenConfig(this.tokenConfig)
+                .flatMap(x -> this.employeeRepository.findByEmailAndPassword(email, password))
                 .map(employee -> new TokenData(
                         employee.getEmployeeId(),
                         employee.getEmail(),
