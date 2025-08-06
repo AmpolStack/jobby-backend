@@ -22,3 +22,7 @@ encrypt:
     length: 12
     t-len: 128
 #  secret-key: yourSecretBase64Key
+token:
+  expiration-ms: 60000
+  #  secret-key: yourSecretBase64Key-256bits
+  refresh-expiration-ms: 120000
