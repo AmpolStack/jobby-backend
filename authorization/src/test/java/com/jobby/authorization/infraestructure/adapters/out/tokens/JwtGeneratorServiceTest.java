@@ -7,6 +7,9 @@ import com.jobby.authorization.domain.shared.TokenData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import java.util.Base64;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,4 +73,25 @@ public class JwtGeneratorServiceTest {
         assertEquals(expectedResult, resp);
         assertTrue(resp.isFailure());
     }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-100, -1, 0, -2000, -5})
+    public void generate_WhenTokenDataExpirationTimeIsZeroOrNegative(int msExpirationTime){
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.VALIDATION_ERROR,
+                new Field("tokenData.msExpirationTime",
+                        "The Expiration time in token data is less than 0")
+        );
+
+        VALID_TOKEN_DATA.setMsExpirationTime(msExpirationTime);
+
+        // Act
+        var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
+
+        // Assert
+        assertEquals(expectedResult, resp);
+        assertTrue(resp.isFailure());
+    }
+
+
 }
