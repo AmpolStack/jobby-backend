@@ -36,7 +36,7 @@ public class JwtGeneratorServiceTest {
                 "valid.audience.com",
                 "valid.issuer.com",
                 "10902",
-                6000);
+                120000);
     }
 
     private final JwtGeneratorService jwtGeneratorService = new JwtGeneratorService();
@@ -160,15 +160,16 @@ public class JwtGeneratorServiceTest {
         assertTrue(resp.isFailure());
     }
 
-    @RepeatedTest(1)
-    public void generate_WhenKeyLengthIsInvalid(){
+    @ParameterizedTest
+    @ValueSource(ints = {100, 255, 264, 383, 392, 511, 520})
+    public void generate_WhenKeyLengthIsInvalid(int keyByteLength){
         // Arrange
         var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                 new Field("key",
                         "The key length are invalid")
         );
 
-        var bytes = new byte[255/8];
+        var bytes = new byte[keyByteLength/8];
         new Random().nextBytes(bytes);
         VALID_KEY_BASE_64 = Base64.getEncoder().encodeToString(bytes);
 
@@ -180,6 +181,58 @@ public class JwtGeneratorServiceTest {
         assertTrue(resp.isFailure());
     }
 
+    @RepeatedTest(100)
+    public void generate_whenAllIsCorrect(){
+        // Act
+        var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
+
+        // Assert
+        assertTrue(resp.isSuccess());
+    }
+
+
+    @Test()
+    public void obtainData_whenTokenIsNull(){
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                new Field("token",
+                        "The provided token is null or blank")
+        );
+
+        // Act
+        var result = this.jwtGeneratorService.obtainData(null, VALID_KEY_BASE_64);
+
+        // Assert
+        assertEquals(expectedResult, result);
+        assertTrue(result.isFailure());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "  ", "   ", "     "})
+    public void obtainData_whenTokenIsBlank(String token){
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                new Field("token",
+                        "The provided token is null or blank")
+        );
+
+        // Act
+        var result = this.jwtGeneratorService.obtainData(token, VALID_KEY_BASE_64);
+
+        // Assert
+        assertEquals(expectedResult, result);
+        assertTrue(result.isFailure());
+    }
+
+    @RepeatedTest(100)
+    public void obtainData_whenAllIsCorrect(){
+        // Act
+        var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64)
+                .flatMap(token -> this.jwtGeneratorService.obtainData(token, VALID_KEY_BASE_64));
+
+        // Assert
+        assertTrue(resp.isSuccess());
+    }
 
 
 
