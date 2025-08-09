@@ -1,7 +1,8 @@
 package com.jobby.authorization.application.useCases;
 
 import com.jobby.authorization.domain.model.TokenRegistry;
-import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeUseCase;
+import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeWithCredentialsUseCase;
+import com.jobby.authorization.domain.ports.out.CacheService;
 import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
@@ -12,74 +13,95 @@ import com.jobby.authorization.domain.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
 import com.jobby.authorization.infraestructure.config.TokenConfig;
 import org.springframework.stereotype.Service;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
-public class AuthorizeEmployeeUseCaseImpl implements AuthorizeEmployeeUseCase {
+public class AuthorizeEmployeeWithCredentialsUseCaseImpl implements AuthorizeEmployeeWithCredentialsUseCase {
 
     private final EmployeeRepository employeeRepository;
     private final TokenGeneratorService tokenGeneratorService;
     private final RefreshTokenGeneratorService refreshTokenGeneratorService;
     private final TokenConfig tokenConfig;
+    private final CacheService cacheService;
 
-    public AuthorizeEmployeeUseCaseImpl(EmployeeRepository employeeRepository, TokenGeneratorService tokenGeneratorService, RefreshTokenGeneratorService refreshTokenGeneratorService, TokenConfig tokenConfig) {
+    public AuthorizeEmployeeWithCredentialsUseCaseImpl(
+            EmployeeRepository employeeRepository,
+            TokenGeneratorService tokenGeneratorService,
+            RefreshTokenGeneratorService refreshTokenGeneratorService,
+            TokenConfig tokenConfig,
+            CacheService cacheService) {
         this.employeeRepository = employeeRepository;
         this.tokenGeneratorService = tokenGeneratorService;
         this.refreshTokenGeneratorService = refreshTokenGeneratorService;
         this.tokenConfig = tokenConfig;
+        this.cacheService = cacheService;
     }
 
-    private Result<Void, Error> validateTokenConfig(TokenConfig tokenConfig) {
-        if(tokenConfig == null){
+    private Result<Void, Error> validateTokenConfig(TokenConfig cfg) {
+        if (cfg == null) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                     new Field("tokenConfig", "is required"));
         }
 
-        if(tokenConfig.getExpirationMs() <= 0){
+        if (cfg.getExpirationMs() <= 0) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                    new Field("tokenConfig.expirationMs", "is must be at least 0"));
+                    new Field("tokenConfig.expirationMs", "must be greater than 0"));
         }
 
-        if(tokenConfig.getRefreshExpirationMs() <= 0){
+        if (cfg.getRefreshExpirationMs() <= 0) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                    new Field("tokenConfig.refresh-expiration-ms", "is must be at least 0"));
+                    new Field("tokenConfig.refreshExpirationMs", "must be greater than 0"));
         }
 
-        if(tokenConfig.getSecretKey() == null || tokenConfig.getSecretKey().isBlank()){
+        if (cfg.getSecretKey() == null || cfg.getSecretKey().isBlank()) {
             return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                    new Field("tokenConfig.secret-key", "the secret key is required or blank"));
+                    new Field("tokenConfig.secretKey", "the secret key is required or blank"));
         }
+
         return Result.success(null);
     }
 
     @Override
     public Result<TokenRegistry, Error> byCredentials(String email, String password) {
         return validateTokenConfig(this.tokenConfig)
-                .flatMap(x -> this.employeeRepository.findByEmailAndPassword(email, password))
-                .map(employee -> new TokenData(
-                        employee.getEmployeeId(),
-                        employee.getEmail(),
-                        "com.jobby.employee",
-                        "com.jobby.authorization",
-                        "3441131",
-                        this.tokenConfig.getRefreshExpirationMs()))
+                .flatMap(x -> employeeRepository.findByEmailAndPassword(email, password))
+                .map(this::buildTokenData)
                 .flatMap(tokenData ->
-                   refreshTokenGeneratorService.generate()
-                           .flatMap(refreshToken ->
-                              this.tokenGeneratorService.generate(tokenData, tokenConfig.getSecretKey())
-                                      .map(token -> new TokenRegistry(
-                                              tokenData.getId(),
-                                              token,
-                                              refreshToken,
-                                              new Date(),
-                                              new Date(new Date().getTime() + tokenConfig.getRefreshExpirationMs())
-                                      ))
-                           )
+                        refreshTokenGeneratorService.generate()
+                                .flatMap(refreshToken ->
+                                        tokenGeneratorService.generate(tokenData, tokenConfig.getSecretKey())
+                                                .flatMap(token -> {
+                                                    TokenRegistry registry = buildTokenRegistry(tokenData, token, refreshToken);
+                                                    return cacheService.put(email, registry, Duration.ofMillis(tokenConfig.getRefreshExpirationMs()))
+                                                            .map(ignored -> registry);
+                                                })
+                                )
                 );
     }
 
-    @Override
-    public Result<TokenRegistry, Error> byTokens(String token, String refreshToken) {
-        return null;
+    private TokenData buildTokenData(com.jobby.authorization.domain.model.Employee employee) {
+        return new TokenData(
+                employee.getEmployeeId(),
+                employee.getEmail(),
+                tokenConfig.getEmployeeSub(),
+                tokenConfig.getDefaultIss(),
+                this.tokenConfig.getRefreshExpirationMs()
+        );
+    }
+
+    private TokenRegistry buildTokenRegistry(TokenData tokenData, String token, String refreshToken) {
+        Instant now = Instant.now();
+        Date issuedAt = Date.from(now);
+        Date refreshExpiry = Date.from(now.plusMillis(tokenConfig.getRefreshExpirationMs()));
+
+        return new TokenRegistry(
+                tokenData.getId(),
+                token,
+                refreshToken,
+                issuedAt,
+                refreshExpiry
+        );
     }
 }
