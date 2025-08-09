@@ -14,6 +14,5 @@ public class TokenData {
     private String email;
     private String audience;
     private String issuer;
-    private String phone;
     private long msExpirationTime;
 }
