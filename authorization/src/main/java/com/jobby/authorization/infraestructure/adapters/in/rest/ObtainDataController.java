@@ -2,7 +2,7 @@ package com.jobby.authorization.infraestructure.adapters.in.rest;
 
 import com.jobby.authorization.application.useCases.ObtainEmployeesUseCase;
 import com.jobby.authorization.domain.model.TokenRegistry;
-import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeUseCase;
+import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeWithCredentialsUseCase;
 import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/obtain")
 public class ObtainDataController {
     private final ObtainEmployeesUseCase obtainEmployeesUseCase;
-    private final AuthorizeEmployeeUseCase authorizeEmployeeUseCase;
+    private final AuthorizeEmployeeWithCredentialsUseCase authorizeEmployeeWithCredentialsUseCase;
 
     @Autowired
-    public ObtainDataController(ObtainEmployeesUseCase obtainEmployeesUseCase, AuthorizeEmployeeUseCase authorizeEmployeeUseCase) {
+    public ObtainDataController(ObtainEmployeesUseCase obtainEmployeesUseCase, AuthorizeEmployeeWithCredentialsUseCase authorizeEmployeeWithCredentialsUseCase) {
         this.obtainEmployeesUseCase = obtainEmployeesUseCase;
-        this.authorizeEmployeeUseCase = authorizeEmployeeUseCase;
+        this.authorizeEmployeeWithCredentialsUseCase = authorizeEmployeeWithCredentialsUseCase;
     }
 
     @PostMapping("/auth")
     public Result<TokenRegistry, Error> ObtainEmployees(
             @RequestHeader String email,
             @RequestHeader String password) {
-        return this.authorizeEmployeeUseCase.byCredentials(email, password);
+        return this.authorizeEmployeeWithCredentialsUseCase.byCredentials(email, password);
     }
 
 

@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/authorize")
-public class AuthController {
+public class AuthorizationController {
 
     private final SafeResultValidator validator;
     private final TokenRegistryResponseMapper responseMapper;
     private final AuthorizeEmployeeWithCredentialsUseCase authorizeEmployeeWithCredentialsUseCase;
 
-    public AuthController(SafeResultValidator validator, TokenRegistryResponseMapper responseMapper, AuthorizeEmployeeWithCredentialsUseCase authorizeEmployeeWithCredentialsUseCase) {
+    public AuthorizationController(SafeResultValidator validator, TokenRegistryResponseMapper responseMapper, AuthorizeEmployeeWithCredentialsUseCase authorizeEmployeeWithCredentialsUseCase) {
         this.validator = validator;
         this.responseMapper = responseMapper;
         this.authorizeEmployeeWithCredentialsUseCase = authorizeEmployeeWithCredentialsUseCase;
@@ -29,7 +29,8 @@ public class AuthController {
     @PostMapping("/withCredentials")
     public Result<TokenRegistryResponse, Error> withCredentials(@RequestBody LoginRequest request) {
         return this.validator.validate(request)
-                .flatMap(x -> this.authorizeEmployeeWithCredentialsUseCase.byCredentials(request.getEmail(), request.getPassword()))
+                .flatMap(x -> this.authorizeEmployeeWithCredentialsUseCase
+                        .byCredentials(request.getEmail(), request.getPassword()))
                 .map(this.responseMapper::toDto);
     }
 
