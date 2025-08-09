@@ -1,6 +1,5 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
-import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
@@ -15,6 +14,7 @@ import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
+import static com.jobby.authorization.infraestructure.TestAssertions.*;
 
 public class JwtGeneratorServiceTest {
 
@@ -306,19 +306,6 @@ public class JwtGeneratorServiceTest {
 
         // Assert
         assertSuccess(resp);
-    }
-
-    private static void assertFailure(Result<?, Error> response,
-                                      ErrorType errorType,
-                                      String fieldName,
-                                      String message) {
-        var expected = Result.failure(errorType, new Field(fieldName, message));
-        assertEquals(expected, response);
-        assertTrue(response.isFailure());
-    }
-
-    private static void assertSuccess(Result<?, Error> response) {
-        assertTrue(response.isSuccess());
     }
 
     private static IntStream negativeOrZeroExpirationTimes() {

@@ -18,6 +18,7 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static com.jobby.authorization.infraestructure.TestAssertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RedisCacheServiceTest {
@@ -30,83 +31,43 @@ public class RedisCacheServiceTest {
 
     @Test
     public void put_whenKeyAreNull(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "key",
-                        "the cache key is required"
-                )
-        );
-
         // Act
         var result = this.redisCacheService.put(null, "hi", Duration.ofDays(10));
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "  ", "       "})
     public void put_whenKeyIsBlank(String key){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "key",
-                        "the cache key is required"
-                )
-        );
-
         // Act
         var result = this.redisCacheService.put(key, "hi", Duration.ofDays(10));
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
     }
 
     @Test
     public void put_whenThrowsSerializationException(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.ITN_SERIALIZATION_ERROR,
-                new Field(
-                        "serialization",
-                        "serialization failed, the object provided are invalid to serialize"
-                )
-        );
-
         when(this.redisTemplate.opsForValue()).thenThrow(SerializationException.class);
 
         // Act
         var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.ITN_SERIALIZATION_ERROR, "serialization", "serialization failed, the object provided are invalid to serialize");
     }
 
     @Test
     public void put_whenThrowsRedisConnectionException(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
-                new Field(
-                        "redis",
-                        "Error connection with redis"
-                )
-        );
-
         when(this.redisTemplate.opsForValue()).thenThrow(RedisConnectionFailureException.class);
 
         // Act
         var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
     }
 
     @Test
@@ -121,101 +82,53 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
 
         // Assert
-        assertTrue(result.isSuccess());
+        assertSuccess(result);
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void get_whenKeyIsNull(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "key",
-                        "the cache key is required"
-                )
-        );
-
         // Act
         var result = this.redisCacheService.get(null, String.class);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "  ", "     "})
     public void get_whenKeyIsBlank(String key){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "key",
-                        "the cache key is required"
-                )
-        );
-
         // Act
         var result = this.redisCacheService.get(key, String.class);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
     }
 
     @Test
     public void get_whenThrowsSerializationException(){
-        // Arrange
-        var expectedResult = Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
-                new Field(
-                        "deserialization",
-                        "deserialization failed, the object provided are invalid to deserialize in the specified class"
-                )
-        );
-
         when(this.redisTemplate.opsForValue()).thenThrow(SerializationException.class);
 
         // Act
         var result = this.redisCacheService.get("thing", String.class);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.ITN_SERIALIZATION_ERROR, "deserialization", "deserialization failed, the object provided are invalid to deserialize in the specified class");
     }
 
     @Test
     public void get_whenThrowsRedisConnectionException(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
-                new Field(
-                        "redis",
-                        "Error connection with redis"
-                )
-        );
-
         when(this.redisTemplate.opsForValue()).thenThrow(RedisConnectionFailureException.class);
 
         // Act
         var result = this.redisCacheService.get("thing", String.class);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
     }
 
     @Test
     public void get_whenTypeIsNotValid(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.ITN_OPERATION_ERROR,
-                new Field(
-                        "type cast",
-                        "the object is not assignable to type"
-                )
-        );
-
         var valueOperationsMock = mock(ValueOperations.class);
         when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
         when(valueOperationsMock.get(anyString())).thenReturn(42);
@@ -224,8 +137,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.get("thing", String.class);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.ITN_OPERATION_ERROR, "type cast", "the object is not assignable to type");
     }
 
     @Test
@@ -241,68 +153,38 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.get("thing", String.class);
 
         // Assert
-        assertTrue(result.isSuccess());
+        assertSuccess(result);
         assertEquals(expectedResult, result);
     }
 
     @Test
     public void evict_whenKeyIsNull(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "key",
-                        "the cache key is required"
-                )
-        );
-
         // Act
         var result = this.redisCacheService.evict(null);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "  ", "     "})
     public void evict_whenKeyIsBlank(String key){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "key",
-                        "the cache key is required"
-                )
-        );
-
         // Act
         var result = this.redisCacheService.evict(key);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
     }
 
     @Test
     public void evict_whenThrowsRedisConnectionException(){
-        // Arrange
-        var expectedResult = Result.failure(
-                ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
-                new Field(
-                        "redis",
-                        "Error connection with redis"
-                )
-        );
-
         doThrow(RedisConnectionFailureException.class).when(this.redisTemplate).delete(anyString());
 
         // Act
         var result = this.redisCacheService.evict("thing");
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
+        assertFailure(result, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
     }
 
     @Test
@@ -315,7 +197,7 @@ public class RedisCacheServiceTest {
         // Act
         var result = this.redisCacheService.evict("thing");
 
-        assertTrue(result.isSuccess());
+        assertSuccess(result);
         assertEquals(expectedResult, result);
     }
 
