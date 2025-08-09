@@ -16,7 +16,6 @@ import java.util.*;
 public class JwtGeneratorService implements TokenGeneratorService {
 
     private final static int[] VALID_SECRET_KEY_LENGTHS_BITS = { 256, 384, 512 };
-    private final static String PHONE_CLAIM_NAME = "com.jobby.employee.phone";
     private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
 
     private Result<Void, Error> validateTokenData(TokenData data){
@@ -54,13 +53,6 @@ public class JwtGeneratorService implements TokenGeneratorService {
             return Result.failure(ErrorType.VALIDATION_ERROR,
                     new Field("tokenData.msExpirationTime",
                             "The Expiration time in token data is less than 0")
-            );
-        }
-
-        if(data.getPhone() == null){
-            return Result.failure(ErrorType.VALIDATION_ERROR,
-                    new Field("tokenData.phone",
-                            "The phone in token data is null")
             );
         }
 
@@ -106,7 +98,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
                             .audience()
                             .add(data.getAudience())
                             .and()
-                            .claim(PHONE_CLAIM_NAME, data.getPhone())
+                            .claim(EMAIL_CLAIM_NAME, data.getEmail())
                             .issuedAt(new Date())
                             .expiration(new Date(new Date().getTime() + data.getMsExpirationTime()))
                             .signWith(secretKey)
@@ -141,9 +133,8 @@ public class JwtGeneratorService implements TokenGeneratorService {
         String issuer = claims.getIssuer();
         String audience = claims.getAudience().stream().findFirst().orElse("");
         String email = claims.get(EMAIL_CLAIM_NAME, String.class);
-        String phone = claims.get(PHONE_CLAIM_NAME, String.class);
 
-        TokenData tokenData = new TokenData(id, issuer, audience, email, phone, expiration);
+        TokenData tokenData = new TokenData(id, issuer, audience, email, expiration);
         return Result.success(tokenData);
     }
 
