@@ -28,6 +28,21 @@ public class JwtGeneratorService implements TokenGeneratorService {
             );
         }
 
+        if(data.getIssuer() == null){
+            Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                    new Field("tokenData.issuer",
+                            "The provided issuer data is null")
+            );
+        }
+
+        if(data.getAudience() == null){
+            Result.failure(ErrorType.ITN_OPERATION_ERROR,
+                    new Field("tokenData.audience",
+                            "The provided audience data is null")
+            );
+        }
+
+
         if(data.getEmail() == null){
             return Result.failure(ErrorType.VALIDATION_ERROR,
                     new Field("tokenData.email",
@@ -123,7 +138,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
                 ? claims.getExpiration().getTime()
                 : 0L;
 
-        String issuer = Optional.ofNullable(claims.getIssuer()).orElse("");
+        String issuer = claims.getIssuer();
         String audience = claims.getAudience().stream().findFirst().orElse("");
         String email = claims.get(EMAIL_CLAIM_NAME, String.class);
         String phone = claims.get(PHONE_CLAIM_NAME, String.class);

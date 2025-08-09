@@ -18,7 +18,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DecryptEncryptBuilderTest {
+public class DefaultEncryptBuilderTest {
 
     private final DefaultEncryptBuilder defaultEncryptBuilder = new DefaultEncryptBuilder();
 
