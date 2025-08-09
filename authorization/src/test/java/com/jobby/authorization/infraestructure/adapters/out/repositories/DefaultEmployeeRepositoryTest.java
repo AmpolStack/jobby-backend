@@ -7,12 +7,14 @@ import com.jobby.authorization.infraestructure.persistence.mappers.MongoEmployee
 import com.jobby.authorization.infraestructure.persistence.repositories.SpringDataMongoEmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessResourceFailureException;
 import java.util.Optional;
-
+import java.util.stream.Stream;
 import static com.jobby.authorization.infraestructure.TestAssertions.*;
 import static org.mockito.Mockito.*;
 
@@ -62,6 +64,53 @@ public class DefaultEmployeeRepositoryTest {
     }
 
     @Test
+    public void findByEmailAndPassword_WhenTheEmailIsNull() {
+        // Act
+        var resp = this.employeeRepository.findByEmailAndPassword(null, VALID_PASSWORD);
+
+        // Assert
+        assertFailure(resp, ErrorType.VALIDATION_ERROR, "email", "is null or blank");
+        verify(springDataMongoEmployeeRepository, never()).findByEmailAndPassword(any(), any());
+        verify(mongoEmployeeEntityMapper, never()).toDomain(any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("blankStringsUpTo5")
+    public void findByEmailAndPassword_WhenTheEmailIsBlank(String input) {
+        // Act
+        var resp = this.employeeRepository.findByEmailAndPassword(input, VALID_PASSWORD);
+
+        // Assert
+        assertFailure(resp, ErrorType.VALIDATION_ERROR, "email", "is null or blank");
+        verify(springDataMongoEmployeeRepository, never()).findByEmailAndPassword(any(), any());
+        verify(mongoEmployeeEntityMapper, never()).toDomain(any());
+    }
+
+
+    @Test
+    public void findByEmailAndPassword_WhenThePasswordIsNull() {
+        // Act
+        var resp = this.employeeRepository.findByEmailAndPassword(VALID_EMAIL, null);
+
+        // Assert
+        assertFailure(resp, ErrorType.VALIDATION_ERROR, "password", "is null or blank");
+        verify(springDataMongoEmployeeRepository, never()).findByEmailAndPassword(any(), any());
+        verify(mongoEmployeeEntityMapper, never()).toDomain(any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("blankStringsUpTo5")
+    public void findByEmailAndPassword_WhenThePasswordIsBlank(String input) {
+        // Act
+        var resp = this.employeeRepository.findByEmailAndPassword(VALID_EMAIL, input);
+
+        // Assert
+        assertFailure(resp, ErrorType.VALIDATION_ERROR, "password", "is null or blank");
+        verify(springDataMongoEmployeeRepository, never()).findByEmailAndPassword(any(), any());
+        verify(mongoEmployeeEntityMapper, never()).toDomain(any());
+    }
+
+    @Test
     public void findByEmailAndPassword_WhenTheEmployeeIsFound() {
         // Arrange
         when(springDataMongoEmployeeRepository.findByEmailAndPassword(any(), any())).thenReturn(Optional.of(new MongoEmployeeEntity()));
@@ -101,7 +150,7 @@ public class DefaultEmployeeRepositoryTest {
         var resp = this.employeeRepository.findById(VALID_ID);
 
         // Assert
-        assertFailure(resp,   ErrorType.USER_NOT_FOUND, "employee", "No employee found with given credentials");
+        assertFailure(resp,   ErrorType.USER_NOT_FOUND, "employee", "No employee found with given id");
         verify(springDataMongoEmployeeRepository, times(1)).findById(anyInt());
         verify(mongoEmployeeEntityMapper, never()).toDomain(any());
     }
@@ -119,6 +168,10 @@ public class DefaultEmployeeRepositoryTest {
         assertSuccess(resp);
         verify(springDataMongoEmployeeRepository, times(1)).findById(any());
         verify(mongoEmployeeEntityMapper, times(1)).toDomain(any());
+    }
+
+    private static Stream<String> blankStringsUpTo5() {
+        return Stream.of("", " ", "  ", "   ", "     ");
     }
 
 
