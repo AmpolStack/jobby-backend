@@ -6,10 +6,13 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.infraestructure.persistence.entities.MongoEmployeeEntity;
 import com.jobby.authorization.infraestructure.persistence.mappers.MongoEmployeeEntityMapper;
 import com.jobby.authorization.infraestructure.persistence.repositories.SpringDataMongoEmployeeRepository;
+import io.jsonwebtoken.lang.Supplier;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class DefaultEmployeeRepository implements EmployeeRepository {
@@ -22,17 +25,20 @@ public class DefaultEmployeeRepository implements EmployeeRepository {
         this.mongoRepository = mongoRepository;
     }
 
-    @Override
-    public Result<Employee, Error> findByEmailAndPassword(String email, String password) {
-        try {
-            return mongoRepository.findByEmailAndPassword(email, password)
+    private Result<Employee, Error> genericExecution(Supplier<Optional<MongoEmployeeEntity>> supplier, String failureInstanceName) {
+        try{
+            return supplier
+                    .get()
                     .map(mongoMapper::toDomain)
                     .map(Result::<Employee, Error>success)
-                    .orElseGet(() -> Result.failure(
-                            ErrorType.USER_NOT_FOUND,
-                            new Field("employee", "No employee found with given credentials")
-                    ));
-        } catch (DataAccessResourceFailureException ex) {
+                    .orElseGet(() ->
+                        Result.failure(
+                                ErrorType.USER_NOT_FOUND,
+                                new Field("employee", "No employee found with given " + failureInstanceName)
+                        )
+                    );
+        }
+        catch (DataAccessResourceFailureException ex){
             return Result.failure(
                     ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
                     new Field("mongo.db.database", ex.getMessage())
@@ -40,22 +46,27 @@ public class DefaultEmployeeRepository implements EmployeeRepository {
         }
     }
 
-    @Override
-    public Result<Employee, Error> findById(int id) {
-        try {
-            return mongoRepository.findById(id)
-                    .map(mongoMapper::toDomain)
-                    .map(Result::<Employee, Error>success)
-                    .orElseGet(() -> Result.failure(
-                            ErrorType.USER_NOT_FOUND,
-                            new Field("employee", "No employee found with given credentials")
-                    ));
-        } catch (DataAccessResourceFailureException ex) {
+    private Result<Void, Error> validateString(String input, String failureInstanceName) {
+        if(input == null || input.isBlank()){
             return Result.failure(
-                    ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
-                    new Field("mongo.db.database", ex.getMessage())
+                    ErrorType.VALIDATION_ERROR,
+                    new Field(failureInstanceName, "is null or blank")
             );
         }
+        return Result.success(null);
+    }
+
+    @Override
+    public Result<Employee, Error> findByEmailAndPassword(String email, String password) {
+        return validateString(email, "email")
+                .flatMap(x -> validateString(password, "password"))
+                .flatMap(x -> genericExecution(() -> this.mongoRepository.findByEmailAndPassword(email, password), "credentials"));
+
+    }
+
+    @Override
+    public Result<Employee, Error> findById(int id) {
+        return genericExecution(() -> this.mongoRepository.findById(id), "id");
     }
 
 }
