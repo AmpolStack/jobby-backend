@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.requests;
+package com.jobby.authorization.infraestructure.dto.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
