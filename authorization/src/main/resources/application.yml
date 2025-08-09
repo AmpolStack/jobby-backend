@@ -24,5 +24,7 @@ encrypt:
 #  secret-key: yourSecretBase64Key
 token:
   expiration-ms: 60000
+  employee-sub: com.jobby.employee
+  default-iss: com.jobby.authorization
   #  secret-key: yourSecretBase64Key-256bits
   refresh-expiration-ms: 120000
