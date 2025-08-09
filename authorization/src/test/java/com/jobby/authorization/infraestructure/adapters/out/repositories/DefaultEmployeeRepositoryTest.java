@@ -21,6 +21,7 @@ public class DefaultEmployeeRepositoryTest {
 
     private static final String VALID_EMAIL = "test@jobby.com";
     private static final String VALID_PASSWORD = "jobby";
+    private static final int VALID_ID = 1;
 
     @Mock
     private MongoEmployeeEntityMapper mongoEmployeeEntityMapper;
@@ -74,5 +75,51 @@ public class DefaultEmployeeRepositoryTest {
         verify(springDataMongoEmployeeRepository, times(1)).findByEmailAndPassword(any(), any());
         verify(mongoEmployeeEntityMapper, times(1)).toDomain(any());
     }
+
+
+    @Test
+    public void findById_WhenDatabaseFails() {
+        // Arrange
+        var expectedErrorMessage = "error in database, check";
+        when(springDataMongoEmployeeRepository.findById(VALID_ID)).thenThrow(new DataAccessResourceFailureException(expectedErrorMessage));
+
+        // Act
+        var resp = this.employeeRepository.findById(VALID_ID);
+
+        // Assert
+        assertFailure(resp, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,"mongo.db.database", expectedErrorMessage);
+        verify(springDataMongoEmployeeRepository, times(1)).findById(any());
+        verify(mongoEmployeeEntityMapper, never()).toDomain(any());
+    }
+
+    @Test
+    public void findById_WhenTheEmployeeIsNotFound() {
+        // Arrange
+        when(springDataMongoEmployeeRepository.findById(any())).thenReturn(Optional.empty());
+
+        // Act
+        var resp = this.employeeRepository.findById(VALID_ID);
+
+        // Assert
+        assertFailure(resp,   ErrorType.USER_NOT_FOUND, "employee", "No employee found with given credentials");
+        verify(springDataMongoEmployeeRepository, times(1)).findById(anyInt());
+        verify(mongoEmployeeEntityMapper, never()).toDomain(any());
+    }
+
+    @Test
+    public void findById_WhenTheEmployeeIsFound() {
+        // Arrange
+        when(springDataMongoEmployeeRepository.findById(any())).thenReturn(Optional.of(new MongoEmployeeEntity()));
+        when(mongoEmployeeEntityMapper.toDomain(any())).thenReturn(new Employee());
+
+        // Act
+        var resp = this.employeeRepository.findById(VALID_ID);
+
+        // Assert
+        assertSuccess(resp);
+        verify(springDataMongoEmployeeRepository, times(1)).findById(any());
+        verify(mongoEmployeeEntityMapper, times(1)).toDomain(any());
+    }
+
 
 }
