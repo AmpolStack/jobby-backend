@@ -1,7 +1,7 @@
 package com.jobby.authorization.application.useCases;
 
 import com.jobby.authorization.domain.model.TokenRegistry;
-import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeWithCredentialsUseCase;
+import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeByCredentials;
 import com.jobby.authorization.domain.ports.out.CacheService;
 import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.Date;
 
 @Service
-public class AuthorizeEmployeeWithCredentialsUseCaseImpl implements AuthorizeEmployeeWithCredentialsUseCase {
+public class AuthorizeEmployeeWithCredentialsUseCaseImpl implements AuthorizeEmployeeByCredentials {
 
     private final EmployeeRepository employeeRepository;
     private final TokenGeneratorService tokenGeneratorService;

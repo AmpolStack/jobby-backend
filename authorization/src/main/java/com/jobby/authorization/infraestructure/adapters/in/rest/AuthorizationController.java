@@ -1,6 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.in.rest;
 
-import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeWithCredentialsUseCase;
+import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeByCredentials;
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.Result;
@@ -19,9 +19,9 @@ public class AuthorizationController {
 
     private final SafeResultValidator validator;
     private final TokenRegistryResponseMapper responseMapper;
-    private final AuthorizeEmployeeWithCredentialsUseCase authorizeEmployeeWithCredentialsUseCase;
+    private final AuthorizeEmployeeByCredentials authorizeEmployeeWithCredentialsUseCase;
 
-    public AuthorizationController(SafeResultValidator validator, TokenRegistryResponseMapper responseMapper, AuthorizeEmployeeWithCredentialsUseCase authorizeEmployeeWithCredentialsUseCase) {
+    public AuthorizationController(SafeResultValidator validator, TokenRegistryResponseMapper responseMapper, AuthorizeEmployeeByCredentials authorizeEmployeeWithCredentialsUseCase) {
         this.validator = validator;
         this.responseMapper = responseMapper;
         this.authorizeEmployeeWithCredentialsUseCase = authorizeEmployeeWithCredentialsUseCase;
