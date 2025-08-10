@@ -7,6 +7,7 @@ import com.jobby.authorization.domain.result.Result;
 import com.jobby.authorization.infraestructure.dto.mappers.TokenRegistryResponseMapper;
 import com.jobby.authorization.infraestructure.dto.requests.LoginRequest;
 import com.jobby.authorization.infraestructure.dto.responses.TokenRegistryResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,11 +28,17 @@ public class AuthorizationController {
     }
 
     @PostMapping("/withCredentials")
-    public Result<TokenRegistryResponse, Error> withCredentials(@RequestBody LoginRequest request) {
-        return this.validator.validate(request)
+    public ResponseEntity<Result<TokenRegistryResponse, Error>> withCredentials(@RequestBody LoginRequest request) {
+        var resp = this.validator.validate(request)
                 .flatMap(x -> this.authorizeEmployeeWithCredentialsUseCase
                         .byCredentials(request.getEmail(), request.getPassword()))
                 .map(this.responseMapper::toDto);
+
+        if(resp.isSuccess()) {
+            return ResponseEntity.ok(resp);
+        }
+
+        return ResponseEntity.badRequest().body(resp);
     }
 
 
