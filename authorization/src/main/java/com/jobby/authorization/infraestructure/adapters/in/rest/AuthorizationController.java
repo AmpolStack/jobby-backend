@@ -19,19 +19,19 @@ public class AuthorizationController {
 
     private final SafeResultValidator validator;
     private final TokenRegistryResponseMapper responseMapper;
-    private final AuthorizeEmployeeByCredentials authorizeEmployeeWithCredentialsUseCase;
+    private final AuthorizeEmployeeByCredentials authorizeByCredentialsUseCase;
 
     public AuthorizationController(SafeResultValidator validator, TokenRegistryResponseMapper responseMapper, AuthorizeEmployeeByCredentials authorizeEmployeeWithCredentialsUseCase) {
         this.validator = validator;
         this.responseMapper = responseMapper;
-        this.authorizeEmployeeWithCredentialsUseCase = authorizeEmployeeWithCredentialsUseCase;
+        this.authorizeByCredentialsUseCase = authorizeEmployeeWithCredentialsUseCase;
     }
 
     @PostMapping("/withCredentials")
     public ResponseEntity<Result<TokenRegistryResponse, Error>> withCredentials(@RequestBody LoginRequest request) {
         var resp = this.validator.validate(request)
-                .flatMap(x -> this.authorizeEmployeeWithCredentialsUseCase
-                        .byCredentials(request.getEmail(), request.getPassword()))
+                .flatMap(x -> this.authorizeByCredentialsUseCase
+                        .execute(request.getEmail(), request.getPassword()))
                 .map(this.responseMapper::toDto);
 
         if(resp.isSuccess()) {
