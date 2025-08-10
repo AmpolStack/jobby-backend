@@ -1,6 +1,8 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
+import com.jobby.authorization.domain.shared.validators.NumberValidator;
+import com.jobby.authorization.domain.shared.validators.ObjectValidator;
 import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
@@ -16,16 +18,15 @@ import java.util.*;
 @Service
 public class JwtGeneratorService implements TokenGeneratorService {
 
-    private final static int[] VALID_SECRET_KEY_LENGTHS_BITS = { 256, 384, 512 };
+    private final static Integer[] VALID_SECRET_KEY_LENGTHS_BITS = { 256, 384, 512 };
     private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
 
     private Result<Void, Error> validateTokenData(TokenData data){
-        return StringValidator.validateNotNullObject(data, "data")
-                .flatMap(x -> StringValidator.validateNotNullObject(data.getIssuer(), "data.issuer"))
-                .flatMap(x -> StringValidator.validateNotNullObject(data.getAudience(), "data.audience"))
-                .flatMap(x -> StringValidator.validateNotNullObject(data.getEmail(), "data.email"))
-                .flatMap(x -> StringValidator.validateGreaterLong(data.getMsExpirationTime(), -1, "data.ms-expiration-time"))
-                .map(x ->null);
+        return ObjectValidator.validateNotNullObject(data, "data")
+                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getIssuer(), "data.issuer"))
+                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getAudience(), "data.audience"))
+                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getEmail(), "data.email"))
+                .flatMap(v -> NumberValidator.validateGreaterNotEqualsLong(data.getMsExpirationTime(), 0, "data.ms-expiration-time"));
     }
 
     private Result<SecretKey, Error> validateAndParseKey(String base64Key){
@@ -39,16 +40,10 @@ public class JwtGeneratorService implements TokenGeneratorService {
                                 new Field("key", "The key is not valid base64"));
                     }
 
-                    var keyLengthBits = keyBytes.length * 8;
-                    if(Arrays.stream(VALID_SECRET_KEY_LENGTHS_BITS).noneMatch(x -> x == keyLengthBits)){
-                        return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                                new Field("key",
-                                        "The key length are invalid")
-                        );
-                    }
-
-                    var keyParsed = Keys.hmacShaKeyFor(keyBytes);
-                    return Result.success(keyParsed);
+                    final int BITS_MULTIPLIER = 8;
+                    var keyLengthBits = keyBytes.length * BITS_MULTIPLIER;
+                    return ObjectValidator.validateAnyMatch(keyLengthBits, VALID_SECRET_KEY_LENGTHS_BITS, "jwt-key-length")
+                            .map(v2 -> Keys.hmacShaKeyFor(keyBytes));
                 });
     }
 
