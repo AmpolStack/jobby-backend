@@ -1,8 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.result.ErrorType;
-import com.jobby.authorization.domain.result.Field;
-import com.jobby.authorization.domain.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -13,7 +11,6 @@ import java.util.Base64;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import static org.junit.jupiter.api.Assertions.*;
 import static com.jobby.authorization.infraestructure.TestAssertions.*;
 
 public class JwtGeneratorServiceTest {
@@ -29,7 +26,6 @@ public class JwtGeneratorServiceTest {
                 "valid@email.com",
                 "valid.audience.com",
                 "valid.issuer.com",
-                "10902",
                 120000);
 
         var bytes = new byte[256/8];
@@ -72,17 +68,6 @@ public class JwtGeneratorServiceTest {
         // Assert
         assertFailure(resp, ErrorType.VALIDATION_ERROR, "tokenData.msExpirationTime", "The Expiration time in token data is less than 0");
     }
-
-     @Test
-     public void generate_WhenTokenDataPhoneWhenIsNull(){
-         VALID_TOKEN_DATA.setPhone(null);
-
-         // Act
-         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
-
-         // Assert
-         assertFailure(resp, ErrorType.VALIDATION_ERROR, "tokenData.phone", "The phone in token data is null");
-     }
 
     @Test
     public void generate_WhenKeyIsNull(){
