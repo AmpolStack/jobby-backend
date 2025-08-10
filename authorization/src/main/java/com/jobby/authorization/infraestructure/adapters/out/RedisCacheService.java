@@ -5,6 +5,7 @@ import com.jobby.authorization.domain.result.Error;
 import com.jobby.authorization.domain.result.ErrorType;
 import com.jobby.authorization.domain.result.Field;
 import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.BasicValidator;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.SerializationException;
@@ -15,6 +16,11 @@ import java.time.Duration;
 public class RedisCacheService implements CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+
+    public RedisCacheService(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
     private static final Result<?, Error> REDIS_CONNECTION_FAILURE_RESULT =  Result.failure(
             ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
             new Field(
@@ -23,27 +29,9 @@ public class RedisCacheService implements CacheService {
             )
     );
 
-
-    public RedisCacheService(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
-
-    private Result<Void, Error> validateKey(String key) {
-        if(key == null || key.isBlank()){
-            return Result.failure(
-                    ErrorType.VALIDATION_ERROR,
-                    new Field(
-                            "key",
-                            "the cache key is required"
-                    )
-            );
-        }
-        return Result.success(null);
-    }
-
     @Override
     public <T> Result<Void, Error> put(String key, T value, Duration ttl) {
-        return validateKey(key)
+        return BasicValidator.validateNotBlankString(key, "cache-key")
                 .flatMap(x -> {
                     try{
                         redisTemplate.opsForValue().set(key, value, ttl);
@@ -66,7 +54,7 @@ public class RedisCacheService implements CacheService {
 
     @Override
     public <T> Result<T, Error> get(String key, Class<T> type) {
-        return validateKey(key)
+        return BasicValidator.validateNotBlankString(key, "cache-key")
                 .flatMap(x -> {
                     Object value;
                     try{
@@ -104,7 +92,7 @@ public class RedisCacheService implements CacheService {
 
     @Override
     public Result<Void, Error> evict(String key) {
-        return validateKey(key)
+        return BasicValidator.validateNotBlankString(key, "cache-key")
                 .flatMap(x -> {
                     try{
                         redisTemplate.delete(key);
