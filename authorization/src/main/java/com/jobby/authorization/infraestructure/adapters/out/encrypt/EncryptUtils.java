@@ -20,7 +20,7 @@ public class EncryptUtils {
         try{
             bytes = Base64.getDecoder().decode(valueBase64);
         }
-        catch (Exception e){
+        catch (IllegalArgumentException e){
             return null;
         }
 
