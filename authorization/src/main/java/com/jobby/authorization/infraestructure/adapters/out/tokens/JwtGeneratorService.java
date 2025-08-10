@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
-import com.jobby.authorization.domain.shared.BasicValidator;
+import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Field;
@@ -20,16 +20,16 @@ public class JwtGeneratorService implements TokenGeneratorService {
     private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
 
     private Result<Void, Error> validateTokenData(TokenData data){
-        return BasicValidator.validateNotNullObject(data, "data")
-                .flatMap(x -> BasicValidator.validateNotNullObject(data.getIssuer(), "data.issuer"))
-                .flatMap(x -> BasicValidator.validateNotNullObject(data.getAudience(), "data.audience"))
-                .flatMap(x -> BasicValidator.validateNotNullObject(data.getEmail(), "data.email"))
-                .flatMap(x -> BasicValidator.validateGreaterLong(data.getMsExpirationTime(), -1, "data.ms-expiration-time"))
+        return StringValidator.validateNotNullObject(data, "data")
+                .flatMap(x -> StringValidator.validateNotNullObject(data.getIssuer(), "data.issuer"))
+                .flatMap(x -> StringValidator.validateNotNullObject(data.getAudience(), "data.audience"))
+                .flatMap(x -> StringValidator.validateNotNullObject(data.getEmail(), "data.email"))
+                .flatMap(x -> StringValidator.validateGreaterLong(data.getMsExpirationTime(), -1, "data.ms-expiration-time"))
                 .map(x ->null);
     }
 
     private Result<SecretKey, Error> validateAndParseKey(String base64Key){
-        return BasicValidator.validateNotBlankString(base64Key, "jwt-key")
+        return StringValidator.validateNotBlankString(base64Key, "jwt-key")
                 .flatMap(v ->{
                     byte[] keyBytes;
                     try {
@@ -111,7 +111,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<TokenData, Error> obtainData(String token, String base64Key) {
-        return BasicValidator.validateNotBlankString(token, "token")
+        return StringValidator.validateNotBlankString(token, "token")
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .flatMap(this::mapClaimsToTokenData);
@@ -119,7 +119,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<Boolean, Error> isValid(String token, String base64Key) {
-        return BasicValidator.validateNotBlankString(token, "token")
+        return StringValidator.validateNotBlankString(token, "token")
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .map(claims -> claims.getExpiration().after(new Date()));
