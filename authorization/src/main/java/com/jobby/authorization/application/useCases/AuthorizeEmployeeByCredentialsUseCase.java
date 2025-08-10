@@ -17,7 +17,7 @@ import java.time.Instant;
 import java.util.Date;
 
 @Service
-public class AuthorizeEmployeeWithCredentialsUseCase implements AuthorizeEmployeeByCredentials {
+public class AuthorizeEmployeeByCredentialsUseCase implements AuthorizeEmployeeByCredentials {
 
     private final EmployeeRepository employeeRepository;
     private final TokenGeneratorService tokenGeneratorService;
@@ -26,7 +26,7 @@ public class AuthorizeEmployeeWithCredentialsUseCase implements AuthorizeEmploye
     private final CacheService cacheService;
     private final SafeResultValidator validator;
 
-    public AuthorizeEmployeeWithCredentialsUseCase(
+    public AuthorizeEmployeeByCredentialsUseCase(
             EmployeeRepository employeeRepository,
             TokenGeneratorService tokenGeneratorService,
             RefreshTokenGeneratorService refreshTokenGeneratorService,
