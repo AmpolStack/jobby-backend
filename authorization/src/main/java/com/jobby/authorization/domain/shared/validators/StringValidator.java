@@ -5,8 +5,7 @@ import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 
-public class BasicValidator {
-    
+public class StringValidator {
 
     public static Result<Void, Error> validateNotBlankString(String entity, String fieldName) {
         return ObjectValidator.validateNotNullObject(entity, fieldName)
