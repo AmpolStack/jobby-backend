@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.config;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +22,12 @@ public class TokenConfig {
     @Min(value = 120000, message = "token.refresh.expiration.ms must be at least 120000")
     private long refreshExpirationMs;
     @NotNull(message = "token.secret-key.value is required")
-    @NotEmpty(message = "token.secret-key.value must not be empty")
+    @NotBlank(message = "token.secret-key.value must not be blank")
     private String secretKey;
+    @NotNull(message = "token.secret-key.value is required")
+    @NotBlank(message = "token.secret-key.value must not be blank")
+    private String employeeSub;
+    @NotNull(message = "token.secret-key.value is required")
+    @NotBlank(message = "token.secret-key.value must not be blank")
+    private String defaultIss;
 }

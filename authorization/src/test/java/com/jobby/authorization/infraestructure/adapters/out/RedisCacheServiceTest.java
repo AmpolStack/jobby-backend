@@ -1,8 +1,7 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
-import com.jobby.authorization.domain.result.ErrorType;
-import com.jobby.authorization.domain.result.Field;
-import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.result.ErrorType;
+import com.jobby.authorization.domain.shared.result.Result;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.SerializationException;
 import java.time.Duration;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static com.jobby.authorization.infraestructure.TestAssertions.*;
@@ -35,7 +33,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.put(null, "hi", Duration.ofDays(10));
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is null");
     }
 
     @ParameterizedTest
@@ -45,7 +43,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.put(key, "hi", Duration.ofDays(10));
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is blank");
     }
 
     @Test
@@ -92,7 +90,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.get(null, String.class);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is null");
     }
 
     @ParameterizedTest
@@ -102,7 +100,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.get(key, String.class);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is blank");
     }
 
     @Test
@@ -163,7 +161,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.evict(null);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is null");
     }
 
     @ParameterizedTest
@@ -173,7 +171,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.evict(key);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "key", "the cache key is required");
+        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is blank");
     }
 
     @Test

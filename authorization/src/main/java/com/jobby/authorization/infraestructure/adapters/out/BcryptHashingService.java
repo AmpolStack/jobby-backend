@@ -1,70 +1,39 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.domain.ports.out.HashingService;
-import com.jobby.authorization.domain.result.Error;
-import com.jobby.authorization.domain.result.ErrorType;
-import com.jobby.authorization.domain.result.Field;
-import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.BasicValidator;
+import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.result.Result;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import java.nio.charset.StandardCharsets;
 
 @Component
 public class BcryptHashingService implements HashingService {
+
+    private static final int VALID_LIMIT_OF_INPUT_BYTES = 72;
+
     @Override
     public Result<String, Error> hash(String input) {
-        if(input == null || input.isBlank()){
-            return Result.failure(
-                    ErrorType.VALIDATION_ERROR,
-                    new Field(
-                            "input",
-                            "the input are null or blank"
-                    )
-            );
-        }
-
-        var bytes = input.getBytes(StandardCharsets.UTF_8);
-
-        if(bytes.length > 72) {
-            return Result.failure(
-                    ErrorType.VALIDATION_ERROR,
-                    new Field(
-                            "input",
-                            "the input are invalid, because exceeds the 72 bytes of length"
-                    )
-            );
-        }
-
-        var encoder = new BCryptPasswordEncoder();
-        var resp = encoder.encode(input);
-        return Result.success(resp);
+        return BasicValidator.validateNotBlankString(input, "hash-input")
+                .flatMap(x -> {
+                    var bytes = input.getBytes(StandardCharsets.UTF_8);
+                    return BasicValidator.validateGreaterInteger(bytes.length, VALID_LIMIT_OF_INPUT_BYTES, "hash-input-bytes");
+                })
+                .map(x -> {
+                    var encoder = new BCryptPasswordEncoder();
+                    return encoder.encode(input);
+                });
     }
 
     @Override
     public Result<Boolean, Error> matches(String plain, String hash) {
-        if(plain == null || plain.isBlank()) {
-            return Result.failure(
-                    ErrorType.VALIDATION_ERROR,
-                    new Field(
-                            "plain",
-                            "The input are null or blank"
-                    )
-            );
-        }
-
-        if(hash == null || hash.isBlank()) {
-            return Result.failure(
-                    ErrorType.VALIDATION_ERROR,
-                    new Field(
-                            "hash",
-                            "The input are null or blank"
-                    )
-            );
-        }
-        var encoder = new BCryptPasswordEncoder();
-        var resp = encoder.matches(plain, hash);
-        return Result.success(resp);
+        return BasicValidator.validateNotBlankString(plain, "plain-input")
+                .flatMap(x -> BasicValidator.validateNotBlankString(hash, "hash-input"))
+                .map(x -> {
+                    var encoder = new BCryptPasswordEncoder();
+                     return encoder.matches(plain, hash);
+                });
     }
 
 }
