@@ -2,8 +2,8 @@ package com.jobby.authorization.infraestructure.adapters.in.rest;
 
 import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeWithCredentialsUseCase;
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
-import com.jobby.authorization.domain.result.Error;
-import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.infraestructure.dto.mappers.TokenRegistryResponseMapper;
 import com.jobby.authorization.infraestructure.dto.requests.LoginRequest;
 import com.jobby.authorization.infraestructure.dto.responses.TokenRegistryResponse;

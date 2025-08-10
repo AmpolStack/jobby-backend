@@ -1,8 +1,8 @@
 package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 
-import com.jobby.authorization.domain.result.ErrorType;
-import com.jobby.authorization.domain.result.Field;
-import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.result.ErrorType;
+import com.jobby.authorization.domain.shared.result.Field;
+import com.jobby.authorization.domain.shared.result.Result;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -3,8 +3,8 @@ package com.jobby.authorization.infraestructure.adapters.in.rest;
 import com.jobby.authorization.application.useCases.ObtainEmployeesUseCase;
 import com.jobby.authorization.domain.model.TokenRegistry;
 import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeWithCredentialsUseCase;
-import com.jobby.authorization.domain.result.Error;
-import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.result.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

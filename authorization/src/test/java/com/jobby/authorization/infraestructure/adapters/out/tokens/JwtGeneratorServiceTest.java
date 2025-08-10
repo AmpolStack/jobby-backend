@@ -1,6 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
-import com.jobby.authorization.domain.result.ErrorType;
+import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.TokenData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;

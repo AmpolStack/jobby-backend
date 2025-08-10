@@ -1,10 +1,10 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
-import com.jobby.authorization.domain.result.Error;
-import com.jobby.authorization.domain.result.ErrorType;
-import com.jobby.authorization.domain.result.Field;
-import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.result.ErrorType;
+import com.jobby.authorization.domain.shared.result.Field;
+import com.jobby.authorization.domain.shared.result.Result;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.stereotype.Component;

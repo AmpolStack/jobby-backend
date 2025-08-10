@@ -1,10 +1,10 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
-import com.jobby.authorization.domain.result.Error;
-import com.jobby.authorization.domain.result.ErrorType;
-import com.jobby.authorization.domain.result.Field;
-import com.jobby.authorization.domain.result.Result;
+import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.result.ErrorType;
+import com.jobby.authorization.domain.shared.result.Field;
+import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
