@@ -19,7 +19,6 @@ public class DefaultSafeResultValidator implements SafeResultValidator {
         this.validator = validator;
     }
 
-
     @Override
     public <T> Result<Void, Error> validate(T entity) {
         Set<ConstraintViolation<T>> violations = validator.validate(entity);
@@ -33,4 +32,5 @@ public class DefaultSafeResultValidator implements SafeResultValidator {
 
         return Result.success(null);
     }
+
 }
