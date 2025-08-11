@@ -20,13 +20,18 @@ public class DefaultTokenRegistryRepository implements TokenRegistryRepository {
 
     @Override
     public Result<TokenRegistry, Error> getTokenRegistry(String token, String refreshToken, int id) {
-        return null;
+        var key = generateKey(token, refreshToken, id);
+        return this.cacheService.get(key, TokenRegistry.class);
     }
 
     @Override
     public Result<Void, Error> saveTokenRegistry(TokenRegistry tokenRegistry) {
-        var stringId = Integer.toString(tokenRegistry.getId());
-        return this.cacheService.put(stringId, tokenRegistry, Duration.ofMinutes(2));
+        var key = generateKey(tokenRegistry.getToken(), tokenRegistry.getRefreshToken(), tokenRegistry.getId());
+        return this.cacheService.put(key, tokenRegistry, Duration.ofMinutes(2));
+    }
+
+    private String generateKey(String token, String refreshToken, int id) {
+        return id + token + refreshToken;
     }
 
     @Override
