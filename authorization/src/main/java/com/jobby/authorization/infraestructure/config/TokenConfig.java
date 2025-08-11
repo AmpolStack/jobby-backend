@@ -7,13 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.validation.annotation.Validated;
 
-@Validated
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+//@Validated
 public class TokenConfig {
     @NotNull(message = "token.expirationMs is required")
     @Min(value = 60000, message = "token.expirationMs must be at least 60000")
