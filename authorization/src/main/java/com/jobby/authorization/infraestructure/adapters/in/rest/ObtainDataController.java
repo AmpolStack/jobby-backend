@@ -24,7 +24,7 @@ public class ObtainDataController {
     public Result<TokenRegistry, Error> ObtainEmployees(
             @RequestHeader String email,
             @RequestHeader String password) {
-        return this.authorizeEmployeeWithCredentialsUseCase.byCredentials(email, password);
+        return this.authorizeEmployeeWithCredentialsUseCase.execute(email, password);
     }
 
 
