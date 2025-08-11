@@ -4,6 +4,6 @@ import com.jobby.authorization.domain.model.TokenRegistry;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.Result;
 
-public interface AuthenticateEmployeeByTokens {
+public interface AuthorizeEmployeeByTokens {
     Result<TokenRegistry, Error> execute(String token, String refreshToken, int id);
 }
