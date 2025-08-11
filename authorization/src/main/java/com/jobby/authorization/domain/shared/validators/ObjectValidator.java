@@ -17,7 +17,7 @@ public class ObjectValidator {
     }
 
      public static <T> Result<Void, Error> validateAnyMatch(T entity, T[] compare, String fieldName){
-         if(Arrays.stream(compare).noneMatch(length -> length == entity)){
+         if(Arrays.stream(compare).noneMatch(length -> length.equals(entity))){
              return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
                      new Field(fieldName, "The value is not within valid parameters"));
          }
