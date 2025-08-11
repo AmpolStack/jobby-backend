@@ -1,6 +1,9 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
+import com.jobby.authorization.domain.shared.validators.NumberValidator;
+import com.jobby.authorization.domain.shared.validators.ObjectValidator;
+import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Field;
@@ -15,76 +18,33 @@ import java.util.*;
 @Service
 public class JwtGeneratorService implements TokenGeneratorService {
 
-    private final static int[] VALID_SECRET_KEY_LENGTHS_BITS = { 256, 384, 512 };
+    private final static Integer[] VALID_SECRET_KEY_LENGTHS_BITS = { 256, 384, 512 };
     private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
 
     private Result<Void, Error> validateTokenData(TokenData data){
-
-        if(data == null){
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
-                    new Field("tokenData",
-                            "The provided token data is null")
-            );
-        }
-
-        if(data.getIssuer() == null){
-            Result.failure(ErrorType.ITN_OPERATION_ERROR,
-                    new Field("tokenData.issuer",
-                            "The provided issuer data is null")
-            );
-        }
-
-        if(data.getAudience() == null){
-            Result.failure(ErrorType.ITN_OPERATION_ERROR,
-                    new Field("tokenData.audience",
-                            "The provided audience data is null")
-            );
-        }
-
-
-        if(data.getEmail() == null){
-            return Result.failure(ErrorType.VALIDATION_ERROR,
-                    new Field("tokenData.email",
-                            "The email in token data is null")
-            );
-        }
-
-        if(data.getMsExpirationTime() <= 0){
-            return Result.failure(ErrorType.VALIDATION_ERROR,
-                    new Field("tokenData.msExpirationTime",
-                            "The Expiration time in token data is less than 0")
-            );
-        }
-
-        return Result.success(null);
+        return ObjectValidator.validateNotNullObject(data, "data")
+                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getIssuer(), "data.issuer"))
+                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getAudience(), "data.audience"))
+                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getEmail(), "data.email"))
+                .flatMap(v -> NumberValidator.validateGreaterNotEqualsLong(data.getMsExpirationTime(), 0, "data.ms-expiration-time"));
     }
 
     private Result<SecretKey, Error> validateAndParseKey(String base64Key){
-        if(base64Key == null || base64Key.isBlank()){
-            return Result.failure(ErrorType.VALIDATION_ERROR,
-                    new Field("key",
-                            "The token key is null or empty")
-            );
-        }
+        return StringValidator.validateNotBlankString(base64Key, "jwt-key")
+                .flatMap(v ->{
+                    byte[] keyBytes;
+                    try {
+                        keyBytes = Base64.getDecoder().decode(base64Key);
+                    } catch (IllegalArgumentException e) {
+                        return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                                new Field("key", "The key is not valid base64"));
+                    }
 
-        byte[] keyBytes;
-        try {
-            keyBytes = Base64.getDecoder().decode(base64Key);
-        } catch (IllegalArgumentException e) {
-            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                    new Field("key", "The key is not valid base64"));
-        }
-
-        var keyLengthBits = keyBytes.length * 8;
-        if(Arrays.stream(VALID_SECRET_KEY_LENGTHS_BITS).noneMatch(x -> x == keyLengthBits)){
-            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
-                    new Field("key",
-                            "The key length are invalid")
-            );
-        }
-
-        var keyParsed = Keys.hmacShaKeyFor(keyBytes);
-        return Result.success(keyParsed);
+                    final int BITS_MULTIPLIER = 8;
+                    var keyLengthBits = keyBytes.length * BITS_MULTIPLIER;
+                    return ObjectValidator.validateAnyMatch(keyLengthBits, VALID_SECRET_KEY_LENGTHS_BITS, "jwt-key-length")
+                            .map(v2 -> Keys.hmacShaKeyFor(keyBytes));
+                });
     }
 
     @Override
@@ -104,17 +64,6 @@ public class JwtGeneratorService implements TokenGeneratorService {
                             .signWith(secretKey)
                             .compact()
                 );
-    }
-
-    private Result<Void, Error> validateToken(String token){
-        if(token == null || token.isBlank()){
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
-                    new Field("token",
-                            "The provided token is null or blank")
-            );
-        }
-
-        return Result.success(null);
     }
 
     private Result<TokenData, Error> mapClaimsToTokenData(Claims claims) {
@@ -157,7 +106,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<TokenData, Error> obtainData(String token, String base64Key) {
-        return validateToken(token)
+        return StringValidator.validateNotBlankString(token, "token")
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .flatMap(this::mapClaimsToTokenData);
@@ -165,7 +114,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<Boolean, Error> isValid(String token, String base64Key) {
-        return validateToken(token)
+        return StringValidator.validateNotBlankString(token, "token")
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .map(claims -> claims.getExpiration().after(new Date()));

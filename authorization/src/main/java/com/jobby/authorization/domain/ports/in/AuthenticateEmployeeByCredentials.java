@@ -3,6 +3,6 @@ package com.jobby.authorization.domain.ports.in;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.Result;
 
-public interface AuthenticateEmployeeUseCase {
+public interface AuthenticateEmployeeByCredentials {
     Result<Void, Error> authenticate();
 }
