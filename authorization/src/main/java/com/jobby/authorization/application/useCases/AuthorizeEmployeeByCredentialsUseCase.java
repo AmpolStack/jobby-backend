@@ -1,10 +1,11 @@
 package com.jobby.authorization.application.useCases;
 
+import com.jobby.authorization.domain.model.Employee;
 import com.jobby.authorization.domain.model.TokenRegistry;
 import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeByCredentials;
-import com.jobby.authorization.domain.ports.out.CacheService;
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
+import com.jobby.authorization.domain.ports.out.repositories.TokenRegistryRepository;
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
 import com.jobby.authorization.domain.shared.result.Error;
@@ -12,7 +13,6 @@ import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
 import com.jobby.authorization.infraestructure.config.TokenConfig;
 import org.springframework.stereotype.Service;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 
@@ -20,24 +20,23 @@ import java.util.Date;
 public class AuthorizeEmployeeByCredentialsUseCase implements AuthorizeEmployeeByCredentials {
 
     private final EmployeeRepository employeeRepository;
+    private final TokenRegistryRepository tokenRegistryRepository;
     private final TokenGeneratorService tokenGeneratorService;
     private final RefreshTokenGeneratorService refreshTokenGeneratorService;
     private final TokenConfig tokenConfig;
-    private final CacheService cacheService;
     private final SafeResultValidator validator;
 
     public AuthorizeEmployeeByCredentialsUseCase(
-            EmployeeRepository employeeRepository,
+            EmployeeRepository employeeRepository, TokenRegistryRepository tokenRegistryRepository,
             TokenGeneratorService tokenGeneratorService,
             RefreshTokenGeneratorService refreshTokenGeneratorService,
             TokenConfig tokenConfig,
-            CacheService cacheService,
             SafeResultValidator validator) {
         this.employeeRepository = employeeRepository;
+        this.tokenRegistryRepository = tokenRegistryRepository;
         this.tokenGeneratorService = tokenGeneratorService;
         this.refreshTokenGeneratorService = refreshTokenGeneratorService;
         this.tokenConfig = tokenConfig;
-        this.cacheService = cacheService;
         this.validator = validator;
     }
 
@@ -52,14 +51,14 @@ public class AuthorizeEmployeeByCredentialsUseCase implements AuthorizeEmployeeB
                                         tokenGeneratorService.generate(tokenData, tokenConfig.getSecretKey())
                                                 .flatMap(token -> {
                                                     TokenRegistry registry = buildTokenRegistry(tokenData, token, refreshToken);
-                                                    return cacheService.put(email, registry, Duration.ofMillis(tokenConfig.getRefreshExpirationMs()))
+                                                    return this.tokenRegistryRepository.saveTokenRegistry(registry)
                                                             .map(ignored -> registry);
                                                 })
                                 )
                 );
     }
 
-    private TokenData buildTokenData(com.jobby.authorization.domain.model.Employee employee) {
+    private TokenData buildTokenData(Employee employee) {
         return new TokenData(
                 employee.getEmployeeId(),
                 employee.getEmail(),
