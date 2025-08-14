@@ -47,6 +47,20 @@ public class AESEncryptionServiceTest {
         when(this.validator.validate(any())).thenReturn(Result.renewFailure(expectedResult));
 
         // Act
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @Test
+    public void decrypt_whenTheConfigValidationReturnsFailed(){
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.VALIDATION_ERROR, new Field("expected-instance", "expected-description"));
+        when(this.validator.validate(any())).thenReturn(Result.renewFailure(expectedResult));
+
+        // Act
         var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
 
         // Assert
