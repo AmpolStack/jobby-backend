@@ -39,9 +39,8 @@ public class AESEncryptionService implements EncryptionService {
     public Result<String, Error> decrypt(String cipherText, EncryptConfig config) {
         return  this.validator.validate(config)
                 .flatMap(v -> ObjectValidator.validateAnyMatch(config.getIv().getTLen(), VALID_T_LENGTHS_BITS, "tLen"))
-                .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap(v -> validateAndParseCipherText(cipherText))
-                .flatMap(combined -> NumberValidator.validateGreaterInteger(config.getIv().getLength(), combined.length, "iv-length")
+                .flatMap(combined -> NumberValidator.validateGreaterInteger(combined.length, config.getIv().getLength(), "combined")
                         .flatMap(v -> validateAndParseKey(config.getSecretKey()))
                         .flatMap( key -> {
                             var rawIv = Arrays.copyOfRange(combined, 0, config.getIv().getLength());
