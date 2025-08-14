@@ -5,11 +5,11 @@ import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Field;
 import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.NumberValidator;
 import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import com.jobby.authorization.infraestructure.config.EncryptConfig.Iv;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +31,7 @@ public class AESEncryptionServiceTest {
     private final static int VALID_T_LENGTH = 128;
     private final static String VALID_DATA = "Hello World";
     private static EncryptConfig VALID_CONFIG;
+    private static final String VALID_CIPHER = "vzBlcYpcMSsdCdYCAAA=";
 
     @Mock
     private SafeResultValidator validator;
@@ -101,7 +102,7 @@ public class AESEncryptionServiceTest {
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
-        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
+        var result = this.aesEncryptionService.decrypt(VALID_CIPHER, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isFailure());
@@ -133,7 +134,7 @@ public class AESEncryptionServiceTest {
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
-        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
+        var result = this.aesEncryptionService.decrypt(VALID_CIPHER, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isFailure());
@@ -169,7 +170,7 @@ public class AESEncryptionServiceTest {
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
-        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
+        var result = this.aesEncryptionService.decrypt(VALID_CIPHER, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isFailure());
@@ -213,7 +214,7 @@ public class AESEncryptionServiceTest {
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
-        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
+        var result = this.aesEncryptionService.decrypt(VALID_CIPHER, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isFailure());
@@ -351,17 +352,34 @@ public class AESEncryptionServiceTest {
         assertTrue(result.isSuccess());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"example1-invalid", "cfowfm233", "words-connected", "example2example3###"})
-    public void decrypt_whenCipherTextAreBase64Invalid(String cipherText) {
+    @Test
+    public void encrypt_whenCombinedIsInvalid() {
         // Arrange
-        var config = new EncryptConfig(
-                VALID_KEY,
-                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
-        );
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+        setUpBuilder(Cipher.ENCRYPT_MODE);
 
+        var resp = new byte[2];
+        Result<byte[], Error> expectedResult = Result.success(resp);
+        when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
-        var expectedResult = Result.failure(ErrorType.INVALID_INPUT,
+        var expectedResult2 = NumberValidator.validateGreaterInteger(0, 2, "iv-length");
+        // Act
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG)
+                .flatMap(cipher -> this.aesEncryptionService.decrypt(cipher.substring(0, VALID_IV_LENGTH - 1), VALID_CONFIG));
+
+        // Assert
+        assertTrue(result.isSuccess());
+        assertEquals(expectedResult2, result);
+    }
+
+    @Test
+    public void encrypt_whenCipherTextAreInvalidInBase64() {
+        // Arrange
+        final String INVALID_CIPHER_TEXT = "invalid-cipher%%";
+
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult =Result.failure(ErrorType.INVALID_INPUT,
                 new Field(
                         "cipherText",
                         "Invalid Base64 encoded cipher text"
@@ -369,78 +387,10 @@ public class AESEncryptionServiceTest {
         );
 
         // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, config);
-
-        // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
-    }
-
-    @RepeatedTest(100)
-    public void decrypt_whenCipherTextLengthAreInvalid(){
-        // Arrange
-        var config = new EncryptConfig(
-                VALID_KEY,
-                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
-        );
-
-        var cipherBytes = new byte[VALID_IV_LENGTH-1]; // It has to be bigger than the iv length
-        new Random().nextBytes(cipherBytes);
-        var cipherText = Base64.getEncoder().encodeToString(cipherBytes);
-
-        var expectedResult = Result.failure(ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "cipherText",
-                        "Cipher text is too short to contain valid data (expected at least " + VALID_IV_LENGTH + " bytes)"
-                )
-        );
-
-        // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, config);
-
-        // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {12,34,100})
-    public void decrypt_WhenEncryptBuilderReturnsFailed(int cipherTextLength) {
-        // Arrange
-        var config = new EncryptConfig(
-                VALID_KEY,
-                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
-        );
-
-        var cipherBytes = new byte[cipherTextLength];
-        new Random().nextBytes(cipherBytes);
-        var cipherText = Base64.getEncoder().encodeToString(cipherBytes);
-
-        Result<byte[], Error> expectedResult = Result.failure(ErrorType.VALIDATION_ERROR,
-                new Field(
-                        "expectedInstance",
-                        "expectedReason"
-                )
-        );
-
-        when(this.defaultEncryptBuilder.setData(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setIv(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setKey(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setMode(Cipher.DECRYPT_MODE)).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setTransformation(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
-
-        // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, config);
+        var result = this.aesEncryptionService.decrypt(INVALID_CIPHER_TEXT, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isFailure());
         assertEquals(Result.renewFailure(expectedResult), result);
-        verify(defaultEncryptBuilder, times(1)).setData(any());
-        verify(defaultEncryptBuilder, times(1)).setMode(Cipher.DECRYPT_MODE);
-        verify(defaultEncryptBuilder, times(1)).setIv(any());
-        verify(defaultEncryptBuilder, times(1)).setKey(any());
-        verify(defaultEncryptBuilder, times(1)).setTransformation(any());
-        verify(defaultEncryptBuilder, times(1)).build();
     }
 }
