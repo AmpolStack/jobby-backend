@@ -5,7 +5,6 @@ import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Field;
 import com.jobby.authorization.domain.shared.result.Result;
-import com.jobby.authorization.domain.shared.validators.ObjectValidator;
 import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import com.jobby.authorization.infraestructure.config.EncryptConfig.Iv;
@@ -19,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.Cipher;
-import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -283,6 +281,35 @@ public class AESEncryptionServiceTest {
         assertEquals(Result.renewFailure(expectedResult), result);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "  ", "   ", "     "})
+    public void decrypt_whenCipherTextAreBlank(String cipherText){
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult = StringValidator.validateNotBlankString(cipherText, "cipher-text");
+        // Act
+        var result = this.aesEncryptionService.decrypt(cipherText, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @Test
+    public void decrypt_whenCipherTextAreNull(){
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult = StringValidator.validateNotBlankString(null, "cipher-text");
+        // Act
+        var result = this.aesEncryptionService.decrypt(null, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
     private void setUpBuilder(int mode){
         when(this.defaultEncryptBuilder.setData(any())).thenReturn(defaultEncryptBuilder);
         when(this.defaultEncryptBuilder.setIv(any())).thenReturn(defaultEncryptBuilder);
@@ -322,53 +349,6 @@ public class AESEncryptionServiceTest {
 
         // Assert
         assertTrue(result.isSuccess());
-    }
-
-    @Test
-    public void decrypt_WhenCipherTextAreNull() {
-        // Arrange
-        var config = new EncryptConfig(
-                VALID_KEY,
-                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
-        );
-
-        var expectedResult = Result.failure(ErrorType.INVALID_INPUT,
-                new Field(
-                        "cipherText",
-                        "Cipher text cannot be null or blank"
-                )
-        );
-
-        // Act
-        var result = this.aesEncryptionService.decrypt(null, config);
-
-        // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", " ", "  ", "         "})
-    public void decrypt_whenCipherTextAreBlank(String cipherText) {
-        // Arrange
-        var config = new EncryptConfig(
-                VALID_KEY,
-                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
-        );
-
-        var expectedResult = Result.failure(ErrorType.INVALID_INPUT,
-                new Field(
-                        "cipherText",
-                        "Cipher text cannot be null or blank"
-                )
-        );
-
-        // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, config);
-
-        // Assert
-        assertTrue(result.isFailure());
-        assertEquals(expectedResult, result);
     }
 
     @ParameterizedTest
@@ -463,38 +443,4 @@ public class AESEncryptionServiceTest {
         verify(defaultEncryptBuilder, times(1)).setTransformation(any());
         verify(defaultEncryptBuilder, times(1)).build();
     }
-
-
-    @RepeatedTest(1)
-    public void decrypt_whenAllIsCorrect() {
-        // Arrange
-        var config = new EncryptConfig(
-                VALID_KEY,
-                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
-        );
-        var cipherBytes = new byte[15];
-        new Random().nextBytes(cipherBytes);
-        var cipherText = Base64.getEncoder().encodeToString(cipherBytes);
-
-        Result<byte[], Error> encryptBuildResult = Result.success(cipherBytes);
-
-        when(this.defaultEncryptBuilder.setData(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setIv(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setKey(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setMode(Cipher.DECRYPT_MODE)).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setTransformation(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.build()).thenReturn(encryptBuildResult);
-        // Act
-        var result = this.aesEncryptionService.decrypt(cipherText, config);
-
-        // Assert
-        assertTrue(result.isSuccess());
-        verify(defaultEncryptBuilder, times(1)).setData(any());
-        verify(defaultEncryptBuilder, times(1)).setMode(Cipher.DECRYPT_MODE);
-        verify(defaultEncryptBuilder, times(1)).setIv(any());
-        verify(defaultEncryptBuilder, times(1)).setKey(any());
-        verify(defaultEncryptBuilder, times(1)).setTransformation(any());
-        verify(defaultEncryptBuilder, times(1)).build();
-    }
-
 }
