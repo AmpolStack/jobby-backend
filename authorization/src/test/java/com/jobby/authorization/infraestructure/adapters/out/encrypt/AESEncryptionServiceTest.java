@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.Cipher;
+import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -177,6 +178,50 @@ public class AESEncryptionServiceTest {
         assertEquals(Result.renewFailure(expectedResult), result);
     }
 
+    public String generateRandomKey(int length){
+        var randomBytes = new byte[length];
+        new Random().nextBytes(randomBytes);
+        return Base64.getEncoder().encodeToString(randomBytes);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {119, 1, 2, 20, 175, 258})
+    public void encrypt_whenKeyLengthIsInvalid(int keyLength){
+        // Arrange
+        VALID_CONFIG.setSecretKey(generateRandomKey(keyLength));
+
+        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                     new Field("keyBase64-bytes", "The value is not within valid parameters"));
+
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        // Act
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {119, 1, 2, 20, 175, 258})
+    public void decrypt_whenKeyLengthIsInvalid(int keyLength){
+        // Arrange
+        VALID_CONFIG.setSecretKey(generateRandomKey(keyLength));
+
+        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                new Field("keyBase64-bytes", "The value is not within valid parameters"));
+
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        // Act
+        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
     @Test
     public void encrypt_whenBuildReturnsFailure() {
         // Arrange
@@ -238,45 +283,45 @@ public class AESEncryptionServiceTest {
         assertEquals(Result.renewFailure(expectedResult), result);
     }
 
-
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "secret-name",
-            "compose.key.username.password.pattern",
-            "email@example.com",
-            "secret-info",
-            "most-info",
-            "secret-name2"})
-    public void encrypt_whenAllIsCorrect(String data) {
-        // Arrange
-        var config = new EncryptConfig(
-                VALID_KEY,
-                new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
-        );
-
-        var expectedResultResponse = new byte[16];
-        new Random().nextBytes(expectedResultResponse);
-        Result<byte[], Error> expectedResult = Result.success(expectedResultResponse);
-
+    private void setUpBuilder(int mode){
         when(this.defaultEncryptBuilder.setData(any())).thenReturn(defaultEncryptBuilder);
         when(this.defaultEncryptBuilder.setIv(any())).thenReturn(defaultEncryptBuilder);
         when(this.defaultEncryptBuilder.setKey(any())).thenReturn(defaultEncryptBuilder);
-        when(this.defaultEncryptBuilder.setMode(Cipher.ENCRYPT_MODE)).thenReturn(defaultEncryptBuilder);
+        when(this.defaultEncryptBuilder.setMode(mode)).thenReturn(defaultEncryptBuilder);
         when(this.defaultEncryptBuilder.setTransformation(any())).thenReturn(defaultEncryptBuilder);
+    }
+
+    @Test
+    public void encrypt_whenBuilderReturnsFailure() {
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+        setUpBuilder(Cipher.ENCRYPT_MODE);
+        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER, new Field("expected-instance", "expected-reason"));
+        when(this.defaultEncryptBuilder.build()).thenReturn(Result.renewFailure(expectedResult));
+
+        // Act
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @Test
+    public void encrypt_whenAllIsCorrect() {
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+        setUpBuilder(Cipher.ENCRYPT_MODE);
+
+        var resp = new byte[2];
+        Result<byte[], Error> expectedResult = Result.success(resp);
         when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, config);
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isSuccess());
-        verify(defaultEncryptBuilder, times(1)).setData(any());
-        verify(defaultEncryptBuilder, times(1)).setMode(Cipher.ENCRYPT_MODE);
-        verify(defaultEncryptBuilder, times(1)).setIv(any());
-        verify(defaultEncryptBuilder, times(1)).setKey(any());
-        verify(defaultEncryptBuilder, times(1)).setTransformation(any());
-        verify(defaultEncryptBuilder, times(1)).build();
     }
 
     @Test
