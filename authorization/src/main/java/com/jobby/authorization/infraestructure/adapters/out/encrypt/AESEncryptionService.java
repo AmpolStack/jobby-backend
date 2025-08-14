@@ -39,6 +39,7 @@ public class AESEncryptionService implements EncryptionService {
     public Result<String, Error> decrypt(String cipherText, EncryptConfig config) {
         return  this.validator.validate(config)
                 .flatMap(v -> ObjectValidator.validateAnyMatch(config.getIv().getTLen(), VALID_T_LENGTHS_BITS, "tLen"))
+                .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap(v -> validateAndParseCipherText(cipherText))
                 .flatMap(combined -> NumberValidator.validateGreaterInteger(config.getIv().getLength(), combined.length, "iv-length")
                         .flatMap(v -> validateAndParseKey(config.getSecretKey()))
@@ -61,7 +62,6 @@ public class AESEncryptionService implements EncryptionService {
     @Override
     public Result<String, Error> encrypt(String data, EncryptConfig config) {
         return this.validator.validate(config)
-                .flatMap(x -> validateIvLength(config.getIv().getLength()))
                 .flatMap(x -> ObjectValidator.validateAnyMatch(config.getIv().getTLen(), VALID_T_LENGTHS_BITS, "tLen"))
                 .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap((key -> {
@@ -88,23 +88,16 @@ public class AESEncryptionService implements EncryptionService {
         return StringValidator.validateNotBlankString(keyBase64, "keyBase64")
                 .flatMap(v -> {
                     var key = EncryptUtils.ParseKeySpec(ALGORITHM, keyBase64);
-                    return ObjectValidator.validateNotNullObject(key, "parsedKey")
-                            .flatMap(v2 -> {
-                                var keyLengthInBytes = Objects.requireNonNull(key).getEncoded().length * BIT_MULTIPLIER;
-                                return ObjectValidator.validateAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "keyBase64-bytes")
-                                        .map(v3 -> key);
-                            });
 
+                    if(key == null){
+                        return Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+                                new Field("keyBase64", "is invalid in base64"));
+                    }
+
+                    var keyLengthInBytes = Objects.requireNonNull(key).getEncoded().length * BIT_MULTIPLIER;
+                    return ObjectValidator.validateAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "keyBase64-bytes")
+                            .map(v3 -> key);
                 });
-    }
-
-    private Result<Void, Error> validateIvLength(int ivLength){
-        final var name = "ivLength";
-        final int IV_LENGTH_LOWER_LIMIT = 0;
-        final int IV_LENGTH_UPPER_LIMIT = 16;
-
-        return NumberValidator.validateGreaterNotEqualsInteger(ivLength, IV_LENGTH_LOWER_LIMIT, name)
-                .flatMap(v -> NumberValidator.validateSmallerInteger(ivLength, IV_LENGTH_UPPER_LIMIT, name));
     }
 
     private Result<byte[], Error> validateAndParseCipherText(String cipherText){
