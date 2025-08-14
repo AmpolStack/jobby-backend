@@ -5,6 +5,7 @@ import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Field;
 import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.ObjectValidator;
 import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import com.jobby.authorization.infraestructure.config.EncryptConfig.Iv;
@@ -141,6 +142,42 @@ public class AESEncryptionServiceTest {
     }
 
     @Test
+    public void encrypt_whenKeyIsInvalidInBase64(){
+        // Arrange
+        final String INVALID_KEY = "p652zw20jx/Bvg/4I7Mrdg==%";
+        VALID_CONFIG.setSecretKey(INVALID_KEY);
+
+        var expectedResult = Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+                new Field("keyBase64", "is invalid in base64"));
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        // Act
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @Test
+    public void decrypt_whenKeyIsInvalidInBase64(){
+        // Arrange
+        final String INVALID_KEY = "p652zw20jx/Bvg/4I7Mrdg==%";
+        VALID_CONFIG.setSecretKey(INVALID_KEY);
+
+        var expectedResult = Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+                new Field("keyBase64", "is invalid in base64"));
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        // Act
+        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @Test
     public void encrypt_whenBuildReturnsFailure() {
         // Arrange
         var config = new EncryptConfig(
@@ -200,6 +237,8 @@ public class AESEncryptionServiceTest {
         assertTrue(result.isFailure());
         assertEquals(Result.renewFailure(expectedResult), result);
     }
+
+
 
     @ParameterizedTest
     @ValueSource(strings = {

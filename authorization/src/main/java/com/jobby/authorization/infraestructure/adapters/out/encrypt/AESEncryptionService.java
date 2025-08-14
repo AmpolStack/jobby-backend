@@ -88,13 +88,15 @@ public class AESEncryptionService implements EncryptionService {
         return StringValidator.validateNotBlankString(keyBase64, "keyBase64")
                 .flatMap(v -> {
                     var key = EncryptUtils.ParseKeySpec(ALGORITHM, keyBase64);
-                    return ObjectValidator.validateNotNullObject(key, "parsedKey")
-                            .flatMap(v2 -> {
-                                var keyLengthInBytes = Objects.requireNonNull(key).getEncoded().length * BIT_MULTIPLIER;
-                                return ObjectValidator.validateAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "keyBase64-bytes")
-                                        .map(v3 -> key);
-                            });
 
+                    if(key == null){
+                        return Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+                                new Field("keyBase64", "is invalid in base64"));
+                    }
+
+                    var keyLengthInBytes = Objects.requireNonNull(key).getEncoded().length * BIT_MULTIPLIER;
+                    return ObjectValidator.validateAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "keyBase64-bytes")
+                            .map(v3 -> key);
                 });
     }
 
