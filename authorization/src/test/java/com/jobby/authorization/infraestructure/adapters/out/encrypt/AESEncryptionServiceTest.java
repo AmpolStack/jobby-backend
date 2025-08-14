@@ -353,22 +353,32 @@ public class AESEncryptionServiceTest {
     }
 
     @Test
-    public void encrypt_whenCombinedIsInvalid() {
+    public void decrypt_whenAllIsCorrect() {
         // Arrange
         when(this.validator.validate(any())).thenReturn(Result.success(null));
-        setUpBuilder(Cipher.ENCRYPT_MODE);
+        setUpBuilder(Cipher.DECRYPT_MODE);
 
         var resp = new byte[2];
         Result<byte[], Error> expectedResult = Result.success(resp);
         when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
-        var expectedResult2 = NumberValidator.validateGreaterInteger(0, 2, "iv-length");
         // Act
-        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG)
-                .flatMap(cipher -> this.aesEncryptionService.decrypt(cipher.substring(0, VALID_IV_LENGTH - 1), VALID_CONFIG));
+        var result = this.aesEncryptionService.decrypt(VALID_CIPHER, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void decrypt_whenCombinedIsInvalid() {
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+        var expectedResult2 = NumberValidator.validateGreaterInteger(0, 12, "combined");
+        // Act
+        var result = this.aesEncryptionService.decrypt(VALID_CIPHER.substring(0, VALID_IV_LENGTH - 1), VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
         assertEquals(expectedResult2, result);
     }
 
