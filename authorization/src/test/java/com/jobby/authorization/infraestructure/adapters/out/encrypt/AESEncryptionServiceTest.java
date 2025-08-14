@@ -29,7 +29,7 @@ public class AESEncryptionServiceTest {
     private final static int VALID_IV_LENGTH = 12;
     private final static int VALID_T_LENGTH = 128;
     private final static String VALID_DATA = "Hello World";
-    private final static EncryptConfig VALID_CONFIG = new EncryptConfig(VALID_KEY, new Iv(VALID_IV_LENGTH, VALID_T_LENGTH));
+    private static EncryptConfig VALID_CONFIG;
 
     @Mock
     private SafeResultValidator validator;
@@ -39,6 +39,11 @@ public class AESEncryptionServiceTest {
 
     @InjectMocks
     private AESEncryptionService aesEncryptionService;
+
+    @BeforeEach
+    public void setUp() {
+        VALID_CONFIG = new EncryptConfig(VALID_KEY, new Iv(VALID_IV_LENGTH, VALID_T_LENGTH));
+    }
 
     @Test
     public void encrypt_whenTheConfigValidationReturnsFailed(){
@@ -89,6 +94,40 @@ public class AESEncryptionServiceTest {
 
         // Act
         var result = this.aesEncryptionService.encrypt(VALID_DATA, config);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1,2,3,50,97, 111, 119, 121,129})
+    public void encrypt_whenTLenAreInvalid(int tLen){
+        // Arrange
+        VALID_CONFIG.getIv().setTLen(tLen);
+
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
+        // Act
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1,2,3,50,97, 111, 119, 121,129})
+    public void decrypt_whenTLenAreInvalid(int tLen){
+        // Arrange
+        VALID_CONFIG.getIv().setTLen(tLen);
+
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
+        // Act
+        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
 
         // Assert
         assertTrue(result.isFailure());
