@@ -1,11 +1,13 @@
 package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 
+import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import com.jobby.authorization.infraestructure.config.EncryptConfig.Iv;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,11 @@ public class AESEncryptionServiceTest {
     private final static String VALID_KEY = "p652zw20jx/Bvg/4I7Mrdg==";
     private final static int VALID_IV_LENGTH = 12;
     private final static int VALID_T_LENGTH = 128;
+    private final static String VALID_DATA = "Hello World";
+    private final static EncryptConfig VALID_CONFIG = new EncryptConfig(VALID_KEY, new Iv(VALID_IV_LENGTH, VALID_T_LENGTH));
+
+    @Mock
+    private SafeResultValidator validator;
 
     @Mock
     private DefaultEncryptBuilder defaultEncryptBuilder;
@@ -34,16 +41,30 @@ public class AESEncryptionServiceTest {
     private AESEncryptionService aesEncryptionService;
 
     @Test
+    public void encrypt_whenTheConfigValidationReturnsFailed(){
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.VALIDATION_ERROR, new Field("expected-instance", "expected-description"));
+        when(this.validator.validate(any())).thenReturn(Result.renewFailure(expectedResult));
+
+        // Act
+        var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+    @Test
     public void encrypt_whenBuildReturnsFailure() {
         // Arrange
-        var data = "example_data";
-
         var config = new EncryptConfig(
                 VALID_KEY,
                 new Iv(VALID_IV_LENGTH, VALID_T_LENGTH)
         );
 
         Result<byte[], Error> expectedResult = Result.failure(ErrorType.VALIDATION_ERROR, new Field("expectedInstance", "expectedReason"));
+
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         when(this.defaultEncryptBuilder.setData(any())).thenReturn(defaultEncryptBuilder);
         when(this.defaultEncryptBuilder.setIv(any())).thenReturn(defaultEncryptBuilder);
@@ -53,7 +74,7 @@ public class AESEncryptionServiceTest {
         when(this.defaultEncryptBuilder.build()).thenReturn(expectedResult);
 
         // Act
-        var result = this.aesEncryptionService.encrypt(data, config);
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, config);
 
         // Assert
         assertTrue(result.isFailure());
