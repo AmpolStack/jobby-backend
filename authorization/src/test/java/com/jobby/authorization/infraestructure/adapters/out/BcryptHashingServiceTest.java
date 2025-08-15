@@ -8,8 +8,6 @@ import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
@@ -98,7 +96,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches(input, "exampleHash");
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain-input", "plain-input is blank");
         assertNull(hashResult.getData());
     }
 
@@ -109,7 +107,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches("examplePlain", input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is blank");
         assertNull(hashResult.getData());
     }
 
@@ -119,7 +117,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches(null, "exampleHash");
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain-input", "plain-input is null");
         assertNull(hashResult.getData());
     }
 
@@ -129,7 +127,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches("examplePlain", null);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is null");
         assertNull(hashResult.getData());
     }
 }
