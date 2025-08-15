@@ -58,6 +58,19 @@ public class RedisCacheServiceTest {
     }
 
     @Test
+    public void get_whenTemplateReturnsNull(){
+        var valueOperationsMock = mock(ValueOperations.class);
+        //noinspection unchecked
+        when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
+        when(valueOperationsMock.get(anyString())).thenReturn(null);
+        // Act
+        var result = this.redisCacheService.get("thing", String.class);
+
+        // Assert
+        assertFailure(result, ErrorType.USER_NOT_FOUND, "value", "the object consulted are null");
+    }
+
+    @Test
     public void put_whenThrowsRedisConnectionException(){
         when(this.redisTemplate.opsForValue()).thenThrow(RedisConnectionFailureException.class);
 
@@ -74,6 +87,7 @@ public class RedisCacheServiceTest {
         var expectedResult = Result.success(null);
 
         var valueOperationsMock = mock(ValueOperations.class);
+        //noinspection unchecked
         when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
 
         // Act
@@ -128,6 +142,7 @@ public class RedisCacheServiceTest {
     @Test
     public void get_whenTypeIsNotValid(){
         var valueOperationsMock = mock(ValueOperations.class);
+        //noinspection unchecked
         when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
         when(valueOperationsMock.get(anyString())).thenReturn(42);
 
@@ -144,6 +159,7 @@ public class RedisCacheServiceTest {
         var expectedResult = Result.success("expected result");
 
         var valueOperationsMock = mock(ValueOperations.class);
+        //noinspection unchecked
         when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
         when(valueOperationsMock.get(anyString())).thenReturn("expected result");
 

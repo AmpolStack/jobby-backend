@@ -3,12 +3,13 @@ package com.jobby.authorization.infraestructure.adapters.out;
 import com.jobby.authorization.domain.shared.result.Error;
 import com.jobby.authorization.domain.shared.result.ErrorType;
 import com.jobby.authorization.domain.shared.result.Result;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Base64;
 import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static com.jobby.authorization.infraestructure.TestAssertions.*;
 
@@ -62,7 +63,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.hash(input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "input", "the input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is blank");
     }
 
     @Test
@@ -72,21 +73,19 @@ public class BcryptHashingServiceTest {
 
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "input", "the input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is null");
     }
 
-    @Test
-    public void hash_WhenInputExceeds72Bytes() {
+    @RepeatedTest(value = 100, name = "{displayName} - rep#{currentRepetition}")
+    public void hash_WhenInputExceeds72Bytes(RepetitionInfo info) {
         //Arrange
-        var bytes = new byte[73];
-        new Random().nextBytes(bytes);
-        var input = new String(bytes);
+        var input = "x".repeat(info.getCurrentRepetition() + 72);
 
         // Act
         var hashResult = this.bcryptHashingService.hash(input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "input", "the input are invalid, because exceeds the 72 bytes of length");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input-bytes", "hash-input-bytes is bigger than 72");
     }
 
 
@@ -97,7 +96,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches(input, "exampleHash");
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain-input", "plain-input is blank");
         assertNull(hashResult.getData());
     }
 
@@ -108,7 +107,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches("examplePlain", input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is blank");
         assertNull(hashResult.getData());
     }
 
@@ -118,7 +117,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches(null, "exampleHash");
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain-input", "plain-input is null");
         assertNull(hashResult.getData());
     }
 
@@ -128,7 +127,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.matches("examplePlain", null);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash", "The input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is null");
         assertNull(hashResult.getData());
     }
 }
