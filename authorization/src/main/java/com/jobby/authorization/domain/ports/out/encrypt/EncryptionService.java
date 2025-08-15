@@ -5,6 +5,6 @@ import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 
 public interface EncryptionService {
-    public Result<String, Error> encrypt(String data, EncryptConfig config);
-    public Result<String, Error> decrypt(String cipherText, EncryptConfig config);
+    Result<String, Error> encrypt(String data, EncryptConfig config);
+    Result<String, Error> decrypt(String cipherText, EncryptConfig config);
 }
