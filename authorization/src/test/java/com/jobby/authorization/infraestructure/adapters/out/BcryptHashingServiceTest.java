@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Base64;
 import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static com.jobby.authorization.infraestructure.TestAssertions.*;
 
@@ -62,7 +61,7 @@ public class BcryptHashingServiceTest {
         var hashResult = this.bcryptHashingService.hash(input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "input", "the input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is blank");
     }
 
     @Test
@@ -72,7 +71,7 @@ public class BcryptHashingServiceTest {
 
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "input", "the input are null or blank");
+        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is null");
     }
 
     @Test
