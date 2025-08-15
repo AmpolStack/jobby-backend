@@ -19,7 +19,7 @@ public class BcryptHashingService implements HashingService {
         return StringValidator.validateNotBlankString(input, "hash-input")
                 .flatMap(x -> {
                     var bytes = input.getBytes(StandardCharsets.UTF_8);
-                    return NumberValidator.validateGreaterInteger(bytes.length, VALID_LIMIT_OF_INPUT_BYTES, "hash-input-bytes");
+                    return NumberValidator.validateSmallerNotEqualsInteger(bytes.length, VALID_LIMIT_OF_INPUT_BYTES, "hash-input-bytes");
                 })
                 .map(x -> {
                     var encoder = new BCryptPasswordEncoder();
