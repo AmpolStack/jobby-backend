@@ -162,6 +162,16 @@ public class ValidationChain {
         });
     }
 
+    public ValidationChain validateInternalGreaterThan(long value, long threshold, String fieldName) {
+        return add(() -> {
+            if (value < threshold) {
+                return Result.failure(ErrorType.ITN_VALIDATION_RANGE,
+                        new Field(fieldName, fieldName + " is less than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
     public ValidationChain validateInternalSmallerThan(int value, int threshold, String fieldName) {
         return add(() -> {
             if (value > threshold) {
