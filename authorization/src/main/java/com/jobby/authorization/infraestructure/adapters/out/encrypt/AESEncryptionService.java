@@ -3,7 +3,6 @@ package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.encrypt.EncryptionService;
 import com.jobby.authorization.domain.shared.validators.NumberValidator;
-import com.jobby.authorization.domain.shared.validators.ObjectValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
