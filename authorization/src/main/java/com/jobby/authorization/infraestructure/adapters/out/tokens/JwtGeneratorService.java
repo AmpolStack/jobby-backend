@@ -1,8 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
-import com.jobby.authorization.domain.shared.validators.NumberValidator;
-import com.jobby.authorization.domain.shared.validators.ObjectValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
@@ -22,11 +20,13 @@ public class JwtGeneratorService implements TokenGeneratorService {
     private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
 
     private Result<Void, Error> validateTokenData(TokenData data){
-        return ObjectValidator.validateNotNullObject(data, "data")
-                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getIssuer(), "data.issuer"))
-                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getAudience(), "data.audience"))
-                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getEmail(), "data.email"))
-                .flatMap(v -> NumberValidator.validateGreaterNotEqualsLong(data.getMsExpirationTime(), 0, "data.ms-expiration-time"));
+        return ValidationChain.create()
+                .validateInternalNotNull(data, "token-data")
+                .validateInternalNotNull(data.getIssuer(), "token-data-issuer")
+                .validateInternalNotNull(data.getAudience(), "token-data-audience")
+                .validateInternalNotNull(data.getEmail(), "token-data-email")
+                .validateInternalGreaterThan(data.getMsExpirationTime(), 0, "token-data-ms-expiration-time")
+                .build();
     }
 
     private Result<SecretKey, Error> validateAndParseKey(String base64Key){
@@ -44,7 +44,9 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
                     final int BITS_MULTIPLIER = 8;
                     var keyLengthBits = keyBytes.length * BITS_MULTIPLIER;
-                    return ObjectValidator.validateAnyMatch(keyLengthBits, VALID_SECRET_KEY_LENGTHS_BITS, "jwt-key-length")
+                    return ValidationChain.create()
+                            .validateInternalAnyMatch(keyLengthBits, VALID_SECRET_KEY_LENGTHS_BITS, "jwt-length")
+                            .build()
                             .map(v2 -> Keys.hmacShaKeyFor(keyBytes));
                 });
     }

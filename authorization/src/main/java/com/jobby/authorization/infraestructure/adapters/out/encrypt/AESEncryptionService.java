@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Objects;
 
 @Service
 public class AESEncryptionService implements EncryptionService {
@@ -38,7 +37,12 @@ public class AESEncryptionService implements EncryptionService {
     @Override
     public Result<String, Error> decrypt(String cipherText, EncryptConfig config) {
         return  this.validator.validate(config)
-                .flatMap(v -> ObjectValidator.validateAnyMatch(config.getIv().getTLen(), VALID_T_LENGTHS_BITS, "tLen"))
+                .flatMap(v -> ValidationChain.create()
+                        .validateInternalAnyMatch(
+                                config.getIv().getLength(),
+                                VALID_T_LENGTHS_BITS,
+                                "t-len")
+                        .build())
                 .flatMap(v -> validateAndParseCipherText(cipherText))
                 .flatMap(combined -> NumberValidator.validateGreaterInteger(combined.length, config.getIv().getLength(), "combined")
                         .flatMap(v -> validateAndParseKey(config.getSecretKey()))
@@ -61,7 +65,12 @@ public class AESEncryptionService implements EncryptionService {
     @Override
     public Result<String, Error> encrypt(String data, EncryptConfig config) {
         return this.validator.validate(config)
-                .flatMap(x -> ObjectValidator.validateAnyMatch(config.getIv().getTLen(), VALID_T_LENGTHS_BITS, "tLen"))
+                .flatMap(v -> ValidationChain.create()
+                        .validateInternalAnyMatch(
+                                config.getIv().getLength(),
+                                VALID_T_LENGTHS_BITS,
+                                "t-len")
+                        .build())
                 .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap((key -> {
                     var iv = EncryptUtils.generateIv(config.getIv().getLength(), config.getIv().getTLen());
@@ -95,8 +104,11 @@ public class AESEncryptionService implements EncryptionService {
                                 new Field("keyBase64", "is invalid in base64"));
                     }
 
-                    var keyLengthInBytes = Objects.requireNonNull(key).getEncoded().length * BIT_MULTIPLIER;
-                    return ObjectValidator.validateAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "keyBase64-bytes")
+                    var keyLengthInBytes = key.getEncoded().length * BIT_MULTIPLIER;
+
+                    return ValidationChain.create()
+                            .validateInternalAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "key-base-64-bytes")
+                            .build()
                             .map(v3 -> key);
                 });
     }
