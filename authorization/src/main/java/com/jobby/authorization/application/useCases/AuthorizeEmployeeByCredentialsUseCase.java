@@ -8,7 +8,7 @@ import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import com.jobby.authorization.domain.ports.out.repositories.TokenRegistryRepository;
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
-import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
 import com.jobby.authorization.infraestructure.config.TokenConfig;
@@ -44,18 +44,23 @@ public class AuthorizeEmployeeByCredentialsUseCase implements AuthorizeEmployeeB
     public Result<TokenRegistry, Error> execute(String email, String password) {
         return this.validator.validate(this.tokenConfig)
                 .flatMap(x -> employeeRepository.findByEmailAndPassword(email, password))
-                .map(this::buildTokenData)
-                .flatMap(tokenData ->
-                        refreshTokenGeneratorService.generate()
-                                .flatMap(refreshToken ->
-                                        tokenGeneratorService.generate(tokenData, tokenConfig.getSecretKey())
-                                                .flatMap(token -> {
-                                                    TokenRegistry registry = buildTokenRegistry(tokenData, token, refreshToken);
-                                                    return this.tokenRegistryRepository.saveTokenRegistry(registry)
-                                                            .map(ignored -> registry);
-                                                })
-                                )
-                );
+                .flatMap(this::processEmployeeAuthorization);
+    }
+
+    private Result<TokenRegistry, Error> processEmployeeAuthorization(Employee employee) {
+        TokenData tokenData = buildTokenData(employee);
+        
+        return refreshTokenGeneratorService.generate()
+                .flatMap(refreshToken -> generateAndSaveTokens(tokenData, refreshToken));
+    }
+
+    private Result<TokenRegistry, Error> generateAndSaveTokens(TokenData tokenData, String refreshToken) {
+        return tokenGeneratorService.generate(tokenData, tokenConfig.getSecretKey())
+                .flatMap(token -> {
+                    TokenRegistry registry = buildTokenRegistry(tokenData, token, refreshToken);
+                    return this.tokenRegistryRepository.saveTokenRegistry(registry)
+                            .map(ignored -> registry);
+                });
     }
 
     private TokenData buildTokenData(Employee employee) {
