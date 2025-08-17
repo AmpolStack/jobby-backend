@@ -25,6 +25,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
                 .validateInternalNotNull(data.getIssuer(), "token-data-issuer")
                 .validateInternalNotNull(data.getAudience(), "token-data-audience")
                 .validateInternalNotNull(data.getEmail(), "token-data-email")
+                .validateInternalEmail(data.getEmail(), "token-data-email")
                 .validateInternalGreaterThan(data.getMsExpirationTime(), 0, "token-data-ms-expiration-time")
                 .build();
     }
@@ -102,7 +103,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
             claims = parser.parseSignedClaims(token);
         } catch (JwtException | IllegalArgumentException e) {
             return Result.failure(ErrorType.ITS_OPERATION_ERROR,
-                    new Field("token", "The provided token is invalid")
+                    new Field("jwt", "The provided token is invalid")
             );
         }
         return Result.success(claims.getPayload());
@@ -120,7 +121,6 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<Boolean, Error> isValid(String token, String base64Key) {
-
         return ValidationChain.create()
                 .validateInternalNotBlank(token, "jwt")
                 .build()
