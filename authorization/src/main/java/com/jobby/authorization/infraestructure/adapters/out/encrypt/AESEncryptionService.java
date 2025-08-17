@@ -34,13 +34,7 @@ public class AESEncryptionService implements EncryptionService {
 
     @Override
     public Result<String, Error> decrypt(String cipherText, EncryptConfig config) {
-        return  this.validator.validate(config)
-                .flatMap(v -> ValidationChain.create()
-                        .validateInternalAnyMatch(
-                                config.getIv().getLength(),
-                                VALID_T_LENGTHS_BITS,
-                                "t-len")
-                        .build())
+        return  validateConfig(config)
                 .flatMap(v -> validateAndParseCipherText(cipherText))
                 .flatMap(combined -> ValidationChain.create()
                         .validateInternalGreaterThan(
@@ -66,13 +60,7 @@ public class AESEncryptionService implements EncryptionService {
 
     @Override
     public Result<String, Error> encrypt(String data, EncryptConfig config) {
-        return this.validator.validate(config)
-                .flatMap(v -> ValidationChain.create()
-                        .validateInternalAnyMatch(
-                                config.getIv().getLength(),
-                                VALID_T_LENGTHS_BITS,
-                                "t-len")
-                        .build())
+        return validator.validate(config)
                 .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap((key -> {
                     var iv = EncryptUtils.generateIv(config.getIv().getLength(), config.getIv().getTLen());
@@ -91,6 +79,17 @@ public class AESEncryptionService implements EncryptionService {
                                 return Base64.getEncoder().encodeToString(combined);
                             });
                 }));
+    }
+
+
+    private Result<Void, Error> validateConfig(EncryptConfig config) {
+        return ValidationChain.create()
+                .add(this.validator.validate(config))
+                .validateInternalAnyMatch(
+                        config.getIv().getLength(),
+                        VALID_T_LENGTHS_BITS,
+                        "t-len")
+                .build();
     }
 
     private Result<Key, Error> validateAndParseKey(String keyBase64){
