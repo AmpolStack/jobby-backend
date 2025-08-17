@@ -4,11 +4,11 @@ import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.encrypt.EncryptionService;
 import com.jobby.authorization.domain.shared.validators.NumberValidator;
 import com.jobby.authorization.domain.shared.validators.ObjectValidator;
-import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;
@@ -84,7 +84,9 @@ public class AESEncryptionService implements EncryptionService {
 
     private Result<Key, Error> validateAndParseKey(String keyBase64){
         final int BIT_MULTIPLIER = 8;
-        return StringValidator.validateNotBlankString(keyBase64, "keyBase64")
+        return ValidationChain.create()
+                .validateInternalNotBlank(keyBase64, "key-base-64")
+                .build()
                 .flatMap(v -> {
                     var key = EncryptUtils.ParseKeySpec(ALGORITHM, keyBase64);
 
@@ -100,7 +102,9 @@ public class AESEncryptionService implements EncryptionService {
     }
 
     private Result<byte[], Error> validateAndParseCipherText(String cipherText){
-        return StringValidator.validateNotBlankString(cipherText, "cipher-text")
+        return ValidationChain.create()
+                .validateInternalNotBlank(cipherText, "cipher-text")
+                .build()
                 .flatMap(v -> {
                     byte[] combined;
                     try{

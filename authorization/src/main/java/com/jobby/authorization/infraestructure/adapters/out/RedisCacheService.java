@@ -6,6 +6,7 @@ import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.validators.StringValidator;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.SerializationException;
@@ -31,7 +32,9 @@ public class RedisCacheService implements CacheService {
 
     @Override
     public <T> Result<Void, Error> put(String key, T value, Duration ttl) {
-        return StringValidator.validateNotBlankString(key, "cache-key")
+        return ValidationChain.create()
+                .validateInternalNotBlank(key, "cache-key")
+                .build()
                 .flatMap(x -> {
                     try{
                         redisTemplate.opsForValue().set(key, value, ttl);
@@ -54,7 +57,9 @@ public class RedisCacheService implements CacheService {
 
     @Override
     public <T> Result<T, Error> get(String key, Class<T> type) {
-        return StringValidator.validateNotBlankString(key, "cache-key")
+        return ValidationChain.create()
+                .validateInternalNotBlank(key, "cache-key")
+                .build()
                 .flatMap(x -> {
                     Object value;
                     try{
@@ -96,7 +101,9 @@ public class RedisCacheService implements CacheService {
 
     @Override
     public Result<Void, Error> evict(String key) {
-        return StringValidator.validateNotBlankString(key, "cache-key")
+        return ValidationChain.create()
+                .validateInternalNotBlank(key, "cache-key")
+                .build()
                 .flatMap(x -> {
                     try{
                         redisTemplate.delete(key);

@@ -9,6 +9,7 @@ import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,9 @@ public class JwtGeneratorService implements TokenGeneratorService {
     }
 
     private Result<SecretKey, Error> validateAndParseKey(String base64Key){
-        return StringValidator.validateNotBlankString(base64Key, "jwt-key")
+        return ValidationChain.create()
+                .validateInternalNotBlank(base64Key, "jwt-key")
+                .build()
                 .flatMap(v ->{
                     byte[] keyBytes;
                     try {
@@ -106,7 +109,9 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<TokenData, Error> obtainData(String token, String base64Key) {
-        return StringValidator.validateNotBlankString(token, "token")
+        return ValidationChain.create()
+                .validateInternalNotBlank(token, "jwt")
+                .build()
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .flatMap(this::mapClaimsToTokenData);
@@ -114,7 +119,10 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<Boolean, Error> isValid(String token, String base64Key) {
-        return StringValidator.validateNotBlankString(token, "token")
+
+        return ValidationChain.create()
+                .validateInternalNotBlank(token, "jwt")
+                .build()
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .map(claims -> claims.getExpiration().after(new Date()));
