@@ -54,7 +54,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
 
         // Assert
-        assertFailure(result, ErrorType.ITN_SERIALIZATION_ERROR, "serialization", "serialization failed, the object provided are invalid to serialize");
+        assertFailure(result, ErrorType.ITS_SERIALIZATION_ERROR, "serialization", "serialization failed, the object provided are invalid to serialize");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
 
         // Assert
-        assertFailure(result, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
+        assertFailure(result, ErrorType.ITS_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
     }
 
     @Test
@@ -125,7 +125,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.get("thing", String.class);
 
         // Assert
-        assertFailure(result, ErrorType.ITN_SERIALIZATION_ERROR, "deserialization", "deserialization failed, the object provided are invalid to deserialize in the specified class");
+        assertFailure(result, ErrorType.ITS_SERIALIZATION_ERROR, "deserialization", "deserialization failed, the object provided are invalid to deserialize in the specified class");
     }
 
     @Test
@@ -136,7 +136,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.get("thing", String.class);
 
         // Assert
-        assertFailure(result, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
+        assertFailure(result, ErrorType.ITS_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
     }
 
     @Test
@@ -150,7 +150,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.get("thing", String.class);
 
         // Assert
-        assertFailure(result, ErrorType.ITN_OPERATION_ERROR, "type cast", "the object is not assignable to type");
+        assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "type cast", "the object is not assignable to type");
     }
 
     @Test
@@ -198,7 +198,7 @@ public class RedisCacheServiceTest {
         var result = this.redisCacheService.evict("thing");
 
         // Assert
-        assertFailure(result, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
+        assertFailure(result, ErrorType.ITS_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
     }
 
     @Test

@@ -2,13 +2,11 @@ package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.encrypt.EncryptionService;
-import com.jobby.authorization.domain.shared.validators.NumberValidator;
-import com.jobby.authorization.domain.shared.validators.ObjectValidator;
-import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;
@@ -18,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Objects;
 
 @Service
 public class AESEncryptionService implements EncryptionService {
@@ -38,9 +35,18 @@ public class AESEncryptionService implements EncryptionService {
     @Override
     public Result<String, Error> decrypt(String cipherText, EncryptConfig config) {
         return  this.validator.validate(config)
-                .flatMap(v -> ObjectValidator.validateAnyMatch(config.getIv().getTLen(), VALID_T_LENGTHS_BITS, "tLen"))
+                .flatMap(v -> ValidationChain.create()
+                        .validateInternalAnyMatch(
+                                config.getIv().getLength(),
+                                VALID_T_LENGTHS_BITS,
+                                "t-len")
+                        .build())
                 .flatMap(v -> validateAndParseCipherText(cipherText))
-                .flatMap(combined -> NumberValidator.validateGreaterInteger(combined.length, config.getIv().getLength(), "combined")
+                .flatMap(combined -> ValidationChain.create()
+                        .validateInternalGreaterThan(
+                                combined.length, config.getIv().getLength(),
+                                "combined")
+                        .build()
                         .flatMap(v -> validateAndParseKey(config.getSecretKey()))
                         .flatMap( key -> {
                             var rawIv = Arrays.copyOfRange(combined, 0, config.getIv().getLength());
@@ -61,7 +67,12 @@ public class AESEncryptionService implements EncryptionService {
     @Override
     public Result<String, Error> encrypt(String data, EncryptConfig config) {
         return this.validator.validate(config)
-                .flatMap(x -> ObjectValidator.validateAnyMatch(config.getIv().getTLen(), VALID_T_LENGTHS_BITS, "tLen"))
+                .flatMap(v -> ValidationChain.create()
+                        .validateInternalAnyMatch(
+                                config.getIv().getLength(),
+                                VALID_T_LENGTHS_BITS,
+                                "t-len")
+                        .build())
                 .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap((key -> {
                     var iv = EncryptUtils.generateIv(config.getIv().getLength(), config.getIv().getTLen());
@@ -84,23 +95,30 @@ public class AESEncryptionService implements EncryptionService {
 
     private Result<Key, Error> validateAndParseKey(String keyBase64){
         final int BIT_MULTIPLIER = 8;
-        return StringValidator.validateNotBlankString(keyBase64, "keyBase64")
+        return ValidationChain.create()
+                .validateInternalNotBlank(keyBase64, "key-base-64")
+                .build()
                 .flatMap(v -> {
                     var key = EncryptUtils.ParseKeySpec(ALGORITHM, keyBase64);
 
                     if(key == null){
-                        return Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+                        return Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
                                 new Field("keyBase64", "is invalid in base64"));
                     }
 
-                    var keyLengthInBytes = Objects.requireNonNull(key).getEncoded().length * BIT_MULTIPLIER;
-                    return ObjectValidator.validateAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "keyBase64-bytes")
+                    var keyLengthInBytes = key.getEncoded().length * BIT_MULTIPLIER;
+
+                    return ValidationChain.create()
+                            .validateInternalAnyMatch(keyLengthInBytes, VALID_KEY_LENGTHS_BITS, "key-base-64-bytes")
+                            .build()
                             .map(v3 -> key);
                 });
     }
 
     private Result<byte[], Error> validateAndParseCipherText(String cipherText){
-        return StringValidator.validateNotBlankString(cipherText, "cipher-text")
+        return ValidationChain.create()
+                .validateInternalNotBlank(cipherText, "cipher-text")
+                .build()
                 .flatMap(v -> {
                     byte[] combined;
                     try{

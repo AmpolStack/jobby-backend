@@ -44,7 +44,7 @@ public class DefaultEmployeeRepositoryTest {
         var resp = this.employeeRepository.findByEmailAndPassword(VALID_EMAIL, VALID_PASSWORD);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,"mongo.db.database", expectedErrorMessage);
+        assertFailure(resp, ErrorType.ITS_EXTERNAL_SERVICE_FAILURE,"mongo.db.database", expectedErrorMessage);
         verify(springDataMongoEmployeeRepository, times(1)).findByEmailAndPassword(any(), any());
         verify(mongoEmployeeEntityMapper, never()).toDomain(any());
     }
@@ -136,7 +136,7 @@ public class DefaultEmployeeRepositoryTest {
         var resp = this.employeeRepository.findById(VALID_ID);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,"mongo.db.database", expectedErrorMessage);
+        assertFailure(resp, ErrorType.ITS_EXTERNAL_SERVICE_FAILURE,"mongo.db.database", expectedErrorMessage);
         verify(springDataMongoEmployeeRepository, times(1)).findById(any());
         verify(mongoEmployeeEntityMapper, never()).toDomain(any());
     }

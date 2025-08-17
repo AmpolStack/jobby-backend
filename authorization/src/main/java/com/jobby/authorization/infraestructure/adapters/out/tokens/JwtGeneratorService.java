@@ -1,14 +1,12 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
-import com.jobby.authorization.domain.shared.validators.NumberValidator;
-import com.jobby.authorization.domain.shared.validators.ObjectValidator;
-import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -22,27 +20,33 @@ public class JwtGeneratorService implements TokenGeneratorService {
     private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
 
     private Result<Void, Error> validateTokenData(TokenData data){
-        return ObjectValidator.validateNotNullObject(data, "data")
-                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getIssuer(), "data.issuer"))
-                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getAudience(), "data.audience"))
-                .flatMap(v -> ObjectValidator.validateNotNullObject(data.getEmail(), "data.email"))
-                .flatMap(v -> NumberValidator.validateGreaterNotEqualsLong(data.getMsExpirationTime(), 0, "data.ms-expiration-time"));
+        return ValidationChain.create()
+                .validateInternalNotNull(data, "token-data")
+                .validateInternalNotNull(data.getIssuer(), "token-data-issuer")
+                .validateInternalNotNull(data.getAudience(), "token-data-audience")
+                .validateInternalNotNull(data.getEmail(), "token-data-email")
+                .validateInternalGreaterThan(data.getMsExpirationTime(), 0, "token-data-ms-expiration-time")
+                .build();
     }
 
     private Result<SecretKey, Error> validateAndParseKey(String base64Key){
-        return StringValidator.validateNotBlankString(base64Key, "jwt-key")
+        return ValidationChain.create()
+                .validateInternalNotBlank(base64Key, "jwt-key")
+                .build()
                 .flatMap(v ->{
                     byte[] keyBytes;
                     try {
                         keyBytes = Base64.getDecoder().decode(base64Key);
                     } catch (IllegalArgumentException e) {
-                        return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                        return Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
                                 new Field("key", "The key is not valid base64"));
                     }
 
                     final int BITS_MULTIPLIER = 8;
                     var keyLengthBits = keyBytes.length * BITS_MULTIPLIER;
-                    return ObjectValidator.validateAnyMatch(keyLengthBits, VALID_SECRET_KEY_LENGTHS_BITS, "jwt-key-length")
+                    return ValidationChain.create()
+                            .validateInternalAnyMatch(keyLengthBits, VALID_SECRET_KEY_LENGTHS_BITS, "jwt-length")
+                            .build()
                             .map(v2 -> Keys.hmacShaKeyFor(keyBytes));
                 });
     }
@@ -71,7 +75,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
         try {
             id = Integer.parseInt(claims.getSubject());
         } catch (NumberFormatException e) {
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+            return Result.failure(ErrorType.ITS_OPERATION_ERROR,
                     new Field("sub", "The subject is not a valid integer"));
         }
 
@@ -97,7 +101,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
         try{
             claims = parser.parseSignedClaims(token);
         } catch (JwtException | IllegalArgumentException e) {
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+            return Result.failure(ErrorType.ITS_OPERATION_ERROR,
                     new Field("token", "The provided token is invalid")
             );
         }
@@ -106,7 +110,9 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<TokenData, Error> obtainData(String token, String base64Key) {
-        return StringValidator.validateNotBlankString(token, "token")
+        return ValidationChain.create()
+                .validateInternalNotBlank(token, "jwt")
+                .build()
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .flatMap(this::mapClaimsToTokenData);
@@ -114,7 +120,10 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<Boolean, Error> isValid(String token, String base64Key) {
-        return StringValidator.validateNotBlankString(token, "token")
+
+        return ValidationChain.create()
+                .validateInternalNotBlank(token, "jwt")
+                .build()
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .flatMap(secretKey -> parseClaims(secretKey, token))
                 .map(claims -> claims.getExpiration().after(new Date()));

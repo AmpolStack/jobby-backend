@@ -43,7 +43,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.generate(null, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_OPERATION_ERROR, "tokenData", "The provided token data is null");
+        assertFailure(resp, ErrorType.ITS_OPERATION_ERROR, "tokenData", "The provided token data is null");
     }
 
     @Test
@@ -95,7 +95,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, key);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
+        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
     }
 
     @ParameterizedTest
@@ -109,7 +109,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
+        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
     }
 
     @RepeatedTest(100)
@@ -128,7 +128,7 @@ public class JwtGeneratorServiceTest {
         var result = this.jwtGeneratorService.obtainData(null, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(result, ErrorType.ITN_OPERATION_ERROR, "token", "The provided token is null or blank");
+        assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is null or blank");
     }
 
     @ParameterizedTest
@@ -138,7 +138,7 @@ public class JwtGeneratorServiceTest {
         var result = this.jwtGeneratorService.obtainData(token, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(result, ErrorType.ITN_OPERATION_ERROR, "token", "The provided token is null or blank");
+        assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is null or blank");
     }
 
     @Test
@@ -167,7 +167,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.obtainData(VALID_TOKEN, key);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
+        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
     }
 
     @ParameterizedTest
@@ -181,7 +181,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.obtainData(VALID_TOKEN, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
+        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
     }
 
     @RepeatedTest(100)
@@ -194,7 +194,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.obtainData(VALID_TOKEN, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_OPERATION_ERROR, "token", "The provided token is invalid");
+        assertFailure(resp, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is invalid");
     }
 
     @RepeatedTest(100)
@@ -214,7 +214,7 @@ public class JwtGeneratorServiceTest {
         var result = this.jwtGeneratorService.isValid(null, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(result, ErrorType.ITN_OPERATION_ERROR, "token", "The provided token is null or blank");
+        assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is null or blank");
     }
 
     @ParameterizedTest
@@ -224,7 +224,7 @@ public class JwtGeneratorServiceTest {
         var result = this.jwtGeneratorService.isValid(token, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(result, ErrorType.ITN_OPERATION_ERROR, "token", "The provided token is null or blank");
+        assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is null or blank");
     }
 
     @Test
@@ -253,7 +253,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.isValid(VALID_TOKEN, key);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
+        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
     }
 
     @ParameterizedTest
@@ -267,7 +267,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.isValid(VALID_TOKEN, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
+        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
     }
 
     @RepeatedTest(100)
@@ -280,7 +280,7 @@ public class JwtGeneratorServiceTest {
         var resp = this.jwtGeneratorService.isValid(VALID_TOKEN, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITN_OPERATION_ERROR, "token", "The provided token is invalid");
+        assertFailure(resp, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is invalid");
     }
 
     @RepeatedTest(100)

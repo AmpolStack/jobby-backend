@@ -58,7 +58,7 @@ public class DefaultEncryptBuilder implements EncryptBuilder {
             cipher = Cipher.getInstance(transformation);
         }
         catch (NoSuchAlgorithmException | NoSuchPaddingException e){
-            return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+            return Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
                     new Field(
                             "transformation",
                             "Invalid cipher transformation: " + transformation
@@ -70,7 +70,7 @@ public class DefaultEncryptBuilder implements EncryptBuilder {
             cipher.init(this.mode, this.key, this.iv);
         }
         catch (InvalidKeyException | InvalidAlgorithmParameterException | InvalidParameterException e){
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+            return Result.failure(ErrorType.ITS_OPERATION_ERROR,
                     new Field[]{
                             new Field(
                                     "this.key",
@@ -93,7 +93,7 @@ public class DefaultEncryptBuilder implements EncryptBuilder {
             cipherBytes = cipher.doFinal(this.data);
         }
         catch (IllegalBlockSizeException | BadPaddingException e){
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+            return Result.failure(ErrorType.ITS_OPERATION_ERROR,
                     new Field(
                             "this.data",
                             "Cipher operation failed - data may be corrupted or incompatible"

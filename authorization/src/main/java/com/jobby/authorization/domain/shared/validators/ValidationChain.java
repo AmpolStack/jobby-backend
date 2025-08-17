@@ -5,6 +5,7 @@ import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -87,6 +88,26 @@ public class ValidationChain {
         });
     }
 
+    public ValidationChain validateGreaterOrEqualsThan(int value, int threshold, String fieldName) {
+        return add(() -> {
+            if (value <= threshold) {
+                return Result.failure(ErrorType.VALIDATION_ERROR,
+                        new Field(fieldName, fieldName + " is less than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public ValidationChain validateSmallerOrEqualsThan(int value, int threshold, String fieldName) {
+        return add(() -> {
+            if (value >= threshold) {
+                return Result.failure(ErrorType.VALIDATION_ERROR,
+                        new Field(fieldName, fieldName + " is bigger than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
     // internal validations
     public ValidationChain validateInternalNotNull(Object value, String fieldName) {
         return add(() -> {
@@ -107,6 +128,85 @@ public class ValidationChain {
             if (value.isBlank()) {
                 return Result.failure(ErrorType.ITN_VALIDATION_BLANK,
                         new Field(fieldName, "Internal validation failed: " + fieldName + " is blank"));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public ValidationChain validateInternalEmail(String email, String fieldName) {
+        return add(() -> {
+            if (email == null) {
+                return Result.failure(ErrorType.ITN_VALIDATION_NULL,
+                        new Field(fieldName, fieldName + " is null"));
+            }
+            if (email.isBlank()) {
+                return Result.failure(ErrorType.ITN_VALIDATION_BLANK,
+                        new Field(fieldName, fieldName + " is blank"));
+            }
+            String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+            if (!email.matches(emailRegex)) {
+                return Result.failure(ErrorType.ITN_VALIDATION_FORMAT,
+                        new Field(fieldName, fieldName + " must be a valid email"));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public ValidationChain validateInternalGreaterThan(int value, int threshold, String fieldName) {
+        return add(() -> {
+            if (value < threshold) {
+                return Result.failure(ErrorType.ITN_VALIDATION_RANGE,
+                        new Field(fieldName, fieldName + " is less than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public ValidationChain validateInternalGreaterThan(long value, long threshold, String fieldName) {
+        return add(() -> {
+            if (value < threshold) {
+                return Result.failure(ErrorType.ITN_VALIDATION_RANGE,
+                        new Field(fieldName, fieldName + " is less than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public ValidationChain validateInternalSmallerThan(int value, int threshold, String fieldName) {
+        return add(() -> {
+            if (value > threshold) {
+                return Result.failure(ErrorType.ITN_VALIDATION_RANGE,
+                        new Field(fieldName, fieldName + " is bigger than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public ValidationChain validateInternalGreaterOrEqualsThan(int value, int threshold, String fieldName) {
+        return add(() -> {
+            if (value <= threshold) {
+                return Result.failure(ErrorType.ITN_VALIDATION_RANGE,
+                        new Field(fieldName, fieldName + " is less than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public ValidationChain validateInternalSmallerOrEqualsThan(int value, int threshold, String fieldName) {
+        return add(() -> {
+            if (value >= threshold) {
+                return Result.failure(ErrorType.ITN_VALIDATION_RANGE,
+                        new Field(fieldName, fieldName + " is bigger than " + threshold));
+            }
+            return Result.success(null);
+        });
+    }
+
+    public <T> ValidationChain validateInternalAnyMatch(T value, T[] threshold, String fieldName) {
+        return add(() -> {
+            if(Arrays.stream(threshold).noneMatch(length -> length.equals(value))){
+                return Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
+                        new Field(fieldName, "The value is not within valid parameters"));
             }
             return Result.success(null);
         });

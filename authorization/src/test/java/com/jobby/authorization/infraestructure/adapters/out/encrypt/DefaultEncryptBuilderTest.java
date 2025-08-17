@@ -25,7 +25,7 @@ public class DefaultEncryptBuilderTest {
     @Test
     public void build_whenInstanceIsNull() {
         // Arrange
-        var resp = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+        var resp = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
                 new Field(
                         "transformation",
                         "Invalid cipher transformation: " + null
@@ -46,7 +46,7 @@ public class DefaultEncryptBuilderTest {
     @ValueSource(strings = {"SHA-256", "NOTHING", "SHA"})
     public void build_whenInstanceIsInvalid(String input) {
         // Arrange
-        var resp = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+        var resp = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
                 new Field(
                         "transformation",
                         "Invalid cipher transformation: " + input
@@ -67,7 +67,7 @@ public class DefaultEncryptBuilderTest {
     @Test
     public void build_whenKeyOrIvIsNull_Encrypt() {
         // Arrange
-        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+        var resp = Result.failure(ErrorType.ITS_OPERATION_ERROR,
                 new Field[]{
                         new Field(
                                 "this.key",
@@ -106,7 +106,7 @@ public class DefaultEncryptBuilderTest {
         // Arrange
         var key = new SecretKeySpec(new byte[5], "AES"); // 5 bytes, invalid key
         var iv = EncryptUtils.generateIv(12, 128);
-        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+        var resp = Result.failure(ErrorType.ITS_OPERATION_ERROR,
                 new Field[]{
                         new Field(
                                 "this.key",
@@ -143,7 +143,7 @@ public class DefaultEncryptBuilderTest {
         // Arrange
         var key = EncryptUtils.generateKey("AES", 256);
         var iv = new GCMParameterSpec(128, new byte[0]); // invalid iv with empty length
-        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+        var resp = Result.failure(ErrorType.ITS_OPERATION_ERROR,
                 new Field[]{
                         new Field(
                                 "this.key",
@@ -182,7 +182,7 @@ public class DefaultEncryptBuilderTest {
         var data = new byte[10];
         new Random().nextBytes(data);
 
-        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+        var resp = Result.failure(ErrorType.ITS_OPERATION_ERROR,
                 new Field(
                         "this.data",
                         "Cipher operation failed - data may be corrupted or incompatible"
@@ -213,7 +213,7 @@ public class DefaultEncryptBuilderTest {
         var data = new byte[32];
         new Random().nextBytes(data);
 
-        var resp = Result.failure(ErrorType.ITN_OPERATION_ERROR,
+        var resp = Result.failure(ErrorType.ITS_OPERATION_ERROR,
                 new Field(
                         "this.data",
                         "Cipher operation failed - data may be corrupted or incompatible"
