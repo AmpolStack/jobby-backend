@@ -40,7 +40,7 @@ public class DefaultEmployeeRepository implements EmployeeRepository {
         }
         catch (DataAccessResourceFailureException ex){
             return Result.failure(
-                    ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
+                    ErrorType.ITS_EXTERNAL_SERVICE_FAILURE,
                     new Field("mongo.db.database", ex.getMessage())
             );
         }

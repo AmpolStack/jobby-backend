@@ -22,7 +22,7 @@ public class RedisCacheService implements CacheService {
     }
 
     private static final Result<?, Error> REDIS_CONNECTION_FAILURE_RESULT =  Result.failure(
-            ErrorType.ITN_EXTERNAL_SERVICE_FAILURE,
+            ErrorType.ITS_EXTERNAL_SERVICE_FAILURE,
             new Field(
                     "redis",
                     "Error connection with redis"
@@ -38,7 +38,7 @@ public class RedisCacheService implements CacheService {
                     }
                     catch(SerializationException e){
                         return Result.failure(
-                                ErrorType.ITN_SERIALIZATION_ERROR,
+                                ErrorType.ITS_SERIALIZATION_ERROR,
                                 new Field(
                                         "serialization",
                                         "serialization failed, the object provided are invalid to serialize"
@@ -61,7 +61,7 @@ public class RedisCacheService implements CacheService {
                         value = redisTemplate.opsForValue().get(key);
                     }
                     catch(SerializationException e){
-                        return Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+                        return Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
                                 new Field(
                                         "deserialization",
                                         "deserialization failed, the object provided are invalid to deserialize in the specified class"
@@ -82,7 +82,7 @@ public class RedisCacheService implements CacheService {
                     }
                     catch(ClassCastException e){
                         return Result.failure(
-                                ErrorType.ITN_OPERATION_ERROR,
+                                ErrorType.ITS_OPERATION_ERROR,
                                 new Field(
                                         "type cast",
                                         "the object is not assignable to type"

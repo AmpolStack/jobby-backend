@@ -36,7 +36,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
                     try {
                         keyBytes = Base64.getDecoder().decode(base64Key);
                     } catch (IllegalArgumentException e) {
-                        return Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+                        return Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
                                 new Field("key", "The key is not valid base64"));
                     }
 
@@ -71,7 +71,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
         try {
             id = Integer.parseInt(claims.getSubject());
         } catch (NumberFormatException e) {
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+            return Result.failure(ErrorType.ITS_OPERATION_ERROR,
                     new Field("sub", "The subject is not a valid integer"));
         }
 
@@ -97,7 +97,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
         try{
             claims = parser.parseSignedClaims(token);
         } catch (JwtException | IllegalArgumentException e) {
-            return Result.failure(ErrorType.ITN_OPERATION_ERROR,
+            return Result.failure(ErrorType.ITS_OPERATION_ERROR,
                     new Field("token", "The provided token is invalid")
             );
         }

@@ -147,7 +147,7 @@ public class AESEncryptionServiceTest {
         final String INVALID_KEY = "p652zw20jx/Bvg/4I7Mrdg==%";
         VALID_CONFIG.setSecretKey(INVALID_KEY);
 
-        var expectedResult = Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+        var expectedResult = Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
                 new Field("keyBase64", "is invalid in base64"));
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
@@ -165,7 +165,7 @@ public class AESEncryptionServiceTest {
         final String INVALID_KEY = "p652zw20jx/Bvg/4I7Mrdg==%";
         VALID_CONFIG.setSecretKey(INVALID_KEY);
 
-        var expectedResult = Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+        var expectedResult = Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
                 new Field("keyBase64", "is invalid in base64"));
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
@@ -189,7 +189,7 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(generateRandomKey(keyLength));
 
-        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
                      new Field("keyBase64-bytes", "The value is not within valid parameters"));
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
@@ -208,7 +208,7 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(generateRandomKey(keyLength));
 
-        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER,
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
                 new Field("keyBase64-bytes", "The value is not within valid parameters"));
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
@@ -256,7 +256,7 @@ public class AESEncryptionServiceTest {
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
-        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
         // Act
         var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
 
@@ -273,7 +273,7 @@ public class AESEncryptionServiceTest {
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
-        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
         // Act
         var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
 
@@ -324,7 +324,7 @@ public class AESEncryptionServiceTest {
         // Arrange
         when(this.validator.validate(any())).thenReturn(Result.success(null));
         setUpBuilder(Cipher.ENCRYPT_MODE);
-        var expectedResult = Result.failure(ErrorType.ITN_INVALID_OPTION_PARAMETER, new Field("expected-instance", "expected-reason"));
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER, new Field("expected-instance", "expected-reason"));
         when(this.defaultEncryptBuilder.build()).thenReturn(Result.renewFailure(expectedResult));
 
         // Act

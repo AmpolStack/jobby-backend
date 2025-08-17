@@ -89,7 +89,7 @@ public class AESEncryptionService implements EncryptionService {
                     var key = EncryptUtils.ParseKeySpec(ALGORITHM, keyBase64);
 
                     if(key == null){
-                        return Result.failure(ErrorType.ITN_SERIALIZATION_ERROR,
+                        return Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
                                 new Field("keyBase64", "is invalid in base64"));
                     }
 
