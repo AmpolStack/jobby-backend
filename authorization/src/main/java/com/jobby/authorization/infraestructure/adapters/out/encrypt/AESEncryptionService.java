@@ -2,7 +2,6 @@ package com.jobby.authorization.infraestructure.adapters.out.encrypt;
 
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.encrypt.EncryptionService;
-import com.jobby.authorization.domain.shared.validators.NumberValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
@@ -43,7 +42,11 @@ public class AESEncryptionService implements EncryptionService {
                                 "t-len")
                         .build())
                 .flatMap(v -> validateAndParseCipherText(cipherText))
-                .flatMap(combined -> NumberValidator.validateGreaterInteger(combined.length, config.getIv().getLength(), "combined")
+                .flatMap(combined -> ValidationChain.create()
+                        .validateInternalGreaterThan(
+                                combined.length, config.getIv().getLength(),
+                                "combined")
+                        .build()
                         .flatMap(v -> validateAndParseKey(config.getSecretKey()))
                         .flatMap( key -> {
                             var rawIv = Arrays.copyOfRange(combined, 0, config.getIv().getLength());

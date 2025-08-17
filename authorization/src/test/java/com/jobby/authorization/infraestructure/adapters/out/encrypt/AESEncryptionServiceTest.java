@@ -389,7 +389,10 @@ public class AESEncryptionServiceTest {
     public void decrypt_whenCombinedIsInvalid() {
         // Arrange
         when(this.validator.validate(any())).thenReturn(Result.success(null));
-        var expectedResult = NumberValidator.validateGreaterInteger(0, 12, "combined");
+        var expectedResult = ValidationChain.create()
+                .validateInternalGreaterThan(0 ,12, "combined")
+                .build();
+
         // Act
         var result = this.aesEncryptionService.decrypt(VALID_CIPHER.substring(0, VALID_IV_LENGTH - 1), VALID_CONFIG);
 

@@ -18,11 +18,11 @@ public class BcryptHashingService implements HashingService {
     public Result<String, Error> hash(String input) {
         return ValidationChain.create()
                 .validateInternalNotBlank(input, "hash-input")
+                .validateInternalSmallerThan(
+                        input.getBytes(StandardCharsets.UTF_8).length,
+                        VALID_LIMIT_OF_INPUT_BYTES,
+                        "hash-input-bytes")
                 .build()
-                .flatMap(x -> {
-                    var bytes = input.getBytes(StandardCharsets.UTF_8);
-                    return NumberValidator.validateSmallerInteger(bytes.length, VALID_LIMIT_OF_INPUT_BYTES, "hash-input-bytes");
-                })
                 .map(x -> {
                     var encoder = new BCryptPasswordEncoder();
                     return encoder.encode(input);
