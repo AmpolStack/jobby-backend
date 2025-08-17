@@ -2,7 +2,6 @@ package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.domain.ports.out.HashingService;
 import com.jobby.authorization.domain.shared.validators.NumberValidator;
-import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.validators.ValidationChain;

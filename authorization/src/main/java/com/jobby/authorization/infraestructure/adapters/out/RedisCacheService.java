@@ -5,7 +5,6 @@ import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
-import com.jobby.authorization.domain.shared.validators.StringValidator;
 import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
