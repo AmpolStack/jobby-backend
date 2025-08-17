@@ -7,6 +7,7 @@ import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.validators.NumberValidator;
 import com.jobby.authorization.domain.shared.validators.StringValidator;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import com.jobby.authorization.infraestructure.config.EncryptConfig.Iv;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,7 +82,10 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(key);
 
-        var expectedResult = StringValidator.validateNotBlankString(key, "keyBase64");
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(key, "key-base-64")
+                .build();
+
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
@@ -98,7 +102,10 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(key);
 
-        var expectedResult = StringValidator.validateNotBlankString(key, "keyBase64");
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(key, "key-base-64")
+                .build();
+
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
@@ -114,7 +121,9 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(null);
 
-        var expectedResult = StringValidator.validateNotBlankString(null, "keyBase64");
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "key-base-64")
+                .build();
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
@@ -130,7 +139,10 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(null);
 
-        var expectedResult = StringValidator.validateNotBlankString(null, "keyBase64");
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "key-base-64")
+                .build();
+
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
@@ -288,7 +300,10 @@ public class AESEncryptionServiceTest {
         // Arrange
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
-        var expectedResult = StringValidator.validateNotBlankString(cipherText, "cipher-text");
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(cipherText, "cipher-text")
+                .build();
+
         // Act
         var result = this.aesEncryptionService.decrypt(cipherText, VALID_CONFIG);
 
@@ -302,7 +317,9 @@ public class AESEncryptionServiceTest {
         // Arrange
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
-        var expectedResult = StringValidator.validateNotBlankString(null, "cipher-text");
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "cipher-text")
+                .build();
         // Act
         var result = this.aesEncryptionService.decrypt(null, VALID_CONFIG);
 
