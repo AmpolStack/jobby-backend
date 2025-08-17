@@ -1,4 +1,4 @@
-package com.jobby.authorization.domain.shared.result;
+package com.jobby.authorization.domain.shared.errors;
 
 public enum ErrorType {
     // --- Errors visible to the end user ---

@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
-import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.result.Result;
 import org.springframework.stereotype.Component;
 

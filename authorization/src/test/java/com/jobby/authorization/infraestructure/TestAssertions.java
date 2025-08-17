@@ -1,8 +1,8 @@
 package com.jobby.authorization.infraestructure;
 
-import com.jobby.authorization.domain.shared.result.Error;
-import com.jobby.authorization.domain.shared.result.ErrorType;
-import com.jobby.authorization.domain.shared.result.Field;
+import com.jobby.authorization.domain.shared.errors.Error;
+import com.jobby.authorization.domain.shared.errors.ErrorType;
+import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 
 import static org.junit.jupiter.api.Assertions.*;

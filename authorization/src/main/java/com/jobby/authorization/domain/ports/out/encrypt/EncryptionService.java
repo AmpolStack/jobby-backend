@@ -1,6 +1,6 @@
 package com.jobby.authorization.domain.ports.out.encrypt;
 
-import com.jobby.authorization.domain.shared.result.Error;
+import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 

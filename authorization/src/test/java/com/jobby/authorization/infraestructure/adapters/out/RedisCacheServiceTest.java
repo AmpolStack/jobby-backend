@@ -1,6 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
-import com.jobby.authorization.domain.shared.result.ErrorType;
+import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.result.Result;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
