@@ -18,7 +18,7 @@ import org.springframework.data.redis.serializer.SerializationException;
 import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static com.jobby.authorization.infraestructure.TestAssertions.*;
+import static com.jobby.authorization.TestAssertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RedisCacheServiceTest {

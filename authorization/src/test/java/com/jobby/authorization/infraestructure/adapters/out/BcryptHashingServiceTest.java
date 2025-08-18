@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Base64;
 import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
-import static com.jobby.authorization.infraestructure.TestAssertions.*;
+import static com.jobby.authorization.TestAssertions.*;
 
 public class BcryptHashingServiceTest {
 

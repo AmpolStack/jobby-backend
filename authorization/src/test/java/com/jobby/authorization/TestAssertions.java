@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure;
+package com.jobby.authorization;
 
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;

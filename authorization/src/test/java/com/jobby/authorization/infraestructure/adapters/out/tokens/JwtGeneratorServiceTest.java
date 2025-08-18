@@ -11,7 +11,7 @@ import java.util.Base64;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import static com.jobby.authorization.infraestructure.TestAssertions.*;
+import static com.jobby.authorization.TestAssertions.*;
 
 public class JwtGeneratorServiceTest {
 

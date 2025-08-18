@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessResourceFailureException;
 import java.util.Optional;
 import java.util.stream.Stream;
-import static com.jobby.authorization.infraestructure.TestAssertions.*;
+import static com.jobby.authorization.TestAssertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
