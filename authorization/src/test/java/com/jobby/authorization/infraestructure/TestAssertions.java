@@ -4,7 +4,6 @@ import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestAssertions {
@@ -19,6 +18,13 @@ public final class TestAssertions {
         assertEquals(expected, response);
         assertTrue(response.isFailure());
     }
+
+    public static <T> void assertFailure(Result<T, Error> response,
+                                         Result<T, Error> expected) {
+        assertEquals(expected, response);
+        assertTrue(response.isFailure());
+    }
+
 
     public static <T> void assertSuccess(Result<T, Error> response) {
         assertTrue(response.isSuccess());
