@@ -1,4 +1,4 @@
-package com.jobby.authorization.domain.shared.result;
+package com.jobby.domain.result;
 
 import com.jobby.domain.mobility.Error;
 import com.jobby.domain.mobility.ErrorType;

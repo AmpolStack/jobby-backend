@@ -5,7 +5,7 @@ import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import com.jobby.domain.mobility.Error;
 import com.jobby.domain.mobility.ErrorType;
 import com.jobby.domain.mobility.Field;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.result.Result;
 import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import com.jobby.authorization.infraestructure.persistence.entities.MongoEmployeeEntity;
 import com.jobby.authorization.infraestructure.persistence.mappers.MongoEmployeeEntityMapper;

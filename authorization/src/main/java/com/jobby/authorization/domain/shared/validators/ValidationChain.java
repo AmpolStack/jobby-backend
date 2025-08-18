@@ -3,7 +3,7 @@ package com.jobby.authorization.domain.shared.validators;
 import com.jobby.domain.mobility.Error;
 import com.jobby.domain.mobility.ErrorType;
 import com.jobby.domain.mobility.Field;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.result.Result;
 
 import java.util.*;
 import java.util.function.Supplier;

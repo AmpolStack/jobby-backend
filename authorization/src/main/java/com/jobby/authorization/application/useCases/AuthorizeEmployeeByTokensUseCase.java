@@ -10,7 +10,7 @@ import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorServ
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
 import com.jobby.authorization.domain.shared.TokenData;
 import com.jobby.domain.mobility.Error;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.result.Result;
 import com.jobby.authorization.infraestructure.config.TokenConfig;
 import org.springframework.stereotype.Service;
 import java.time.Instant;

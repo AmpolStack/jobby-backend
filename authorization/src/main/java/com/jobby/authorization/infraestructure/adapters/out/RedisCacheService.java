@@ -4,7 +4,7 @@ import com.jobby.authorization.domain.ports.out.CacheService;
 import com.jobby.domain.mobility.Error;
 import com.jobby.domain.mobility.ErrorType;
 import com.jobby.domain.mobility.Field;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.result.Result;
 import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;

@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.response.definition;
 
 import com.jobby.domain.mobility.Error;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.result.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

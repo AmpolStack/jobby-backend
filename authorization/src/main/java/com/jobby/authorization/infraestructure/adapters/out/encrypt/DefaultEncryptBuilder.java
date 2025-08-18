@@ -4,7 +4,7 @@ import com.jobby.authorization.domain.ports.out.encrypt.EncryptBuilder;
 import com.jobby.domain.mobility.Error;
 import com.jobby.domain.mobility.ErrorType;
 import com.jobby.domain.mobility.Field;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.result.Result;
 import org.springframework.stereotype.Component;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

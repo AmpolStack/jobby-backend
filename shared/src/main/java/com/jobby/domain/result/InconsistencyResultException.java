@@ -1,4 +1,4 @@
-package com.jobby.authorization.domain.shared.result;
+package com.jobby.domain.result;
 
 public class InconsistencyResultException extends RuntimeException {
     public InconsistencyResultException(String message) {

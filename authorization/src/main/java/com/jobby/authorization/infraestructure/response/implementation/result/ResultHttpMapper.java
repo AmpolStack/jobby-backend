@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.response.implementation.result;
 
 import com.jobby.domain.mobility.Error;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.result.Result;
 import com.jobby.authorization.infraestructure.response.definition.ErrorTypeHttpCollection;
 import com.jobby.authorization.infraestructure.response.definition.ApiResponseMapper;
 import org.springframework.http.HttpStatus;
