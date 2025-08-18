@@ -1,23 +1,41 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
+import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.TokenData;
+import com.jobby.authorization.domain.shared.errors.Field;
+import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.Base64;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import static com.jobby.authorization.TestAssertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class JwtGeneratorServiceTest {
 
     private TokenData VALID_TOKEN_DATA;
     private String VALID_TOKEN;
     private String VALID_KEY_BASE_64;
+
+    @Mock
+    private SafeResultValidator validator;
+
+    @InjectMocks
+    private JwtGeneratorService jwtGeneratorService;
 
     @BeforeEach
     public void setUpTokenDataAndToken(){
@@ -35,86 +53,96 @@ public class JwtGeneratorServiceTest {
         VALID_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaXNzIjoiY29tLmpvYmJ5LmF1dGhvcml6YXRpb24iLCJhdWQiOlsiY29tLmpvYmJ5LmVtcGxveWVlIl0sImNvbS5qb2JieS5lbXBsb3llZS5waG9uZSI6IjM0NDExMzEiLCJpYXQiOjE3NTQ2OTM0NDksImV4cCI6MTc1NDY5MzU2OX0.g1kE3pxqqyh-QorArs1yMLfULmEpBHgz0M4vaLvkOR0";
     }
 
-    private final JwtGeneratorService jwtGeneratorService = new JwtGeneratorService();
-
     @Test
     public void generate_WhenTokenDataIsNull(){
-        // Act
-        var resp = this.jwtGeneratorService.generate(null, VALID_KEY_BASE_64);
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
+                new Field("expected-instance", "expected-reason"));
 
-        // Assert
-        assertFailure(resp, ErrorType.ITS_OPERATION_ERROR, "tokenData", "The provided token data is null");
-    }
-
-    @Test
-    public void generate_WhenTokenDataEmailPropertyIsNull(){
-        VALID_TOKEN_DATA.setEmail(null);
+        when(this.validator.validate(any())).thenReturn(Result.renewFailure(expectedResult));
 
         // Act
-        var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
+        var result = this.jwtGeneratorService.generate(null, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.VALIDATION_ERROR, "tokenData.email", "The email in token data is null");
-    }
-
-    @ParameterizedTest
-    @MethodSource("negativeOrZeroExpirationTimes")
-    public void generate_WhenTokenDataExpirationTimeIsZeroOrNegative(int msExpirationTime){
-        VALID_TOKEN_DATA.setMsExpirationTime(msExpirationTime);
-
-        // Act
-        var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
-
-        // Assert
-        assertFailure(resp, ErrorType.VALIDATION_ERROR, "tokenData.msExpirationTime", "The Expiration time in token data is less than 0");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
     public void generate_WhenKeyIsNull(){
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "jwt-key")
+                .build();
+
         // Act
         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, null);
 
         // Assert
-        assertFailure(resp, ErrorType.VALIDATION_ERROR, "key", "The token key is null or empty");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
-    @MethodSource("blankStringsUpTo4")
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void generate_WhenKeyIsBlank(String key){
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(key, "jwt-key")
+                .build();
+
         // Act
         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, key);
 
         // Assert
-        assertFailure(resp, ErrorType.VALIDATION_ERROR, "key", "The token key is null or empty");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
     @MethodSource("invalidBase64Keys")
     public void generate_WhenKeyIsInvalidInBase64(String key){
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
+                new Field("key", "The key is not valid base64"));
+
         // Act
         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, key);
 
         // Assert
-        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
     @MethodSource("invalidKeyBitLengths")
     public void generate_WhenKeyLengthIsInvalid(int keyByteLength){
+        // Arrange
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
         var bytes = new byte[keyByteLength/8];
         new Random().nextBytes(bytes);
         VALID_KEY_BASE_64 = Base64.getEncoder().encodeToString(bytes);
+
+        var expectedResult = ValidationChain.create()
+                .validateInternalAnyMatch(VALID_KEY_BASE_64, new Integer[]{ 256, 384, 512 }, "jwt-length")
+                .build();
 
         // Act
         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @RepeatedTest(100)
     public void generate_whenAllIsCorrect(){
         // Act
+        when(this.validator.validate(any())).thenReturn(Result.success(null));
+
         var resp = this.jwtGeneratorService.generate(VALID_TOKEN_DATA, VALID_KEY_BASE_64);
 
         // Assert
@@ -124,50 +152,74 @@ public class JwtGeneratorServiceTest {
 
     @Test()
     public void obtainData_whenTokenIsNull(){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "jwt")
+                .build();
+
         // Act
         var result = this.jwtGeneratorService.obtainData(null, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is null or blank");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
-    @MethodSource("blankStringsUpTo5")
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void obtainData_whenTokenIsBlank(String token){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(token, "jwt")
+                .build();
+
         // Act
         var result = this.jwtGeneratorService.obtainData(token, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is null or blank");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
     public void obtainData_WhenKeyIsNull(){
+        // Arrange
+        var expectedResult =  ValidationChain.create()
+                .validateInternalNotBlank(null, "jwt-key")
+                .build();
+
         // Act
         var resp = this.jwtGeneratorService.obtainData("a", null);
 
         // Assert
-        assertFailure(resp, ErrorType.VALIDATION_ERROR, "key", "The token key is null or empty");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
-    @MethodSource("blankStringsUpTo4")
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void obtainData_WhenKeyIsBlank(String key){
+        // Arrange
+        var expectedResult =  ValidationChain.create()
+                .validateInternalNotBlank(key, "jwt-key")
+                .build();
+
         // Act
-        var resp = this.jwtGeneratorService.obtainData(VALID_TOKEN, key);
+        var resp = this.jwtGeneratorService.obtainData("a", key);
 
         // Assert
-        assertFailure(resp, ErrorType.VALIDATION_ERROR, "key", "The token key is null or empty");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
     @MethodSource("invalidBase64Keys")
     public void obtainData_WhenKeyIsInvalidInBase64(String key){
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
+                new Field("key", "The key is not valid base64"));
+
         // Act
         var resp = this.jwtGeneratorService.obtainData(VALID_TOKEN, key);
 
         // Assert
-        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key is not valid base64");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
@@ -177,11 +229,14 @@ public class JwtGeneratorServiceTest {
         new Random().nextBytes(bytes);
         VALID_KEY_BASE_64 = Base64.getEncoder().encodeToString(bytes);
 
+        var expectedResult = ValidationChain.create()
+                .validateInternalAnyMatch(keyByteLength * 8,new Integer[]{ 256, 384, 512 }, "jwt-length")
+                .build();
         // Act
         var resp = this.jwtGeneratorService.obtainData(VALID_TOKEN, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITS_INVALID_OPTION_PARAMETER, "key", "The key length are invalid");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @RepeatedTest(100)
@@ -190,11 +245,15 @@ public class JwtGeneratorServiceTest {
         new Random().nextBytes(bytes);
         VALID_TOKEN = Base64.getEncoder().encodeToString(bytes);
 
+        var expectedResult = Result.failure(ErrorType.ITS_OPERATION_ERROR,
+                new Field("jwt", "The provided token is invalid")
+        );
+
         // Act
         var resp = this.jwtGeneratorService.obtainData(VALID_TOKEN, VALID_KEY_BASE_64);
 
         // Assert
-        assertFailure(resp, ErrorType.ITS_OPERATION_ERROR, "token", "The provided token is invalid");
+        assertFailure(resp, Result.renewFailure(expectedResult));
     }
 
     @RepeatedTest(100)
