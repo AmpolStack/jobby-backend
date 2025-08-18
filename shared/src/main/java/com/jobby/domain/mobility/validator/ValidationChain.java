@@ -1,9 +1,9 @@
-package com.jobby.authorization.domain.shared.validators;
+package com.jobby.domain.mobility.validator;
 
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
-import com.jobby.authorization.domain.shared.errors.Field;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
+import com.jobby.domain.mobility.result.Result;
 
 import java.util.*;
 import java.util.function.Supplier;

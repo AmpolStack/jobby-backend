@@ -9,8 +9,8 @@ import com.jobby.authorization.domain.ports.out.repositories.TokenRegistryReposi
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
 import com.jobby.authorization.domain.shared.TokenData;
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.result.Result;
 import com.jobby.authorization.infraestructure.config.TokenConfig;
 import org.springframework.stereotype.Service;
 import java.time.Instant;

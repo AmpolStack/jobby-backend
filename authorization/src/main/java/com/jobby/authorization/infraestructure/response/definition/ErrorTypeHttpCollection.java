@@ -1,8 +1,8 @@
 package com.jobby.authorization.infraestructure.response.definition;
 
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
-import com.jobby.authorization.domain.shared.errors.Field;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
 import org.springframework.http.HttpStatus;
 import java.util.EnumMap;
 import java.util.Map;

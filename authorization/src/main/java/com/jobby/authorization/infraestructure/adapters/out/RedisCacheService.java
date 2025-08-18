@@ -1,11 +1,11 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.domain.ports.out.CacheService;
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
-import com.jobby.authorization.domain.shared.errors.Field;
-import com.jobby.authorization.domain.shared.result.Result;
-import com.jobby.authorization.domain.shared.validators.ValidationChain;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
+import com.jobby.domain.mobility.result.Result;
+import com.jobby.domain.mobility.validator.ValidationChain;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;

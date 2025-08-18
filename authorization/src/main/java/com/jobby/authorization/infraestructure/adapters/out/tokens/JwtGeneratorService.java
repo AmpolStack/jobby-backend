@@ -2,12 +2,12 @@ package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
-import com.jobby.authorization.domain.shared.errors.Field;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
+import com.jobby.domain.mobility.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
-import com.jobby.authorization.domain.shared.validators.ValidationChain;
+import com.jobby.domain.mobility.validator.ValidationChain;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;

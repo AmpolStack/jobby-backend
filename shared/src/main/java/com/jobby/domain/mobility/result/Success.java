@@ -1,9 +1,9 @@
-package com.jobby.authorization.domain.shared.result;
+package com.jobby.domain.mobility.result;
 
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
-public final class Success<T, E> implements Result<T,E>{
+public final class Success<T, E> implements Result<T,E> {
     private final T data;
 
     public Success(final T data) {

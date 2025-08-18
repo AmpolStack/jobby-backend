@@ -1,8 +1,8 @@
 package com.jobby.authorization.domain.ports.out.repositories;
 
 import com.jobby.authorization.domain.model.TokenRegistry;
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.result.Result;
 
 public interface TokenRegistryRepository {
     Result<TokenRegistry, Error> getTokenRegistry(String token, String refreshToken, int id);

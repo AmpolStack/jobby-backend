@@ -1,7 +1,7 @@
 package com.jobby.authorization.domain.ports.out.tokens;
 
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.result.Result;
 import com.jobby.authorization.domain.shared.TokenData;
 
 public interface TokenGeneratorService {

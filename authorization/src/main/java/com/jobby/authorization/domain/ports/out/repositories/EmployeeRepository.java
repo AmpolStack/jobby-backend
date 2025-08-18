@@ -1,8 +1,8 @@
 package com.jobby.authorization.domain.ports.out.repositories;
 
 import com.jobby.authorization.domain.model.Employee;
-import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.result.Result;
 
 public interface EmployeeRepository {
     Result<Employee, Error> findByEmailAndPassword(String email, String password);
