@@ -31,5 +31,5 @@ public enum ErrorType {
     ITS_EXTERNAL_SERVICE_FAILURE,    // External service call failed.
     ITS_CONFIGURATION_ERROR,         // System configuration issue.
     ITS_SERIALIZATION_ERROR,         // Failed to serialize or deserialize data.
-    ITS_UNKNOWN_ERROR;               // An unknown error occurred.
+    ITS_UNKNOWN_ERROR               // An unknown error occurred.
 }
