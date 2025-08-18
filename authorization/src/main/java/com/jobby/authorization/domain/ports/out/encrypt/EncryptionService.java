@@ -1,7 +1,7 @@
 package com.jobby.authorization.domain.ports.out.encrypt;
 
-import com.jobby.domain.mobility.Error;
-import com.jobby.domain.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.result.Result;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 
 public interface EncryptionService {

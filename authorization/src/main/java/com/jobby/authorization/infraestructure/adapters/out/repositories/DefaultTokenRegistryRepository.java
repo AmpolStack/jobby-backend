@@ -3,10 +3,10 @@ package com.jobby.authorization.infraestructure.adapters.out.repositories;
 import com.jobby.authorization.domain.ports.out.CacheService;
 import com.jobby.authorization.domain.model.TokenRegistry;
 import com.jobby.authorization.domain.ports.out.repositories.TokenRegistryRepository;
-import com.jobby.domain.mobility.Error;
-import com.jobby.domain.mobility.ErrorType;
-import com.jobby.domain.mobility.Field;
-import com.jobby.domain.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
+import com.jobby.domain.mobility.result.Result;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 

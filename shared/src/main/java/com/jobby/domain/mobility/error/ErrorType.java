@@ -1,4 +1,4 @@
-package com.jobby.domain.mobility;
+package com.jobby.domain.mobility.error;
 
 public enum ErrorType {
     // --- Errors visible to the end user ---

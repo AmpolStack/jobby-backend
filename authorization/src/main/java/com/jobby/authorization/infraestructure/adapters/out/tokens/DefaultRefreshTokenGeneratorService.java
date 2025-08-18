@@ -1,8 +1,8 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;
-import com.jobby.domain.mobility.Error;
-import com.jobby.domain.result.Result;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.result.Result;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

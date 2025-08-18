@@ -1,4 +1,4 @@
-package com.jobby.domain.mobility;
+package com.jobby.domain.mobility.error;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

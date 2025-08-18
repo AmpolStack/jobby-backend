@@ -1,8 +1,8 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
-import com.jobby.domain.mobility.ErrorType;
-import com.jobby.domain.mobility.Field;
-import com.jobby.domain.result.Result;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
+import com.jobby.domain.mobility.result.Result;
 import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

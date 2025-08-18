@@ -1,4 +1,4 @@
-package com.jobby.domain.result;
+package com.jobby.domain.mobility.result;
 
 import lombok.EqualsAndHashCode;
 

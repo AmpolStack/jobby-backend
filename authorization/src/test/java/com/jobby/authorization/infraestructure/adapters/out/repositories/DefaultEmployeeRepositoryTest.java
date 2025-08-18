@@ -1,8 +1,8 @@
 package com.jobby.authorization.infraestructure.adapters.out.repositories;
 
 import com.jobby.authorization.domain.model.Employee;
-import com.jobby.domain.mobility.ErrorType;
-import com.jobby.domain.result.Result;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.result.Result;
 import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import com.jobby.authorization.infraestructure.persistence.entities.MongoEmployeeEntity;
 import com.jobby.authorization.infraestructure.persistence.mappers.MongoEmployeeEntityMapper;

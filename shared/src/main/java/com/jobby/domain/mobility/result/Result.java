@@ -1,8 +1,8 @@
-package com.jobby.domain.result;
+package com.jobby.domain.mobility.result;
 
-import com.jobby.domain.mobility.Error;
-import com.jobby.domain.mobility.ErrorType;
-import com.jobby.domain.mobility.Field;
+import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
 import java.util.Arrays;
 import java.util.function.Function;
 
