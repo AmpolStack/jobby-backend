@@ -1,6 +1,6 @@
 package com.jobby.authorization.domain.ports.out;
 
-import com.jobby.authorization.domain.shared.errors.Error;
+import com.jobby.domain.mobility.Error;
 import com.jobby.authorization.domain.shared.result.Result;
 
 public interface HashingService {

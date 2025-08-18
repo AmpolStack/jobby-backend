@@ -1,7 +1,5 @@
-package com.jobby.authorization.domain.shared.errors;
+package com.jobby.domain.mobility;
 
-import com.jobby.domain.mobility.ErrorType;
-import com.jobby.domain.mobility.Field;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

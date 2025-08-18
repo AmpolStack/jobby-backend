@@ -2,7 +2,7 @@ package com.jobby.authorization.infraestructure.adapters.out.repositories;
 
 import com.jobby.authorization.domain.model.Employee;
 import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
-import com.jobby.authorization.domain.shared.errors.Error;
+import com.jobby.domain.mobility.Error;
 import com.jobby.domain.mobility.ErrorType;
 import com.jobby.domain.mobility.Field;
 import com.jobby.authorization.domain.shared.result.Result;

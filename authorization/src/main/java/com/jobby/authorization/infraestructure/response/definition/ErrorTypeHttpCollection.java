@@ -1,6 +1,6 @@
 package com.jobby.authorization.infraestructure.response.definition;
 
-import com.jobby.authorization.domain.shared.errors.Error;
+import com.jobby.domain.mobility.Error;
 import com.jobby.domain.mobility.ErrorType;
 import com.jobby.domain.mobility.Field;
 import org.springframework.http.HttpStatus;
