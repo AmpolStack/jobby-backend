@@ -60,7 +60,7 @@ public class AESEncryptionService implements EncryptionService {
 
     @Override
     public Result<String, Error> encrypt(String data, EncryptConfig config) {
-        return validator.validate(config)
+        return validateConfig(config)
                 .flatMap(x -> validateAndParseKey(config.getSecretKey()))
                 .flatMap((key -> {
                     var iv = EncryptUtils.generateIv(config.getIv().getLength(), config.getIv().getTLen());
@@ -86,7 +86,7 @@ public class AESEncryptionService implements EncryptionService {
         return ValidationChain.create()
                 .add(this.validator.validate(config))
                 .validateInternalAnyMatch(
-                        config.getIv().getLength(),
+                        config.getIv().getTLen(),
                         VALID_T_LENGTHS_BITS,
                         "t-len")
                 .build();
@@ -102,7 +102,7 @@ public class AESEncryptionService implements EncryptionService {
 
                     if(key == null){
                         return Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
-                                new Field("keyBase64", "is invalid in base64"));
+                                new Field("key-base-64", "is invalid in base64"));
                     }
 
                     var keyLengthInBytes = key.getEncoded().length * BIT_MULTIPLIER;
@@ -124,7 +124,7 @@ public class AESEncryptionService implements EncryptionService {
                         combined = Base64.getDecoder().decode(cipherText);
                     }
                     catch (IllegalArgumentException e){
-                        return Result.failure(ErrorType.INVALID_INPUT,
+                        return Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
                                 new Field(
                                         "cipherText",
                                         "Invalid Base64 encoded cipher text"
