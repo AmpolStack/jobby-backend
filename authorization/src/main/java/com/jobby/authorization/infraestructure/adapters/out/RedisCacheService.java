@@ -76,10 +76,6 @@ public class RedisCacheService implements CacheService {
                         return Result.renewFailure(REDIS_CONNECTION_FAILURE_RESULT);
                     }
 
-                    if(value == null){
-                        return Result.failure(ErrorType.USER_NOT_FOUND, new Field("value", "the object consulted are null"));
-                    }
-
                     T response;
                     try{
                         response = type.cast(value);
