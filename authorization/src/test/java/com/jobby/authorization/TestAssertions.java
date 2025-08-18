@@ -2,7 +2,7 @@ package com.jobby.authorization;
 
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.domain.mobility.ErrorType;
-import com.jobby.authorization.domain.shared.errors.Field;
+import com.jobby.domain.mobility.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.response.implementation.problem;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.jobby.authorization.domain.shared.errors.Field;
+import com.jobby.domain.mobility.Field;
 import lombok.Getter;
 
 import java.net.URI;

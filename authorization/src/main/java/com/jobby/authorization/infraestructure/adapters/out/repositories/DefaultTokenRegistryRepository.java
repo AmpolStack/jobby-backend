@@ -5,7 +5,7 @@ import com.jobby.authorization.domain.model.TokenRegistry;
 import com.jobby.authorization.domain.ports.out.repositories.TokenRegistryRepository;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.domain.mobility.ErrorType;
-import com.jobby.authorization.domain.shared.errors.Field;
+import com.jobby.domain.mobility.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import org.springframework.stereotype.Service;
 import java.time.Duration;

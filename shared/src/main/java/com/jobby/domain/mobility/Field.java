@@ -1,4 +1,4 @@
-package com.jobby.authorization.domain.shared.errors;
+package com.jobby.domain.mobility;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
