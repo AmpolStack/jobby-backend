@@ -1,4 +1,4 @@
-package com.jobby.authorization.domain.shared.validators;
+package com.jobby.domain.mobility.validator;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;

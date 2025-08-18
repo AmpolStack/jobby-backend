@@ -2,7 +2,7 @@ package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.authorization.domain.shared.validators.ValidationChain;
+import com.jobby.domain.mobility.validator.ValidationChain;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;

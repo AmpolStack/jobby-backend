@@ -6,7 +6,7 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.authorization.domain.shared.validators.ValidationChain;
+import com.jobby.domain.mobility.validator.ValidationChain;
 import com.jobby.authorization.infraestructure.config.EncryptConfig;
 import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;

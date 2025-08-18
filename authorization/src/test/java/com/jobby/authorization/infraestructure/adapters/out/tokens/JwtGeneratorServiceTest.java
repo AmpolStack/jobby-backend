@@ -5,7 +5,7 @@ import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.authorization.domain.shared.TokenData;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.authorization.domain.shared.validators.ValidationChain;
+import com.jobby.domain.mobility.validator.ValidationChain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;

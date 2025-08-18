@@ -3,7 +3,7 @@ package com.jobby.authorization.infraestructure.adapters.in.rest;
 import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeByCredentials;
 import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeByTokens;
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
-import com.jobby.authorization.domain.shared.validators.ValidationChain;
+import com.jobby.domain.mobility.validator.ValidationChain;
 import com.jobby.authorization.infraestructure.response.definition.ApiResponseMapper;
 import com.jobby.authorization.infraestructure.dto.mappers.TokenRegistryResponseMapper;
 import com.jobby.authorization.infraestructure.dto.requests.LoginRequest;
