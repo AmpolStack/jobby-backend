@@ -1,11 +1,13 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.domain.shared.errors.ErrorType;
+import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,7 +18,7 @@ import org.springframework.data.redis.serializer.SerializationException;
 import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static com.jobby.authorization.infraestructure.TestAssertions.*;
+import static com.jobby.authorization.TestAssertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RedisCacheServiceTest {
@@ -27,23 +29,36 @@ public class RedisCacheServiceTest {
     @InjectMocks
     private RedisCacheService redisCacheService;
 
+    private static final String VALID_KEY = "valid_key";
+    private static final String VALID_VALUE = "valid_value";
+
     @Test
     public void put_whenKeyAreNull(){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "cache-key")
+                .build();
+
         // Act
         var result = this.redisCacheService.put(null, "hi", Duration.ofDays(10));
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is null");
+        assertFailure(result, expectedResult);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "  ", "       "})
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void put_whenKeyIsBlank(String key){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(key, "cache-key")
+                .build();
+
         // Act
         var result = this.redisCacheService.put(key, "hi", Duration.ofDays(10));
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is blank");
+        assertFailure(result, expectedResult);
     }
 
     @Test
@@ -51,34 +66,28 @@ public class RedisCacheServiceTest {
         when(this.redisTemplate.opsForValue()).thenThrow(SerializationException.class);
 
         // Act
-        var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
+        var result = this.redisCacheService.put(VALID_KEY, VALID_VALUE, Duration.ofDays(10));
 
         // Assert
         assertFailure(result, ErrorType.ITS_SERIALIZATION_ERROR, "serialization", "serialization failed, the object provided are invalid to serialize");
     }
 
     @Test
-    public void get_whenTemplateReturnsNull(){
-        var valueOperationsMock = mock(ValueOperations.class);
-        //noinspection unchecked
-        when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
-        when(valueOperationsMock.get(anyString())).thenReturn(null);
-        // Act
-        var result = this.redisCacheService.get("thing", String.class);
-
-        // Assert
-        assertFailure(result, ErrorType.USER_NOT_FOUND, "value", "the object consulted are null");
-    }
-
-    @Test
-    public void put_whenThrowsRedisConnectionException(){
+    public void put_whenThrowsRedisConnectionFailureException(){
         when(this.redisTemplate.opsForValue()).thenThrow(RedisConnectionFailureException.class);
 
+        var expectedResult = Result.failure(
+                ErrorType.ITS_EXTERNAL_SERVICE_FAILURE,
+                new Field(
+                        "redis",
+                        "Error connection with redis"
+                ));
+
         // Act
-        var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
+        var result = this.redisCacheService.put(VALID_KEY, VALID_VALUE, Duration.ofDays(10));
 
         // Assert
-        assertFailure(result, ErrorType.ITS_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
@@ -91,7 +100,7 @@ public class RedisCacheServiceTest {
         when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
 
         // Act
-        var result = this.redisCacheService.put("thing", "hi", Duration.ofDays(10));
+        var result = this.redisCacheService.put(VALID_KEY, VALID_VALUE, Duration.ofDays(10));
 
         // Assert
         assertSuccess(result);
@@ -99,22 +108,47 @@ public class RedisCacheServiceTest {
     }
 
     @Test
+    public void get_whenTemplateReturnsNull(){
+        // Arrange
+        var valueOperationsMock = mock(ValueOperations.class);
+        //noinspection unchecked
+        when(this.redisTemplate.opsForValue()).thenReturn(valueOperationsMock);
+        when(valueOperationsMock.get(anyString())).thenReturn(null);
+
+        // Act
+        var result = this.redisCacheService.get(VALID_KEY, String.class);
+
+        // Assert
+        assertSuccess(result);
+    }
+
+    @Test
     public void get_whenKeyIsNull(){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "cache-key")
+                .build();
+
         // Act
         var result = this.redisCacheService.get(null, String.class);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is null");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "  ", "     "})
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void get_whenKeyIsBlank(String key){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(key, "cache-key")
+                .build();
+
         // Act
         var result = this.redisCacheService.get(key, String.class);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is blank");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
@@ -122,7 +156,7 @@ public class RedisCacheServiceTest {
         when(this.redisTemplate.opsForValue()).thenThrow(SerializationException.class);
 
         // Act
-        var result = this.redisCacheService.get("thing", String.class);
+        var result = this.redisCacheService.get(VALID_KEY, String.class);
 
         // Assert
         assertFailure(result, ErrorType.ITS_SERIALIZATION_ERROR, "deserialization", "deserialization failed, the object provided are invalid to deserialize in the specified class");
@@ -133,7 +167,7 @@ public class RedisCacheServiceTest {
         when(this.redisTemplate.opsForValue()).thenThrow(RedisConnectionFailureException.class);
 
         // Act
-        var result = this.redisCacheService.get("thing", String.class);
+        var result = this.redisCacheService.get(VALID_KEY, String.class);
 
         // Assert
         assertFailure(result, ErrorType.ITS_EXTERNAL_SERVICE_FAILURE, "redis", "Error connection with redis");
@@ -147,7 +181,7 @@ public class RedisCacheServiceTest {
         when(valueOperationsMock.get(anyString())).thenReturn(42);
 
         // Act
-        var result = this.redisCacheService.get("thing", String.class);
+        var result = this.redisCacheService.get(VALID_KEY, String.class);
 
         // Assert
         assertFailure(result, ErrorType.ITS_OPERATION_ERROR, "type cast", "the object is not assignable to type");
@@ -173,21 +207,31 @@ public class RedisCacheServiceTest {
 
     @Test
     public void evict_whenKeyIsNull(){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "cache-key")
+                .build();
+
         // Act
         var result = this.redisCacheService.evict(null);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is null");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "  ", "     "})
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void evict_whenKeyIsBlank(String key){
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(key, "cache-key")
+                .build();
+
         // Act
         var result = this.redisCacheService.evict(key);
 
         // Assert
-        assertFailure(result, ErrorType.VALIDATION_ERROR, "cache-key", "cache-key is blank");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
@@ -214,5 +258,4 @@ public class RedisCacheServiceTest {
         assertSuccess(result);
         assertEquals(expectedResult, result);
     }
-
 }

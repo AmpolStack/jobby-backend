@@ -1,5 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
+import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
 import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
@@ -18,16 +19,12 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     private final static Integer[] VALID_SECRET_KEY_LENGTHS_BITS = { 256, 384, 512 };
     private final static String EMAIL_CLAIM_NAME = "com.jobby.employee.email";
+    private final SafeResultValidator validator;
 
-    private Result<Void, Error> validateTokenData(TokenData data){
-        return ValidationChain.create()
-                .validateInternalNotNull(data, "token-data")
-                .validateInternalNotNull(data.getIssuer(), "token-data-issuer")
-                .validateInternalNotNull(data.getAudience(), "token-data-audience")
-                .validateInternalNotNull(data.getEmail(), "token-data-email")
-                .validateInternalGreaterThan(data.getMsExpirationTime(), 0, "token-data-ms-expiration-time")
-                .build();
+    public JwtGeneratorService(SafeResultValidator validator) {
+        this.validator = validator;
     }
+
 
     private Result<SecretKey, Error> validateAndParseKey(String base64Key){
         return ValidationChain.create()
@@ -53,7 +50,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<String, Error> generate(TokenData data, String base64Key) {
-        return validateTokenData(data)
+        return this.validator.validate(data)
                 .flatMap(x -> validateAndParseKey(base64Key))
                 .map(secretKey ->
                     Jwts.builder()
@@ -102,7 +99,7 @@ public class JwtGeneratorService implements TokenGeneratorService {
             claims = parser.parseSignedClaims(token);
         } catch (JwtException | IllegalArgumentException e) {
             return Result.failure(ErrorType.ITS_OPERATION_ERROR,
-                    new Field("token", "The provided token is invalid")
+                    new Field("jwt", "The provided token is invalid")
             );
         }
         return Result.success(claims.getPayload());
@@ -120,7 +117,6 @@ public class JwtGeneratorService implements TokenGeneratorService {
 
     @Override
     public Result<Boolean, Error> isValid(String token, String base64Key) {
-
         return ValidationChain.create()
                 .validateInternalNotBlank(token, "jwt")
                 .build()

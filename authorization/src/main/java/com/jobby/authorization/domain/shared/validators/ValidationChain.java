@@ -4,14 +4,13 @@ import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 import java.util.function.Supplier;
 
 // short-circuit validation
 public class ValidationChain {
-    private final List<Supplier<Result<?, Error>>> validations = new ArrayList<>();
+    private final Queue<Supplier<Result<?, Error>>> validations = new LinkedList<>();
 
     // Add lazy validations
     public ValidationChain add(Supplier<Result<?, Error>> validation) {
@@ -244,7 +243,7 @@ public class ValidationChain {
     // execute all short-circuit validations in real-time
     public Result<Void, Error> build() {
         for (Supplier<Result<?, Error>> validation : validations) {
-            Result<?, Error> result = validation.get(); // Solo se ejecuta aquí
+            Result<?, Error> result = validation.get(); // it only runs here
             if (result.isFailure()) {
                 return Result.failure(result.getError());
             }
