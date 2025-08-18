@@ -6,6 +6,7 @@ import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import com.jobby.authorization.domain.shared.validators.ValidationChain;
+import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.SerializationException;
@@ -47,7 +48,7 @@ public class RedisCacheService implements CacheService {
                                 )
                         );
                     }
-                    catch(RedisConnectionFailureException e){
+                    catch(RedisConnectionFailureException | QueryTimeoutException e){
                         return Result.renewFailure(REDIS_CONNECTION_FAILURE_RESULT);
                     }
                     return Result.success(null);
@@ -72,7 +73,7 @@ public class RedisCacheService implements CacheService {
                                 )
                         );
                     }
-                    catch(RedisConnectionFailureException e){
+                    catch(RedisConnectionFailureException | QueryTimeoutException e){
                         return Result.renewFailure(REDIS_CONNECTION_FAILURE_RESULT);
                     }
 
