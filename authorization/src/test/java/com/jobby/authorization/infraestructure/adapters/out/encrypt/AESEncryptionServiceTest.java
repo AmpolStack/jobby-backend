@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.crypto.Cipher;
 import java.util.Base64;
 import java.util.Random;
+
+import static com.jobby.authorization.TestAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -95,7 +98,7 @@ public class AESEncryptionServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", " ", "  ", "   ", "     "})
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void decrypt_whenKeyIsBlank(String key){
         // Arrange
         VALID_CONFIG.setSecretKey(key);
@@ -158,15 +161,14 @@ public class AESEncryptionServiceTest {
         VALID_CONFIG.setSecretKey(INVALID_KEY);
 
         var expectedResult = Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
-                new Field("keyBase64", "is invalid in base64"));
+                new Field("key-base-64", "is invalid in base64"));
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
         var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
@@ -176,15 +178,14 @@ public class AESEncryptionServiceTest {
         VALID_CONFIG.setSecretKey(INVALID_KEY);
 
         var expectedResult = Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
-                new Field("keyBase64", "is invalid in base64"));
+                new Field("key-base-64", "is invalid in base64"));
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
         // Act
         var result = this.aesEncryptionService.decrypt(VALID_CIPHER, VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     public String generateRandomKey(int length){
@@ -199,8 +200,9 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(generateRandomKey(keyLength));
 
-        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
-                     new Field("keyBase64-bytes", "The value is not within valid parameters"));
+        var expectedResult = ValidationChain.create()
+                .validateInternalAnyMatch(keyLength, new Integer[]{128, 192, 256}, "key-base-64-bytes")
+                .build();
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
@@ -208,8 +210,7 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
@@ -218,8 +219,9 @@ public class AESEncryptionServiceTest {
         // Arrange
         VALID_CONFIG.setSecretKey(generateRandomKey(keyLength));
 
-        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
-                new Field("keyBase64-bytes", "The value is not within valid parameters"));
+        var expectedResult = ValidationChain.create()
+                .validateInternalAnyMatch(keyLength, new Integer[]{128, 192, 256}, "key-base-64-bytes")
+                .build();
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
@@ -227,8 +229,7 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.decrypt(VALID_CIPHER, VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
@@ -266,13 +267,15 @@ public class AESEncryptionServiceTest {
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
-        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
+        var expectedResult = ValidationChain.create().validateInternalAnyMatch(
+                tLen * 8,
+                new Integer[]{98, 112, 120, 128},
+                "t-len").build();
         // Act
         var result = this.aesEncryptionService.encrypt(VALID_DATA, VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
@@ -283,13 +286,17 @@ public class AESEncryptionServiceTest {
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
-        var expectedResult = Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER, new Field("tLen", "The value is not within valid parameters"));
+        var expectedResult = ValidationChain.create().validateInternalAnyMatch(
+                        tLen * 8,
+                        new Integer[]{98, 112, 120, 128},
+                        "t-len")
+                .build();
+
         // Act
         var result = this.aesEncryptionService.decrypt(VALID_DATA, VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
@@ -396,18 +403,17 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.decrypt(VALID_CIPHER.substring(0, VALID_IV_LENGTH - 1), VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
-    public void encrypt_whenCipherTextAreInvalidInBase64() {
+    public void decrypt_whenCipherTextAreInvalidInBase64() {
         // Arrange
         final String INVALID_CIPHER_TEXT = "invalid-cipher%%";
 
         when(this.validator.validate(any())).thenReturn(Result.success(null));
 
-        var expectedResult =Result.failure(ErrorType.INVALID_INPUT,
+        var expectedResult = Result.failure(ErrorType.ITS_SERIALIZATION_ERROR,
                 new Field(
                         "cipherText",
                         "Invalid Base64 encoded cipher text"
@@ -418,8 +424,7 @@ public class AESEncryptionServiceTest {
         var result = this.aesEncryptionService.decrypt(INVALID_CIPHER_TEXT, VALID_CONFIG);
 
         // Assert
-        assertTrue(result.isFailure());
-        assertEquals(Result.renewFailure(expectedResult), result);
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
