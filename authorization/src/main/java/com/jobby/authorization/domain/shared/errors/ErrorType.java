@@ -4,6 +4,7 @@ public enum ErrorType {
     // --- Errors visible to the end user ---
     INVALID_INPUT,               // The input provided is invalid.
     USER_NOT_FOUND,              // User not found.
+    NOT_FOUND,                   // Not found Entity
     AUTHENTICATION_FAILED,       // Invalid credentials.
     PERMISSION_DENIED,           // No permission for this action.
     RESOURCE_ALREADY_EXISTS,     // The resource already exists.
