@@ -6,6 +6,7 @@ import com.jobby.authorization.domain.shared.errors.Error;
 import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import com.jobby.authorization.infraestructure.persistence.entities.MongoEmployeeEntity;
 import com.jobby.authorization.infraestructure.persistence.mappers.MongoEmployeeEntityMapper;
 import com.jobby.authorization.infraestructure.persistence.repositories.SpringDataMongoEmployeeRepository;
@@ -46,27 +47,23 @@ public class DefaultEmployeeRepository implements EmployeeRepository {
         }
     }
 
-    private Result<Void, Error> validateString(String input, String failureInstanceName) {
-        if(input == null || input.isBlank()){
-            return Result.failure(
-                    ErrorType.VALIDATION_ERROR,
-                    new Field(failureInstanceName, "is null or blank")
-            );
-        }
-        return Result.success(null);
-    }
 
     @Override
     public Result<Employee, Error> findByEmailAndPassword(String email, String password) {
-        return validateString(email, "email")
-                .flatMap(x -> validateString(password, "password"))
+        return ValidationChain.create()
+                .validateInternalNotBlank(email, "email")
+                .validateInternalNotBlank(password, "password")
+                .build()
                 .flatMap(x -> genericExecution(() -> this.mongoRepository.findByEmailAndPassword(email, password), "credentials"));
 
     }
 
     @Override
     public Result<Employee, Error> findById(int id) {
-        return genericExecution(() -> this.mongoRepository.findById(id), "id");
+        return ValidationChain.create()
+                .validateInternalGreaterThan(id, 0, "employee-id")
+                .build()
+                .flatMap(v -> genericExecution(() -> this.mongoRepository.findById(id), "id"));
     }
 
 }
