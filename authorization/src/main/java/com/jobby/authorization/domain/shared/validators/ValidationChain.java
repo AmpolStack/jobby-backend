@@ -243,7 +243,7 @@ public class ValidationChain {
     // execute all short-circuit validations in real-time
     public Result<Void, Error> build() {
         for (Supplier<Result<?, Error>> validation : validations) {
-            Result<?, Error> result = validation.get(); // Solo se ejecuta aquí
+            Result<?, Error> result = validation.get(); // it only runs here
             if (result.isFailure()) {
                 return Result.failure(result.getError());
             }
