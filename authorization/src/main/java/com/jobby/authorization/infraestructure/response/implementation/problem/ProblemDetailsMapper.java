@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.response.implementation.problem;
 
 import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
+import com.jobby.domain.mobility.ErrorType;
 import com.jobby.authorization.infraestructure.response.definition.ErrorTypeHttpCollection;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

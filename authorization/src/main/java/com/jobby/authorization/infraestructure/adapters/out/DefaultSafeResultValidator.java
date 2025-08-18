@@ -2,7 +2,7 @@ package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.domain.ports.out.SafeResultValidator;
 import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
+import com.jobby.domain.mobility.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import com.jobby.authorization.domain.shared.result.Result;
 import jakarta.validation.ConstraintViolation;

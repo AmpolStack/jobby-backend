@@ -1,7 +1,7 @@
 package com.jobby.authorization.domain.shared.result;
 
 import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
+import com.jobby.domain.mobility.ErrorType;
 import com.jobby.authorization.domain.shared.errors.Field;
 import java.util.Arrays;
 import java.util.function.Function;
