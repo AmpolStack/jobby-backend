@@ -1,12 +1,13 @@
 package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.authorization.domain.shared.errors.Error;
-import com.jobby.authorization.domain.shared.errors.ErrorType;
 import com.jobby.authorization.domain.shared.result.Result;
+import com.jobby.authorization.domain.shared.validators.ValidationChain;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Base64;
 import java.util.Random;
@@ -31,7 +32,6 @@ public class BcryptHashingServiceTest {
         assertTrue(matchesResult.isSuccess());
         assertTrue(matchesResult.getData());
         assertEquals(expectedResult, matchesResult);
-
     }
 
     @ParameterizedTest
@@ -41,7 +41,7 @@ public class BcryptHashingServiceTest {
         Result<Boolean, Error> expectedResult =  Result.success(false);
 
         // Act
-        var hashResult = this.bcryptHashingService.hash(input)
+        var result = this.bcryptHashingService.hash(input)
                 .flatMap( hash -> {
                     var bytePadding = new byte[8];
                     var random = new Random();
@@ -51,83 +51,116 @@ public class BcryptHashingServiceTest {
                 });
 
         // Assert
-        assertTrue(hashResult.isSuccess());
-        assertFalse(hashResult.getData());
-        assertEquals(expectedResult, hashResult);
+        assertTrue(result.isSuccess());
+        assertFalse(result.getData());
+        assertEquals(expectedResult, result);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "  ", "\n", "\r", "\r\n", " "})
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void hash_WhenInputAreBlank(String input) {
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(input, "hash-input")
+                .build();
+
         // Act
-        var hashResult = this.bcryptHashingService.hash(input);
+        var result = this.bcryptHashingService.hash(input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is blank");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
     public void hash_WhenInputIsNull() {
-        // Act
-        var hashResult = this.bcryptHashingService.hash(null);
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "hash-input")
+                .build();
 
+        // Act
+        var result = this.bcryptHashingService.hash(null);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is null");
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @RepeatedTest(value = 100, name = "{displayName} - rep#{currentRepetition}")
     public void hash_WhenInputExceeds72Bytes(RepetitionInfo info) {
         //Arrange
-        var input = "x".repeat(info.getCurrentRepetition() + 72);
+        var repetition = info.getCurrentRepetition() + 72;
 
+        var input = "x".repeat(repetition);
+
+        var expectedResult = ValidationChain.create()
+                .validateInternalSmallerThan(
+                        repetition,
+                        72,
+                        "hash-input-bytes")
+                .build();
         // Act
         var hashResult = this.bcryptHashingService.hash(input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input-bytes", "hash-input-bytes is bigger than 72");
+        assertFailure(hashResult, Result.renewFailure(expectedResult));
     }
 
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "  ", "\n", "\r", "\r\n", " "})
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void matches_WhenInputAreBlank_FirstInput(String input) {
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(input, "plain-input")
+                .build();
+
         // Act
-        var hashResult = this.bcryptHashingService.matches(input, "exampleHash");
+        var result = this.bcryptHashingService.matches(input, "exampleHash");
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain-input", "plain-input is blank");
-        assertNull(hashResult.getData());
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "  ", "\n", "\r", "\r\n", " "})
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
     public void matches_WhenInputAreBlank_SecondInput(String input) {
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(input, "hash-input")
+                .build();
+
         // Act
-        var hashResult = this.bcryptHashingService.matches("examplePlain", input);
+        var result = this.bcryptHashingService.matches("example-input", input);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is blank");
-        assertNull(hashResult.getData());
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
     public void matches_WhenInputAreNull_FirstInput() {
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "plain-input")
+                .build();
+
         // Act
-        var hashResult = this.bcryptHashingService.matches(null, "exampleHash");
+        var result = this.bcryptHashingService.matches(null, "exampleHash");
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "plain-input", "plain-input is null");
-        assertNull(hashResult.getData());
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 
     @Test
     public void matches_WhenInputAreNull_SecondInput() {
+        // Arrange
+        var expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "hash-input")
+                .build();
+
         // Act
-        var hashResult = this.bcryptHashingService.matches("examplePlain", null);
+        var result = this.bcryptHashingService.matches("exampleHash", null);
 
         // Assert
-        assertFailure(hashResult, ErrorType.VALIDATION_ERROR, "hash-input", "hash-input is null");
-        assertNull(hashResult.getData());
+        assertFailure(result, Result.renewFailure(expectedResult));
     }
 }

@@ -13,14 +13,18 @@ public class BcryptHashingService implements HashingService {
 
     private static final int VALID_LIMIT_OF_INPUT_BYTES = 72;
 
+
     @Override
     public Result<String, Error> hash(String input) {
         return ValidationChain.create()
                 .validateInternalNotBlank(input, "hash-input")
-                .validateInternalSmallerThan(
-                        input.getBytes(StandardCharsets.UTF_8).length,
-                        VALID_LIMIT_OF_INPUT_BYTES,
-                        "hash-input-bytes")
+                .validateIf(input != null, () ->
+                        ValidationChain.create()
+                                .validateInternalSmallerThan(
+                                        input.getBytes(StandardCharsets.UTF_8).length,
+                                        VALID_LIMIT_OF_INPUT_BYTES,
+                                        "hash-input-bytes")
+                                .build())
                 .build()
                 .map(x -> {
                     var encoder = new BCryptPasswordEncoder();
