@@ -210,7 +210,7 @@ public class DefaultEncryptBuilderTest {
         // Arrange
         var key = EncryptUtils.generateKey("AES", 128);
         var iv = new IvParameterSpec(new byte[16]);
-        var data = new byte[32];
+        var data = new byte[33];
         new Random().nextBytes(data);
 
         var resp = Result.failure(ErrorType.ITS_OPERATION_ERROR,
