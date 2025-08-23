@@ -1,6 +1,6 @@
 ___
 # WHAT IS JOBBY?
-**Jobby** is an extensible and open-source *Fake API* that works as a toolbox for small and medium-sized businesses. It allows you to keep track of a company's key information — from product management, employee and branch handling, to customers and invoices. It also provides point-of-sale (POS) functionality and multiple instances to advertise your business or display an interactive menu, enabling the management of online reservations and purchases.
+**Jobby** is an extensible and open-source *Fake API* that works as a toolbox for small and medium-sized businesses. It allows you to keep track of a company's key information — from product management, jpaEmployeeEntity and branch handling, to customers and invoices. It also provides point-of-sale (POS) functionality and multiple instances to advertise your business or display an interactive menu, enabling the management of online reservations and purchases.
 # WHAT ARE THE INTENTIONS OF THE JOBBY PROJECT?
 **Jobby** is intended as a learning tool, serving as a public API that provides information and data, along with features such as authorization, messaging, notifications, and storage. It allows developers to extend, study, and replicate the foundations presented in this project. It also includes related documentation and a **roadmap** to support learning.
 > The goal is also to evolve **Jobby** into a real and professional product. Work is underway to ensure the application's and users’ security. For now, **Jobby** will function as a *Fake API* designed for developer use.

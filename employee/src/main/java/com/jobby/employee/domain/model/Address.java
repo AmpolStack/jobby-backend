@@ -3,7 +3,7 @@ package com.jobby.employee.domain.model;
 import java.util.Date;
 
 public class Address {
-    private int addressId;
+    private int id;
     private City city;
     private String value;
     private String description;
