@@ -5,10 +5,9 @@ import com.jobby.employee.infraestructure.persistence.entities.JpaEmployeeEntity
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = { JpaAddressMapper.class, JpaSectionalMapper.class })
+@Mapper(componentModel = "spring", uses = { JpaAddressMapper.class, JpaSectionalMapper.class, JpaEmployeeStatusMapper.class })
 public interface JpaEmployeeMapper {
 
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "status", ignore = true)
     Employee toDomain(JpaEmployeeEntity jpaEmployeeEntity);
 }
