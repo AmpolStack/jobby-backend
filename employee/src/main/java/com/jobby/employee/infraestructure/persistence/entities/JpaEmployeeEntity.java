@@ -13,7 +13,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "employee")
 public class JpaEmployeeEntity {
     @Id
     @Column(name = "employee_id", nullable = false)
@@ -34,12 +34,12 @@ public class JpaEmployeeEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "sectional_id", nullable = false)
-    private JpaSectionalEntity jpaSectionalEntity;
+    private JpaSectionalEntity sectional;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "employee_status_id", nullable = false)
-    private JpaEmployeeStatusEntity jpaEmployeeStatusEntity;
+    private JpaEmployeeStatusEntity status;
 
     @Size(max = 60)
     @NotNull

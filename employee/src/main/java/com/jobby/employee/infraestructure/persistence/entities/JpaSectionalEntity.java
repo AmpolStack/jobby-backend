@@ -13,7 +13,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "sectional")
 public class JpaSectionalEntity {
     @Id
     @Column(name = "sectional_id", nullable = false)

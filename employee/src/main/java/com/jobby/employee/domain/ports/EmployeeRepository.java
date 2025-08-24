@@ -6,4 +6,5 @@ import com.jobby.employee.domain.model.Employee;
 
 public interface EmployeeRepository {
     Result<Employee, Error> save(Employee employee);
+    Result<Employee, Error> getEmployeeById(int id);
 }
