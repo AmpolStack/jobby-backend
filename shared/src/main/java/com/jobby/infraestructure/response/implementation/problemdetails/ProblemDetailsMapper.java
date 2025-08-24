@@ -2,7 +2,8 @@ package com.jobby.authorization.infraestructure.response.implementation.problem;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
-import com.jobby.authorization.infraestructure.response.definition.ErrorTypeHttpCollection;
+import com.jobby.infraestructure.response.definition.ErrorTypeHttpCollection;
+import com.jobby.infraestructure.response.implementation.problemdetails.ProblemDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
