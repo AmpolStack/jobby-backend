@@ -1,7 +1,12 @@
 package com.jobby.employee.domain.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
+@Getter
+@Setter
 public class User {
     private int id;
     private String firstName;
