@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.response.implementation.problem;
+package com.jobby.infraestructure.response.implementation.problemdetails;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;

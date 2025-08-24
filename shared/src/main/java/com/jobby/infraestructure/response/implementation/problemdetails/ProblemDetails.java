@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.response.implementation.problem;
+package com.jobby.infraestructure.response.implementation.problemdetails;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jobby.domain.mobility.error.Field;

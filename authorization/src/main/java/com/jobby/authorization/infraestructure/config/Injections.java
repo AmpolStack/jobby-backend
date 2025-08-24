@@ -1,7 +1,7 @@
 package com.jobby.authorization.infraestructure.config;
 
-import com.jobby.authorization.infraestructure.response.definition.ApiResponseMapper;
-import com.jobby.authorization.infraestructure.response.implementation.problem.ProblemDetailsResultMapper;
+import com.jobby.infraestructure.response.definition.ApiResponseMapper;
+import com.jobby.infraestructure.response.implementation.problemdetails.ProblemDetailsResultMapper;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
