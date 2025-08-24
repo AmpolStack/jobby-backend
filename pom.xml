@@ -17,6 +17,7 @@
     <module>authorization</module>
     <module>shared</module>
     <module>employee</module>
+    <module>gateway</module>
   </modules>
 
   <dependencyManagement>
