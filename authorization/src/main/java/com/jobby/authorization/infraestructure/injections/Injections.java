@@ -1,5 +1,7 @@
-package com.jobby.authorization.infraestructure.config;
+package com.jobby.authorization.infraestructure.injections;
 
+import com.jobby.authorization.infraestructure.config.EncryptConfig;
+import com.jobby.authorization.infraestructure.config.TokenConfig;
 import com.jobby.infraestructure.response.definition.ApiResponseMapper;
 import com.jobby.infraestructure.response.implementation.problemdetails.ProblemDetailsResultMapper;
 import org.springframework.boot.context.properties.ConfigurationProperties;
