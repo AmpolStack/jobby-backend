@@ -1,0 +1,13 @@
+server:
+  port: 8090
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: employee-rest-api
+              uri: http://localhost:8081
+              predicates:
+                - Path=/employee/**
