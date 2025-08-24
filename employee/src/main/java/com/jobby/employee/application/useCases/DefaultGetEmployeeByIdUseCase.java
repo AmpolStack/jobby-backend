@@ -21,7 +21,7 @@ public class DefaultGetEmployeeByIdUseCase implements GetEmployeeByIdUseCase {
     public Result<Employee, Error> execute(int id) {
         return ValidationChain
                 .create()
-                .validateGreaterOrEqualsThan(id, 0, "employee-id")
+                .validateGreaterThan(id, 0, "employee-id")
                 .build()
                 .flatMap(v -> this.employeeRepository.getEmployeeById(id));
     }
