@@ -10,4 +10,13 @@ spring:
             - id: employee-rest-api
               uri: http://localhost:8081
               predicates:
-                - Path=/employee/**
+                - Path=/api/employee/**
+              filters:
+                - StripPrefix=1
+
+            - id: authorization-rest-api
+              uri: http://localhost:8080
+              predicates:
+                - Path=/api/authorize/**
+              filters:
+                - StripPrefix=1
