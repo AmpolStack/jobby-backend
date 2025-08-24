@@ -13,7 +13,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "employee_status")
 public class JpaEmployeeStatusEntity {
     @Id
     @Column(name = "employee_status_id", nullable = false)

@@ -11,7 +11,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "address")
 public class JpaAddressEntity {
     @Id
     @Column(name = "address_id", nullable = false)

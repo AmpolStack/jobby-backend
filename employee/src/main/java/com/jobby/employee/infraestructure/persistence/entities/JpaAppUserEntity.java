@@ -13,7 +13,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "app_user")
 public class JpaAppUserEntity {
     @Id
     @Column(name = "user_id", nullable = false)

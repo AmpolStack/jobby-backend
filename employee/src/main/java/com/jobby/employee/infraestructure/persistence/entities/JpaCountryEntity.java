@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "country")
 public class JpaCountryEntity {
     @Id
     @Column(name = "country_id", nullable = false)

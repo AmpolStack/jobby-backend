@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "city")
 public class JpaCityEntity {
     @Id
     @Column(name = "city_id", nullable = false)
