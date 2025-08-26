@@ -37,25 +37,17 @@ public class JwtClaimToHeadersFilter implements GlobalFilter {
                     if (authentication == null || !authentication.isAuthenticated()) {
                         return chain.filter(cleanedExchange);
                     }
-
-                    var authHeader = cleanedExchange.getRequest()
-                            .getHeaders().getFirst("Authorization");
-
-                    return this.decoder.decode(authHeader)
-                            .flatMap(auth -> decoder.toHeaders(auth)
-                                    .flatMap(headersMap -> {
-                                        var mutated = cleanedExchange.getRequest().mutate()
-                                                .headers(h -> headersMap.forEach((k, v) -> {
-                                                    if (v != null && !v.isBlank()) h.add(k, v);
-                                                }))
-                                                .build();
-
-                                        var withHeaders = cleanedExchange.mutate()
-                                                .request(mutated).build();
-
-                                        return chain.filter(withHeaders);
-                                    })
-                            );
+                    return decoder.toHeaders(authentication)
+                            .flatMap(headersMap -> {
+                                var mutated = cleanedExchange.getRequest().mutate()
+                                        .headers(h -> headersMap.forEach((k, v) -> {
+                                            if (v != null && !v.isBlank()) h.add(k, v);
+                                        }))
+                                        .build();
+                                var withHeaders = cleanedExchange.mutate()
+                                        .request(mutated).build();
+                                return chain.filter(withHeaders);
+                            });
                 })
                 .switchIfEmpty(chain.filter(cleanedExchange));
     }
