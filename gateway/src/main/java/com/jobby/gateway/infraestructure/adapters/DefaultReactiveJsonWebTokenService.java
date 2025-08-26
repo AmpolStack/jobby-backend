@@ -1,6 +1,6 @@
 package com.jobby.gateway.infraestructure.adapters;
 
-import com.jobby.gateway.domain.ReactiveJsonWebTokenDecoder;
+import com.jobby.gateway.domain.ReactiveJsonWebTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class DefaultReactiveJsonWebTokenDecoder implements ReactiveJsonWebTokenDecoder {
+public class DefaultReactiveJsonWebTokenService implements ReactiveJsonWebTokenService {
     private final ReactiveJwtDecoder jwtDecoder;
     private final JwtGrantedAuthoritiesConverter authoritiesConverter;
 
-    public DefaultReactiveJsonWebTokenDecoder(ReactiveJwtDecoder jwtDecoder) {
+    public DefaultReactiveJsonWebTokenService(ReactiveJwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
         this.authoritiesConverter = new JwtGrantedAuthoritiesConverter();
         this.authoritiesConverter.setAuthoritiesClaimName("roles");
