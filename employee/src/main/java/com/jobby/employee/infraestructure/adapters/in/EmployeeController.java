@@ -3,10 +3,7 @@ package com.jobby.employee.infraestructure.adapters.in;
 import com.jobby.employee.domain.ports.in.GetEmployeeByIdUseCase;
 import com.jobby.infraestructure.response.definition.ApiResponseMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/employee")
@@ -21,7 +18,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/findById")
-    public ResponseEntity<?> getById(@RequestParam int id) {
+    public ResponseEntity<?> getById(@RequestHeader("X-User-Id") int id) {
         var resp = this.getEmployeeByIdUseCase
                 .execute(id);
 
