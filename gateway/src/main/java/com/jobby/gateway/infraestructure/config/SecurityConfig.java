@@ -18,9 +18,8 @@ public class SecurityConfig {
     @Order(1)
     public SecurityWebFilterChain publicSecurityFilterChain(ServerHttpSecurity http) {
         http
-                .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
-                        "/authorize/**", "/api/public/**", "/api/authorize/**"))
-                .authorizeExchange(exchanges -> exchanges.anyExchange().permitAll())
+                .securityMatcher(ServerWebExchangeMatchers.pathMatchers("/authorize/**", "/api/public/**", "/api/authorize/**"))
+                .authorizeExchange(ex -> ex.anyExchange().permitAll())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable);
         return http.build();
@@ -28,16 +27,12 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityWebFilterChain securedSecurityFilterChain(
-            ServerHttpSecurity http,
-            ReactiveJwtAuthenticationConverterAdapter authenticationConverter) {
+    public SecurityWebFilterChain securedSecurityFilterChain(ServerHttpSecurity http, ReactiveJwtAuthenticationConverterAdapter authenticationConverter) {
         http
-                .authorizeExchange(exchanges -> exchanges.anyExchange().authenticated())
+                .authorizeExchange(ex -> ex.anyExchange().authenticated())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter)));
-
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter)));
         return http.build();
     }
 
