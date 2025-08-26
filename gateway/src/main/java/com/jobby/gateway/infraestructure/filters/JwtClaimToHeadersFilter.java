@@ -1,6 +1,6 @@
 package com.jobby.gateway.infraestructure.filters;
 
-import com.jobby.gateway.domain.ReactiveJsonWebTokenService;
+import com.jobby.gateway.domain.ReactiveJwtHeaderTransformer;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
@@ -15,9 +15,9 @@ import java.util.List;
 @Order()
 public class JwtClaimToHeadersFilter implements GlobalFilter {
     private static final List<String> FORBIDDEN = List.of("X-User-Id", "X-Roles", "X-Username");
-    private final ReactiveJsonWebTokenService decoder;
+    private final ReactiveJwtHeaderTransformer decoder;
 
-    public JwtClaimToHeadersFilter(ReactiveJsonWebTokenService decoder) {
+    public JwtClaimToHeadersFilter(ReactiveJwtHeaderTransformer decoder) {
         this.decoder = decoder;
     }
 
