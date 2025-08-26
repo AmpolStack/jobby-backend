@@ -56,4 +56,30 @@ public class DefaultReactiveJsonWebTokenService implements ReactiveJsonWebTokenS
 
         return Mono.just(headers);
     }
+
+    @Override
+    public Mono<Map<String, String>> toHeaders(Authentication authentication) {
+        Map<String, String> headers = new HashMap<>();
+
+        if (!(authentication instanceof JwtAuthenticationToken jwtAuth)) {
+            return Mono.just(headers);
+        }
+
+        jwtAuth.getTokenAttributes().forEach((k, v) -> {
+            System.out.println(k + " : " + v);
+        });
+
+
+        var email = jwtAuth.getTokenAttributes().get("com.jobby.employee.email");
+        if(email != null && !(email instanceof String)) headers.put("X-User-Email", email.toString());
+
+        Jwt jwt = jwtAuth.getToken();
+
+        var subject = jwt.getSubject();
+        if (subject != null){
+            headers.put("X-User-Id", subject);
+        }
+
+        return Mono.just(headers);
+    }
 }
