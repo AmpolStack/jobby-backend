@@ -5,7 +5,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import reactor.core.publisher.Mono;
 import java.util.Map;
 
-public interface ReactiveJsonWebTokenDecoder {
+public interface ReactiveJsonWebTokenService {
     Mono<Jwt> decode(String token);
     Mono<Authentication> toAuthentication(Jwt jwt);
     Mono<Map<String, String>> toHeaders(Jwt jwt);

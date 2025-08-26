@@ -1,7 +1,11 @@
+logging:
+  level:
+    org.springframework.security: DEBUG
 server:
   port: 8090
-
 spring:
+  config:
+    import: classpath:application-secrets.yml
   cloud:
     gateway:
       server:
@@ -17,6 +21,6 @@ spring:
             - id: authorization-rest-api
               uri: http://localhost:8080
               predicates:
-                - Path=/api/authorize/**
+                - Path=/api/public/authorize/**
               filters:
-                - StripPrefix=1
+                - StripPrefix=2
