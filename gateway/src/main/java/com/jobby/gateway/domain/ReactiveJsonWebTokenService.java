@@ -9,4 +9,5 @@ public interface ReactiveJsonWebTokenService {
     Mono<Jwt> decode(String token);
     Mono<Authentication> toAuthentication(Jwt jwt);
     Mono<Map<String, String>> toHeaders(Jwt jwt);
+    Mono<Map<String, String>> toHeaders(Authentication authentication);
 }
