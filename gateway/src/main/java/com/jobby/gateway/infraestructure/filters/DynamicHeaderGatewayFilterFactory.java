@@ -19,7 +19,69 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-
+/**
+ * DynamicHeaderGatewayFilterFactory
+ * <p>
+ * A GatewayFilterFactory for Spring Cloud Gateway that injects multiple dynamic headers
+ * into proxied requests. Configuration is per-route via {@code application.yml}.
+ * </p>
+ *
+ * <h3>Summary</h3>
+ * <p>
+ * - Supports a list of header definitions (name/value) to inject into the request forwarded to the backend.
+ * - Value formats supported: *   <ul>
+ *     <li><b>Literal</b> — e.g. {@code some-literal-value}.</li>
+ *     <li><b>Env</b> — {@code env:VAR_NAME} reads from {@code System.getenv("VAR_NAME")}.</li>
+ *     <li><b>SpEL</b> — {@code spel:<expression>} evaluates a SpEL expression with a predefined evaluation context (see <em>SpEL Context</em>).</li>
+ *   </ul>
+ * </p>
+ *
+ * <h3>SpEL evaluation context</h3>
+ * <p>
+ * When evaluating a SpEL expression, the following variables are available in the evaluation context:
+ * </p>
+ * <ul>
+ *   <li>{@code #claims} — a {@code Map<String,Object>} containing JWT claims when a {@code JwtAuthenticationToken} is present; otherwise an empty map.</li>
+ *   <li>{@code #principal} — the {@link org.springframework.security.core.Authentication} instance (maybe {@code null}).</li>
+ *   <li>{@code #request} — the {@link org.springframework.http.server.reactive.ServerHttpRequest} for the incoming request.</li>
+ *   <li>{@code #exchange} — the {@link org.springframework.web.server.ServerWebExchange} instance.</li>
+ * </ul>
+ *
+ * <h3>Example (application.yml)</h3>
+ * <pre>
+ * spring:
+ *   cloud: *     gateway: *       routes: *         - id: example-service *           uri: example-uri *           predicates: *             - Path=/api/users/** *           filters: *             - name: DynamicHeader *               args: *                 headers[0].name: X-User-Id *                 headers[0].value: "spel:#claims['sub']" *                 headers[1].name: X-User-Email *                 headers[1].value: "spel:#claims['email']" *                 headers[2].name: X-Env *                 headers[2].value: env:MY_ENV_VAR *                 headers[3].name: X-Literal *                 headers[3].value: some-literal-value * </pre>
+ *
+ * <h3>Behavior when authentication or claims are missing</h3>
+ * <ul>
+ *   <li>If there is no authentication, {@code #claims} is an empty map; SpEL expressions that reference missing claims return {@code null} and the header is not added.</li>
+ *   <li>If a SpEL evaluation throws an exception, the error is logged at DEBUG level and the header is not added (the filter will not produce a 500 error due to a failing SpEL expression).</li>
+ * </ul>
+ *
+ * <h3>Security considerations</h3>
+ * <ul>
+ *   <li>The filter removes any incoming headers that would be added (prevents client spoofing).</li>
+ *   <li>Do not expose sensitive data (e.g. raw tokens, secrets) as headers.</li>
+ *   <li>If you require extra integrity guarantees, consider signing internal headers (for example, {@code X-Gateway-Signature}) and verifying them in the backend.</li>
+ * </ul>
+ *
+ * <h3>Performance & maintenance notes</h3>
+ * <ul>
+ *   <li>SpEL evaluation has a runtime cost; avoid extremely complex SpEL expressions on very hot routes or consider caching computed values if feasible.</li>
+ *   <li>The filter is stateless and safe for concurrent use within the Gateway runtime.</li>
+ * </ul>
+ *
+ * <h3>Recommended usage</h3>
+ * <ol>
+ *   <li>Use {@code spel:#claims['sub']} (note the {@code #}) to reference injected variables in SpEL.</li>
+ *   <li>Test SpEL expressions in staging and enable DEBUG logs if a value does not resolve as expected.</li>
+ *   <li>Apply this filter only on routes that actually need the dynamic headers to avoid unnecessary header propagation.</li>
+ * </ol>
+ *
+ * @since 1.0.0
+ * @see org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
+ * @see org.springframework.expression.spel.standard.SpelExpressionParser
+ */
 @Component
 public class DynamicHeaderGatewayFilterFactory
         extends AbstractGatewayFilterFactory<DynamicHeaderGatewayFilterFactory.Config> {
