@@ -17,6 +17,10 @@ spring:
                 - Path=/api/employee/**
               filters:
                 - StripPrefix=1
+                - name: DynamicHeader
+                  args:
+                    headers[0].name: X-User-Id
+                    headers[0].value: spel:#claims['sub']
 
             - id: authorization-rest-api
               uri: http://localhost:8080
