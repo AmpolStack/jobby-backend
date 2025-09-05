@@ -40,3 +40,4 @@ build/
 ## Custom
 .idea
 application-secrets.yml
+.env
