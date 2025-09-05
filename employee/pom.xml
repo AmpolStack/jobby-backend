@@ -6,7 +6,7 @@
 		<groupId>com.jobby</groupId>
 		<artifactId>jobby</artifactId>
 		<version>1.0-SNAPSHOT</version>
-		<relativePath/>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>employee</artifactId>
 	<version>0.0.1-SNAPSHOT</version>

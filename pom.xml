@@ -17,10 +17,10 @@
   </properties>
 
   <modules>
-    <module>authorization</module>
-    <module>shared</module>
-    <module>employee</module>
-    <module>gateway</module>
+    <module>/authorization</module>
+    <module>/shared</module>
+    <module>/employee</module>
+    <module>/gateway</module>
   </modules>
 
   <dependencyManagement>
@@ -108,6 +108,13 @@
               </exclude>
             </excludes>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
