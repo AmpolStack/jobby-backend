@@ -1,0 +1,19 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "8090:8080"
+  authorization:
+    build:
+      context: .
+      dockerfile: authorization/Dockerfile
+    ports:
+      - "8081:8080"
+  employee:
+    build:
+      context: .
+      dockerfile: employee/Dockerfile
+    ports:
+      - "8082:8080"
