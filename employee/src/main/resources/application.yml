@@ -1,12 +1,11 @@
-server:
-  port: 8081
 spring:
+  profiles:
+    default: local
   config:
     import: classpath:application-secrets.yml
   application:
     name: employee
   datasource:
-    url: jdbc:mariadb://localhost:3308/jobbydata
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     show-sql: true
