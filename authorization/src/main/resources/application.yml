@@ -1,22 +1,10 @@
 spring:
+  profiles:
+    default: local
   config:
     import: classpath:application-secrets.yml
   application:
     name: authorization
-  data:
-    redis:
-      host: localhost
-      port: 6379
-#      password: yourPassword
-    mongodb:
-      host: localhost
-      port: 27017
-#      username: yourUsername
-#      password: yourPassword
-      authentication-database: admin
-      database: jobby
-server:
-  port: 8080
 encrypt:
   iv:
     length: 12
