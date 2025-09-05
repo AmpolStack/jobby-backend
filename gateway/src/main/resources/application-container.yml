@@ -1,0 +1,25 @@
+token:
+  secret-key: ${TOKEN_SECRET_KEY}
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: employee-api
+              uri: http://employee:8080
+              predicates:
+                - Path=/api/employee/**
+              filters:
+                - StripPrefix=1
+                - name: DynamicHeader
+                  args:
+                    headers[0].name: X-User-Id
+                    headers[0].value: spel:#claims['sub']
+
+            - id: authorization-api
+              uri: http://authorization:8080
+              predicates:
+                - Path=/api/public/authorize/**
+              filters:
+                - StripPrefix=2
