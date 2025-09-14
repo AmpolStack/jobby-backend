@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.injections;
+package com.jobby.authorization.infraestructure.autoconfiguration;
 
 import com.jobby.domain.configurations.EncryptConfig;
 import com.jobby.authorization.infraestructure.config.TokenConfig;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class Injections {
+public class baseAutoConfiguration {
     @Bean
     @ConfigurationProperties(prefix = "encrypt")
     public EncryptConfig getEncryptConfig(){
