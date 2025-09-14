@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.adapters.out.encrypt;
+package com.jobby.infraestructure.adapter.encrypt;
 
 import com.jobby.domain.ports.encrypt.EncryptBuilder;
 import com.jobby.domain.mobility.error.Error;

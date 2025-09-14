@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.adapters.out.encrypt;
+package com.jobby.infraestructure.adapter.encrypt;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
