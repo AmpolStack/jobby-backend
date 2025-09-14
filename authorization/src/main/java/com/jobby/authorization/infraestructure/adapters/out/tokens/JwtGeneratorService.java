@@ -1,6 +1,6 @@
 package com.jobby.authorization.infraestructure.adapters.out.tokens;
 
-import com.jobby.authorization.domain.ports.out.SafeResultValidator;
+import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.tokens.TokenGeneratorService;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;

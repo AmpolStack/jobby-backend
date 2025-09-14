@@ -1,6 +1,6 @@
-package com.jobby.authorization.infraestructure.adapters.out.encrypt;
+package com.jobby.infraestructure.adapter.encrypt;
 
-import com.jobby.authorization.domain.ports.out.encrypt.EncryptBuilder;
+import com.jobby.domain.ports.encrypt.EncryptBuilder;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
@@ -13,7 +13,6 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.*;
 import java.security.spec.AlgorithmParameterSpec;
 
-@Component
 public class DefaultEncryptBuilder implements EncryptBuilder {
     private byte[] data;
     private Key key;

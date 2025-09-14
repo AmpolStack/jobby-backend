@@ -1,14 +1,12 @@
-package com.jobby.authorization.infraestructure.adapters.out;
+package com.jobby.infraestructure.adapter;
 
-import com.jobby.authorization.domain.ports.out.HashingService;
+import com.jobby.domain.ports.HashingService;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 
-@Component
 public class BcryptHashingService implements HashingService {
 
     private static final int VALID_LIMIT_OF_INPUT_BYTES = 72;
@@ -16,6 +14,7 @@ public class BcryptHashingService implements HashingService {
 
     @Override
     public Result<String, Error> hash(String input) {
+        //noinspection DataFlowIssue
         return ValidationChain.create()
                 .validateInternalNotBlank(input, "hash-input")
                 .validateIf(input != null, () ->

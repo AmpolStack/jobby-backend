@@ -1,6 +1,6 @@
-package com.jobby.authorization.infraestructure.adapters.out;
+package com.jobby.infraestructure.adapter;
 
-import com.jobby.authorization.domain.ports.out.CacheService;
+import com.jobby.domain.ports.CacheService;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
@@ -10,10 +10,8 @@ import org.springframework.dao.QueryTimeoutException;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.SerializationException;
-import org.springframework.stereotype.Service;
 import java.time.Duration;
 
-@Service
 public class RedisCacheService implements CacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;

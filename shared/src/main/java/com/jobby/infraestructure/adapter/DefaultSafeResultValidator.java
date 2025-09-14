@@ -1,17 +1,15 @@
-package com.jobby.authorization.infraestructure.adapters.out;
+package com.jobby.infraestructure.adapter;
 
-import com.jobby.authorization.domain.ports.out.SafeResultValidator;
+import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-@Component
 public class DefaultSafeResultValidator implements SafeResultValidator {
 
     private final Validator validator;

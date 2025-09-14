@@ -3,7 +3,7 @@ package com.jobby.authorization.application.useCases;
 import com.jobby.authorization.domain.model.Employee;
 import com.jobby.authorization.domain.model.TokenRegistry;
 import com.jobby.authorization.domain.ports.in.AuthorizeEmployeeByCredentials;
-import com.jobby.authorization.domain.ports.out.SafeResultValidator;
+import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.authorization.domain.ports.out.repositories.EmployeeRepository;
 import com.jobby.authorization.domain.ports.out.repositories.TokenRegistryRepository;
 import com.jobby.authorization.domain.ports.out.tokens.RefreshTokenGeneratorService;

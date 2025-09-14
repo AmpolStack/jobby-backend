@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.config;
+package com.jobby.domain.configurations;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -9,9 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.validation.annotation.Validated;
 
-@Validated
 @Getter
 @Setter
 @AllArgsConstructor
