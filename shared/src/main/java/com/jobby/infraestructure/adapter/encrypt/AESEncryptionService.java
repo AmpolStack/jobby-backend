@@ -1,6 +1,7 @@
 package com.jobby.infraestructure.adapter.encrypt;
 
 import com.jobby.domain.ports.SafeResultValidator;
+import com.jobby.domain.ports.encrypt.EncryptBuilder;
 import com.jobby.domain.ports.encrypt.EncryptionService;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
@@ -8,7 +9,6 @@ import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;
 import com.jobby.domain.configurations.EncryptConfig;
-import org.springframework.stereotype.Service;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import java.nio.ByteBuffer;
@@ -17,7 +17,6 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Base64;
 
-@Service
 public class AESEncryptionService implements EncryptionService {
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
@@ -25,9 +24,9 @@ public class AESEncryptionService implements EncryptionService {
     private static final Integer[] VALID_KEY_LENGTHS_BITS = {128, 192, 256};
 
     private final SafeResultValidator validator;
-    private final DefaultEncryptBuilder encryptBuilder;
+    private final EncryptBuilder encryptBuilder;
 
-    public AESEncryptionService(SafeResultValidator validator, DefaultEncryptBuilder defaultEncryptBuilder) {
+    public AESEncryptionService(SafeResultValidator validator, EncryptBuilder defaultEncryptBuilder) {
         this.validator = validator;
         this.encryptBuilder = defaultEncryptBuilder;
     }

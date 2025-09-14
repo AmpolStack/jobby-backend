@@ -13,7 +13,6 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.*;
 import java.security.spec.AlgorithmParameterSpec;
 
-@Component
 public class DefaultEncryptBuilder implements EncryptBuilder {
     private byte[] data;
     private Key key;
