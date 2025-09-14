@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.adapter;
+package com.jobby.authorization.infraestructure.adapters.out;
 
 import com.jobby.domain.ports.CacheService;
 import com.jobby.domain.mobility.error.Error;
