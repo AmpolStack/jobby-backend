@@ -1,0 +1,2 @@
+com.jobby.infraestructure.autoconfiguration.EncryptionAutoConfiguration
+com.jobby.infraestructure.autoconfiguration.SafeValidatorAutoConfiguration
