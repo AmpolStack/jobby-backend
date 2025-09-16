@@ -1,0 +1,112 @@
+services:
+  controller:
+    image: apache/kafka:4.0.0
+    container_name: controller
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_PROCESS_ROLES: "controller"
+      KAFKA_NODE_ID: "1"
+      CLUSTER_ID: ${MAIN_CLUSTER_ID}
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_LISTENERS: "CONTROLLER://0.0.0.0:9092"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@controller:9092"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT"
+    networks:
+      - messaging-net
+
+  first-broker:
+    image: apache/kafka:4.0.0
+    container_name: first-broker
+    ports:
+      - "9093:9093"
+    environment:
+      KAFKA_PROCESS_ROLES: "broker"
+      KAFKA_NODE_ID: "2"
+      CLUSTER_ID: ${MAIN_CLUSTER_ID}
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://first-broker:9093"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@controller:9092"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+    networks:
+      - messaging-net
+    depends_on:
+      - controller
+
+  second-broker:
+    image: apache/kafka:4.0.0
+    container_name: second-broker
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_PROCESS_ROLES: "broker"
+      KAFKA_NODE_ID: "3"
+      CLUSTER_ID: ${MAIN_CLUSTER_ID}
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9094"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://second-broker:9094"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@controller:9092"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+    networks:
+      - messaging-net
+    depends_on:
+      - controller
+
+  third-broker:
+    image: apache/kafka:4.0.0
+    container_name: third-broker
+    ports:
+      - "9095:9095"
+    environment:
+      KAFKA_PROCESS_ROLES: "broker"
+      KAFKA_NODE_ID: "4"
+      CLUSTER_ID: ${MAIN_CLUSTER_ID}
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9095"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://third-broker:9095"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@controller:9092"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+      KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+    networks:
+      - messaging-net
+    depends_on:
+      - controller
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.2.15
+    container_name: schema-registry
+    hostname: schema-registry
+    depends_on:
+      - first-broker
+      - second-broker
+      - third-broker
+    ports:
+      - "8091:8091"
+    environment:
+      - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=PLAINTEXT://first-broker:9093,PLAINTEXT://second-broker:9094,PLAINTEXT://third-broker:9095
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry
+      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8091
+    networks:
+      - messaging-net
+
+
+networks:
+  messaging-net:
+    name: jobby-messaging-net
+    driver: bridge
