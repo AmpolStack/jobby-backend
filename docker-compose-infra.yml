@@ -63,3 +63,6 @@ networks:
   redis-net:
     external: true
     name: jobby-redis-net
+  messaging-net:
+    external: true
+    name: jobby-messaging-net
