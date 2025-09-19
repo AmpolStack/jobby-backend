@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "User",
+  "namespace": "com.jobby.messaging.schemas",
+  "fields": [
+    {"name": "id", "type": "int"},
+    {"name": "firstName", "type": "string"},
+    {"name": "lastName", "type": "string"},
+    {"name":  "email", "type": ["null","string"], "default": "null"},
+    {"name":  "phone", "type": ["null","string"], "default": "null"},
+    {"name": "createdAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {"name": "modifiedAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ]
+}
