@@ -1,4 +1,4 @@
-package com.jobby.employee.infraestructure.persistence.mappers;
+package com.jobby.employee.infraestructure.persistence.jpa.mappers;
 
 import com.jobby.employee.domain.model.Country;
 import org.mapstruct.Mapper;

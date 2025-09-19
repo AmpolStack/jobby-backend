@@ -1,7 +1,7 @@
-package com.jobby.employee.infraestructure.persistence.mappers;
+package com.jobby.employee.infraestructure.persistence.jpa.mappers;
 
 import com.jobby.employee.domain.model.User;
-import com.jobby.employee.infraestructure.persistence.entities.JpaAppUserEntity;
+import com.jobby.employee.infraestructure.persistence.jpa.entities.JpaAppUserEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

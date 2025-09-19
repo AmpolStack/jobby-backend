@@ -1,6 +1,6 @@
-package com.jobby.employee.infraestructure.persistence.repositories;
+package com.jobby.employee.infraestructure.persistence.jpa.repositories;
 
-import com.jobby.employee.infraestructure.persistence.entities.JpaEmployeeEntity;
+import com.jobby.employee.infraestructure.persistence.jpa.entities.JpaEmployeeEntity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

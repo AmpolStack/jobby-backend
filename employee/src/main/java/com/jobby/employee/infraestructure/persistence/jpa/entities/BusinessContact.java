@@ -1,4 +1,4 @@
-package com.jobby.employee.infraestructure.persistence.entities;
+package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
