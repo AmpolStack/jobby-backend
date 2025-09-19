@@ -22,13 +22,13 @@ public class Contact {
     @JoinColumn(name = "contact_type_id", nullable = false)
     private ContactType contactType;
 
-    @Size(max = 150)
+    @Size(max = 1200)
     @NotNull
-    @Column(name = "value", nullable = false, length = 150)
+    @Column(name = "value", nullable = false, length = 1200)
     private String value;
 
-    @Size(max = 100)
-    @Column(name = "name", length = 100)
+    @Size(max = 600)
+    @Column(name = "name", length = 600)
     private String name;
 
     @ColumnDefault("current_timestamp()")

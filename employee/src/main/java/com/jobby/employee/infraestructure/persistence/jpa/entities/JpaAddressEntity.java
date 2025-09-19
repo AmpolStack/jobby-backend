@@ -22,13 +22,13 @@ public class JpaAddressEntity {
     @JoinColumn(name = "city_id", nullable = false)
     private JpaCityEntity city;
 
-    @Size(max = 100)
+    @Size(max = 600)
     @NotNull
-    @Column(name = "value", nullable = false, length = 100)
+    @Column(name = "value", nullable = false, length = 600)
     private String value;
 
-    @Size(max = 200)
-    @Column(name = "description", length = 200)
+    @Size(max = 1200)
+    @Column(name = "description", length = 1200)
     private String description;
 
     @ColumnDefault("current_timestamp()")

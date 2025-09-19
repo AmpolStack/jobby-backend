@@ -19,22 +19,22 @@ public class JpaAppUserEntity {
     @Column(name = "user_id", nullable = false)
     private Integer id;
 
-    @Size(max = 100)
+    @Size(max = 600)
     @NotNull
-    @Column(name = "first_name", nullable = false, length = 100)
+    @Column(name = "first_name", nullable = false, length = 600)
     private String firstName;
 
-    @Size(max = 100)
+    @Size(max = 600)
     @NotNull
-    @Column(name = "last_name", nullable = false, length = 100)
+    @Column(name = "last_name", nullable = false, length = 600)
     private String lastName;
 
-    @Size(max = 100)
-    @Column(name = "email", length = 100)
+    @Size(max = 600)
+    @Column(name = "email", length = 600)
     private String email;
 
-    @Size(max = 20)
-    @Column(name = "phone", length = 20)
+    @Size(max = 350)
+    @Column(name = "phone", length = 350)
     private String phone;
 
     @ColumnDefault("current_timestamp()")

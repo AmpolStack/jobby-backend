@@ -46,13 +46,13 @@ public class JpaEmployeeEntity {
     @Column(name = "password", nullable = false, length = 60)
     private String password;
 
-    @Size(max = 70)
+    @Size(max = 600)
     @NotNull
-    @Column(name = "username", nullable = false, length = 70)
+    @Column(name = "username", nullable = false, length = 600)
     private String username;
 
-    @Size(max = 100)
-    @Column(name = "position_name", length = 100)
+    @Size(max = 600)
+    @Column(name = "position_name", length = 600)
     private String positionName;
 
     @Size(max = 250)
