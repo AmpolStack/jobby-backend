@@ -22,7 +22,15 @@ public class DefaultEmployeeRepository implements EmployeeRepository {
 
     @Override
     public Result<Employee, Error> save(Employee employee) {
-        return null;
+        var jpaEmployeeEntity = this.jpaEmployeeMapper.toJpa(employee);
+        try{
+            var resp = this.employeeRepository.save(jpaEmployeeEntity);
+            return Result.success(this.jpaEmployeeMapper.toDomain(resp));
+        }
+        catch (Exception ex){
+            return Result.failure(ErrorType.ITS_EXTERNAL_SERVICE_FAILURE,
+                    new Field("jpa database", ex.getMessage()));
+        }
     }
 
     @Override
