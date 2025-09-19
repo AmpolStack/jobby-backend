@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 public class MongoSectionalEntity {
@@ -13,6 +15,10 @@ public class MongoSectionalEntity {
     private MongoBusinessEntity business;
     private String name;
     private String description;
-    @Name("bannerImageUrl")
+    @Name("banner_image_url")
     private String bannerImageUrl;
+    @Name("created_at")
+    private Instant createdAt;
+    @Name("modified_at")
+    private Instant modifiedAt;
 }

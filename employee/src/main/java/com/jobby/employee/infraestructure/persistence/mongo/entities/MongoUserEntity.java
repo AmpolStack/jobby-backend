@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
 
+import java.util.Date;
+
 @Getter
 @Setter
 public class MongoUserEntity {
@@ -15,4 +17,8 @@ public class MongoUserEntity {
     private String lastName;
     private String email;
     private String phone;
+    @Name("created_at")
+    private Date createdAt;
+    @Name("modified_at")
+    private Date modifiedAt;
 }

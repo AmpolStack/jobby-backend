@@ -1,6 +1,5 @@
 package com.jobby.employee.infraestructure.persistence.mongo.entities;
 
-import com.jobby.employee.domain.model.Sectional;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
@@ -19,13 +18,15 @@ public class MongoEmployeeEntity {
     private MongoAddressEntity address;
     private MongoUserEntity user;
     private MongoSectionalEntity sectional;
-    private String status;
+    private MongoEmployeeStatus status;
     private String username;
     private String password;
     @Name("position_name")
     private String positionName;
     @Name("profile_image_url")
     private String profileImageUrl;
-    @Name("since")
+    @Name("created_at")
     private Instant createdAt;
+    @Name("modified_at")
+    private Instant modifiedAt;
 }
