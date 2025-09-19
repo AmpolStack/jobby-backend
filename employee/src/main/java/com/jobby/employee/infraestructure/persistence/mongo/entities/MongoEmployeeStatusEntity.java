@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Setter
 @Getter
-public class MongoEmployeeStatus {
+public class MongoEmployeeStatusEntity {
     @Name("employee_status_id")
     private int id;
     private String name;

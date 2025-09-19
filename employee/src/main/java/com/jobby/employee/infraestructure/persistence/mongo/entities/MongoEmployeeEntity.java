@@ -18,7 +18,7 @@ public class MongoEmployeeEntity {
     private MongoAddressEntity address;
     private MongoUserEntity user;
     private MongoSectionalEntity sectional;
-    private MongoEmployeeStatus status;
+    private MongoEmployeeStatusEntity status;
     private String username;
     private String password;
     @Name("position_name")
