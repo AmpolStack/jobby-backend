@@ -1,0 +1,23 @@
+{
+  "type": "record",
+  "name": "Address",
+  "namespace": "com.jobby.messaging.schemas",
+  "fields": [
+    {"name": "id", "type": "int"},
+    {"name": "value", "type": "string"},
+    {"name": "description", "type": ["string", "null"], "default": "null"},
+    {"name":  "city", "type":  "com.jobby.messaging.schemas.City"},
+    {"name": "createdAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {"name": "modifiedAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ]
+}

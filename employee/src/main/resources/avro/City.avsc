@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "City",
+  "namespace": "com.jobby.messaging.schemas",
+  "fields": [
+    {"name": "id", "type": "int"},
+    {"name": "name", "type": "string"},
+    {"name":  "country", "type": "com.jobby.messaging.schemas.Country"}
+  ]
+}

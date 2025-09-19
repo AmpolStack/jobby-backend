@@ -6,8 +6,8 @@ import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.ports.out.EmployeeRepository;
-import com.jobby.employee.infraestructure.persistence.mappers.JpaEmployeeMapper;
-import com.jobby.employee.infraestructure.persistence.repositories.SpringDataJpaEmployeeRepository;
+import com.jobby.employee.infraestructure.persistence.jpa.mappers.JpaEmployeeMapper;
+import com.jobby.employee.infraestructure.persistence.jpa.repositories.SpringDataJpaEmployeeRepository;
 import org.springframework.stereotype.Component;
 
 @Component

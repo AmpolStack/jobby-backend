@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "EmployeeCreatedEvent",
+  "namespace": "com.jobby.messaging.schemas",
+  "fields": [
+    {"name": "id", "type": "int"},
+    {"name": "password", "type": "string"},
+    {"name": "username", "type": "string"},
+    {"name":  "positionName", "type": "string"},
+    {"name":  "profileImageUrl", "type": "string"},
+    {"name":  "user", "type": "com.jobby.messaging.schemas.User"},
+    {"name":  "address", "type": "com.jobby.messaging.schemas.Address"},
+    {"name": "createdAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {"name": "modifiedAt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ]
+}
