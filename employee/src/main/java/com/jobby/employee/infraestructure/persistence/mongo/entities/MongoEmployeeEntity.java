@@ -18,7 +18,7 @@ public class MongoEmployeeEntity {
     private int id;
     private MongoAddressEntity address;
     private MongoUserEntity user;
-    private Sectional sectional;
+    private MongoSectionalEntity sectional;
     private String status;
     private String username;
     private String password;
