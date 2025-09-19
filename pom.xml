@@ -159,7 +159,7 @@
           <artifactId>avro-maven-plugin</artifactId>
           <version>1.12.0</version>
           <configuration>
-            <sourceDirectory>${project.basedir}/src/main/avro</sourceDirectory>
+            <sourceDirectory>${project.basedir}/src/main/resources/avro</sourceDirectory>
             <outputDirectory>${project.build.directory}/generated-sources/avro</outputDirectory>
           </configuration>
           <executions>
