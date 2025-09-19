@@ -9,5 +9,6 @@ import org.mapstruct.Mapper;
 public interface JpaEmployeeMapper {
 
     Employee toDomain(JpaEmployeeEntity jpaEmployeeEntity);
+    JpaEmployeeEntity toJpa(Employee employee);
 
 }

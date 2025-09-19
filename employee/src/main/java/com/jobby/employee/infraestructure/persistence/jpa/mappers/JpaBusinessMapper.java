@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = { JpaBusinessMapper.class })
 public interface JpaBusinessMapper {
     Business toDomain(JpaBusinessEntity jpaBusinessEntity);
+    JpaBusinessEntity toJpa(Business business);
 }

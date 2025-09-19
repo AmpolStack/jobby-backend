@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = { JpaSectionalMapper.class, JpaBusinessMapper.class })
 public interface JpaSectionalMapper {
     Sectional toDomain(JpaSectionalEntity jpaSectionalEntity);
+    JpaSectionalEntity toJpa(Sectional sectional);
 }
