@@ -10,3 +10,7 @@ spring:
   jpa:
     show-sql: true
     open-in-view: false
+encrypt:
+  iv:
+    length: 12
+    t-len: 128
