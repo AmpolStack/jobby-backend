@@ -1,8 +1,8 @@
-package com.jobby.employee.infraestructure.adapters.in.rest.controllers.dtos.mappers;
+package com.jobby.employee.infraestructure.adapters.in.rest.mappers;
 
 import com.jobby.employee.domain.model.Address;
 import com.jobby.employee.domain.model.City;
-import com.jobby.employee.infraestructure.adapters.in.rest.controllers.dtos.objects.created.AddressCreated;
+import com.jobby.employee.infraestructure.adapters.in.rest.dto.created.AddressCreated;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
