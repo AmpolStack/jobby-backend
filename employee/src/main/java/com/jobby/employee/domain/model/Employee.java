@@ -7,7 +7,7 @@ import java.time.Instant;
 @Getter
 @Setter
 public class Employee {
-    private int id;
+    private Integer id;
     private Address address;
     private User user;
     private Sectional sectional;
