@@ -1,4 +1,4 @@
-package com.jobby.employee.infraestructure.adapters.in;
+package com.jobby.employee.infraestructure.adapters.in.rest.controllers;
 
 import com.jobby.employee.domain.ports.in.GetEmployeeByIdUseCase;
 import com.jobby.employee.domain.ports.in.PutEmployeeUseCase;
