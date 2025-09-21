@@ -8,7 +8,7 @@ import java.util.Date;
 @Setter
 @Getter
 public class Address {
-    private int id;
+    private Integer id;
     private City city;
     private String value;
     private String description;

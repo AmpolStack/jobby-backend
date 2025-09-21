@@ -2,6 +2,11 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3308/jobbydata
+    url: jdbc:mariadb://localhost:3307/jobbydata
     username: root
-    password: jobbymaria
+  data:
+    mongodb:
+      host: localhost
+      port: 27018
+      authentication-database: admin
+      database: jobby

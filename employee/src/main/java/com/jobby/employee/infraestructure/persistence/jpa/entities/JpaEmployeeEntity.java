@@ -1,5 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
+import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
+import com.jobby.infraestructure.entitytransformers.EntityPasswordTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,15 +19,16 @@ import java.time.Instant;
 public class JpaEmployeeEntity {
     @Id
     @Column(name = "employee_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private JpaAppUserEntity user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "address_id")
     private JpaAddressEntity address;
@@ -44,15 +47,18 @@ public class JpaEmployeeEntity {
     @Size(max = 60)
     @NotNull
     @Column(name = "password", nullable = false, length = 60)
+    @Convert(converter = EntityPasswordTransformer.class)
     private String password;
 
     @Size(max = 600)
     @NotNull
     @Column(name = "username", nullable = false, length = 600)
+    @Convert(converter = EntityEncryptorTransformer.class)
     private String username;
 
     @Size(max = 600)
     @Column(name = "position_name", length = 600)
+    @Convert(converter = EntityEncryptorTransformer.class)
     private String positionName;
 
     @Size(max = 250)
@@ -60,11 +66,11 @@ public class JpaEmployeeEntity {
     private String profileImageUrl;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at")
+    @Column(name = "modified_at", insertable = false, updatable = false)
     private Instant modifiedAt;
 
 }

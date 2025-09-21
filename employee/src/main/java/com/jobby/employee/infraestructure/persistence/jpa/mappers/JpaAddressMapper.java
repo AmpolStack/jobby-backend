@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {JpaCityMapper.class})
 public interface JpaAddressMapper {
     Address toDomain(JpaAddressEntity jpaAddressEntity);
+    JpaAddressEntity toJpa(Address address);
 }

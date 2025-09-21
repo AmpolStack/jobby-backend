@@ -11,21 +11,21 @@ spring:
       password: jobbysecret
       authentication-database: admin
       database: jobby
-  kafka:
-    bootstrap-servers: "first-broker:9093,second-broker:9094,third-broker:9095"
-    consumer:
-      # group-id: test-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-      properties:
-        schema.registry.url: http://schema-registry:8091
-        specific.avro.reader: true
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-      properties:
-        schema.registry.url: http://schema-registry:8091
-        auto.register.schemas: true
+#  kafka:
+#    bootstrap-servers: "first-broker:9093,second-broker:9094,third-broker:9095"
+#    consumer:
+#      # group-id: test-group
+#      auto-offset-reset: earliest
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+#      properties:
+#        schema.registry.url: http://schema-registry:8091
+#        specific.avro.reader: true
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+#      properties:
+#        schema.registry.url: http://schema-registry:8091
+#        auto.register.schemas: true
 server:
   port: 8080

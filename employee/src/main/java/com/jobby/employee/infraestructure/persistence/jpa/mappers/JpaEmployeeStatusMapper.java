@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface JpaEmployeeStatusMapper {
     EmployeeStatus toDomain(JpaEmployeeStatusEntity jpaEmployeeStatusEntity);
+    JpaEmployeeStatusEntity toJpa(EmployeeStatus employeeStatus);
 }

@@ -1,8 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -17,24 +16,29 @@ import java.time.Instant;
 public class JpaAppUserEntity {
     @Id
     @Column(name = "user_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Size(max = 600)
     @NotNull
     @Column(name = "first_name", nullable = false, length = 600)
+    @Convert(converter = EntityEncryptorTransformer.class)
     private String firstName;
 
     @Size(max = 600)
     @NotNull
     @Column(name = "last_name", nullable = false, length = 600)
+    @Convert(converter = EntityEncryptorTransformer.class)
     private String lastName;
 
     @Size(max = 600)
     @Column(name = "email", length = 600)
+    @Convert(converter = EntityEncryptorTransformer.class)
     private String email;
 
     @Size(max = 350)
     @Column(name = "phone", length = 350)
+    @Convert(converter = EntityEncryptorTransformer.class)
     private String phone;
 
     @ColumnDefault("current_timestamp()")
