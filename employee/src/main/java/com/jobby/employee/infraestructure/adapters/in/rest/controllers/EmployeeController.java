@@ -2,8 +2,8 @@ package com.jobby.employee.infraestructure.adapters.in.rest.controllers;
 
 import com.jobby.employee.domain.ports.in.GetEmployeeByIdUseCase;
 import com.jobby.employee.domain.ports.in.PutEmployeeUseCase;
-import com.jobby.employee.infraestructure.dtos.objects.created.EmployeeCreated;
-import com.jobby.employee.infraestructure.dtos.mappers.EmployeeCreatedMapper;
+import com.jobby.employee.infraestructure.adapters.in.rest.dto.created.EmployeeCreated;
+import com.jobby.employee.infraestructure.adapters.in.rest.mappers.EmployeeCreatedMapper;
 import com.jobby.infraestructure.response.definition.ApiResponseMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
