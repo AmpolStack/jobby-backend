@@ -21,7 +21,6 @@ public class DefaultPutEmployeeUseCase implements PutEmployeeUseCase {
 
     @Override
     public Result<Employee, Error> execute(Employee employee) {
-        return this.safeResultValidator.validate(employee)
-                .flatMap(x -> this.employeeRepository.save(employee));
+        return this.employeeRepository.save(employee);
     }
 }
