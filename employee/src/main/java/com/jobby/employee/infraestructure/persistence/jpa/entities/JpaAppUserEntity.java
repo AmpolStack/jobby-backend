@@ -42,11 +42,11 @@ public class JpaAppUserEntity {
     private String phone;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at")
+    @Column(name = "modified_at", insertable = false, updatable = false)
     private Instant modifiedAt;
 
 }
