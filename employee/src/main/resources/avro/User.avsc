@@ -6,19 +6,23 @@
     {"name": "id", "type": "int"},
     {"name": "firstName", "type": "string"},
     {"name": "lastName", "type": "string"},
-    {"name":  "email", "type": ["null","string"], "default": "null"},
-    {"name":  "phone", "type": ["null","string"], "default": "null"},
+    {"name":  "email", "type": ["null","string"], "default": null},
+    {"name":  "phone", "type": ["null","string"], "default": null},
     {"name": "createdAt",
-      "type": {
+      "type": ["null",
+        {
         "type": "long",
         "logicalType": "timestamp-millis"
-      }
+      }],
+      "default": null
     },
     {"name": "modifiedAt",
-      "type": {
+      "type": [ "null",
+        {
         "type": "long",
         "logicalType": "timestamp-millis"
-      }
+      }],
+      "default": null
     }
   ]
 }

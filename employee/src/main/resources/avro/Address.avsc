@@ -5,19 +5,23 @@
   "fields": [
     {"name": "id", "type": "int"},
     {"name": "value", "type": "string"},
-    {"name": "description", "type": ["string", "null"], "default": "null"},
+    {"name": "description", "type": ["null", "string"], "default": null},
     {"name":  "city", "type":  "com.jobby.messaging.schemas.City"},
     {"name": "createdAt",
-      "type": {
-        "type": "long",
-        "logicalType": "timestamp-millis"
-      }
+      "type": ["null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }],
+      "default": null
     },
     {"name": "modifiedAt",
-      "type": {
-        "type": "long",
-        "logicalType": "timestamp-millis"
-      }
+      "type": [ "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }],
+      "default": null
     }
   ]
 }
