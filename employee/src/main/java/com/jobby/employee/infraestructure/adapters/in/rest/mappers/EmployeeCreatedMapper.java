@@ -1,9 +1,9 @@
-package com.jobby.employee.infraestructure.mappers;
+package com.jobby.employee.infraestructure.adapters.in.rest.mappers;
 
 import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.model.EmployeeStatus;
 import com.jobby.employee.domain.model.Sectional;
-import com.jobby.employee.infraestructure.dto.EmployeeCreated;
+import com.jobby.employee.infraestructure.adapters.in.rest.dto.created.EmployeeCreated;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

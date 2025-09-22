@@ -1,4 +1,4 @@
-package com.jobby.employee.infraestructure.dto;
+package com.jobby.employee.infraestructure.adapters.in.rest.dto.created;
 
 import lombok.Getter;
 import lombok.Setter;

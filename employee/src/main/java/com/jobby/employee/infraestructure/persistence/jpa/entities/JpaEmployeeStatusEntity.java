@@ -25,7 +25,7 @@ public class JpaEmployeeStatusEntity {
     private String name;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Instant createdAt;
 
 }

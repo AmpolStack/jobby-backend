@@ -1,12 +1,14 @@
 {
   "type": "record",
-  "name": "Address",
+  "name": "Sectional",
   "namespace": "com.jobby.messaging.schemas",
   "fields": [
     {"name": "id", "type": "int"},
-    {"name": "value", "type": "string"},
-    {"name": "description", "type": ["null", "string"], "default": null},
-    {"name":  "city", "type":  "com.jobby.messaging.schemas.City"},
+    {"name": "name", "type": "string"},
+    {"name": "bannerImageUrl", "type": "string"},
+    {"name": "description", "type": "string"},
+    {"name":  "address", "type": "com.jobby.messaging.schemas.Address"},
+    {"name":  "business", "type": "com.jobby.messaging.schemas.Business"},
     {"name": "createdAt",
       "type": ["null",
         {
@@ -25,3 +27,4 @@
     }
   ]
 }
+

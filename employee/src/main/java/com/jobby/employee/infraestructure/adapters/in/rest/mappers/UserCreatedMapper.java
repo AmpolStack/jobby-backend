@@ -1,7 +1,7 @@
-package com.jobby.employee.infraestructure.mappers;
+package com.jobby.employee.infraestructure.adapters.in.rest.mappers;
 
 import com.jobby.employee.domain.model.User;
-import com.jobby.employee.infraestructure.dto.UserCreated;
+import com.jobby.employee.infraestructure.adapters.in.rest.dto.created.UserCreated;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
