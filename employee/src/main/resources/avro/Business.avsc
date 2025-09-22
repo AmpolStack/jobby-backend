@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "name": "Business",
+  "namespace": "com.jobby.messaging.schemas",
+  "fields": [
+    {"name": "id", "type": "int"},
+    {"name": "name", "type": "string"},
+    {"name": "bannerImageUrl", "type": "string"},
+    {"name": "description", "type": "string"},
+    {"name": "profileImageUrl", "type": "string"},
+    {"name":  "address", "type": "com.jobby.messaging.schemas.Address"},
+    {"name": "createdAt",
+      "type": ["null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }],
+      "default": null
+    },
+    {"name": "modifiedAt",
+      "type": [ "null",
+        {
+          "type": "long",
+          "logicalType": "timestamp-millis"
+        }],
+      "default": null
+    }
+  ]
+}
