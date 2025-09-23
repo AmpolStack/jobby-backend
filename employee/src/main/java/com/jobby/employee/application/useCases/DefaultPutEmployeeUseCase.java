@@ -8,17 +8,21 @@ import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.ports.in.PutEmployeeUseCase;
 import com.jobby.employee.domain.ports.out.EmployeeRepository;
 import com.jobby.employee.infraestructure.adapters.in.messaging.mappers.AvroEmployeeMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DefaultPutEmployeeUseCase implements PutEmployeeUseCase {
+public class WritePutEmployeeUseCase implements PutEmployeeUseCase {
 
     private final EmployeeRepository employeeRepository;
     private final SafeResultValidator safeResultValidator;
     private final MessagingPublisher messagingPublisher;
     private final AvroEmployeeMapper employeeMapper;
 
-    public DefaultPutEmployeeUseCase(EmployeeRepository employeeRepository, SafeResultValidator safeResultValidator, MessagingPublisher messagingPublisher, AvroEmployeeMapper employeeMapper) {
+    public WritePutEmployeeUseCase(@Qualifier("writeEmployeeRepository") EmployeeRepository employeeRepository,
+                                   SafeResultValidator safeResultValidator,
+                                   MessagingPublisher messagingPublisher,
+                                   AvroEmployeeMapper employeeMapper) {
         this.employeeRepository = employeeRepository;
         this.safeResultValidator = safeResultValidator;
         this.messagingPublisher = messagingPublisher;
