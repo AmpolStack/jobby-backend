@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface MongoUserMapper {
     User toDomain(MongoUserEntity mongoUserEntity);
+    MongoUserEntity toDocument(User user);
 }

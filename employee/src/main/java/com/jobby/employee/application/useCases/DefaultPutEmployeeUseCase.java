@@ -7,7 +7,8 @@ import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.ports.in.PutEmployeeUseCase;
 import com.jobby.employee.domain.ports.out.EmployeeRepository;
-import com.jobby.employee.infraestructure.adapters.in.messaging.mappers.AvroEmployeeMapper;
+import com.jobby.employee.infraestructure.adapters.in.messaging.mappers.SchemaEmployeeMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +17,12 @@ public class DefaultPutEmployeeUseCase implements PutEmployeeUseCase {
     private final EmployeeRepository employeeRepository;
     private final SafeResultValidator safeResultValidator;
     private final MessagingPublisher messagingPublisher;
-    private final AvroEmployeeMapper employeeMapper;
+    private final SchemaEmployeeMapper employeeMapper;
 
-    public DefaultPutEmployeeUseCase(EmployeeRepository employeeRepository, SafeResultValidator safeResultValidator, MessagingPublisher messagingPublisher, AvroEmployeeMapper employeeMapper) {
+    public DefaultPutEmployeeUseCase(@Qualifier("writeEmployeeRepository") EmployeeRepository employeeRepository,
+                                     SafeResultValidator safeResultValidator,
+                                     MessagingPublisher messagingPublisher,
+                                     SchemaEmployeeMapper employeeMapper) {
         this.employeeRepository = employeeRepository;
         this.safeResultValidator = safeResultValidator;
         this.messagingPublisher = messagingPublisher;
@@ -30,7 +34,7 @@ public class DefaultPutEmployeeUseCase implements PutEmployeeUseCase {
         return this.employeeRepository.save(employee)
                 .flatMap(employeeCreated -> this.employeeRepository.getEmployeeById(employeeCreated.getId()))
                 .map(employeeConsulted ->{
-                    var mapped = this.employeeMapper.toAvro(employeeConsulted);
+                    var mapped = this.employeeMapper.toSchema(employeeConsulted);
                     this.messagingPublisher.publishAsync("com.jobby.messaging.event.employee.created.v1", mapped);
                     return employeeConsulted;
                 });

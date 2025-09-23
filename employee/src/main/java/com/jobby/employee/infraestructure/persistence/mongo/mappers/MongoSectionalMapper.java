@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = { MongoSectionalMapper.class, MongoBusinessMapper.class })
 public interface MongoSectionalMapper {
     Sectional toDomain(MongoSectionalEntity mongoSectionalEntity);
+    MongoSectionalEntity toDocument(Sectional sectional);
 }

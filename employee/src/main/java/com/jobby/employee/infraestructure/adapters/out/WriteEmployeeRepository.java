@@ -10,12 +10,12 @@ import com.jobby.employee.infraestructure.persistence.jpa.mappers.JpaEmployeeMap
 import com.jobby.employee.infraestructure.persistence.jpa.repositories.SpringDataJpaEmployeeRepository;
 import org.springframework.stereotype.Component;
 
-@Component
-public class DefaultEmployeeRepository implements EmployeeRepository {
+@Component("writeEmployeeRepository")
+public class WriteEmployeeRepository implements EmployeeRepository {
     private final SpringDataJpaEmployeeRepository employeeRepository;
     private final JpaEmployeeMapper jpaEmployeeMapper;
 
-    public DefaultEmployeeRepository(SpringDataJpaEmployeeRepository employeeRepository, JpaEmployeeMapper jpaEmployeeMapper) {
+    public WriteEmployeeRepository(SpringDataJpaEmployeeRepository employeeRepository, JpaEmployeeMapper jpaEmployeeMapper) {
         this.employeeRepository = employeeRepository;
         this.jpaEmployeeMapper = jpaEmployeeMapper;
     }

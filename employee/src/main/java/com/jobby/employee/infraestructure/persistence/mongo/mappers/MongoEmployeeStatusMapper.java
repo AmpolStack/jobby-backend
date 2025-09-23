@@ -7,4 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface MongoEmployeeStatusMapper {
     EmployeeStatus toDomain(MongoEmployeeStatusEntity mongoEmployeeStatusEntity);
+    MongoEmployeeStatusEntity toDocument(EmployeeStatus employeeStatus);
+
 }

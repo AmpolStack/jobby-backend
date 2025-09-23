@@ -6,6 +6,7 @@ import com.jobby.domain.mobility.validator.ValidationChain;
 import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.ports.in.GetEmployeeByIdUseCase;
 import com.jobby.employee.domain.ports.out.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +14,7 @@ public class DefaultGetEmployeeByIdUseCase implements GetEmployeeByIdUseCase {
 
     private final EmployeeRepository employeeRepository;
 
-    public DefaultGetEmployeeByIdUseCase(EmployeeRepository employeeRepository) {
+    public DefaultGetEmployeeByIdUseCase(@Qualifier("writeEmployeeRepository") EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
