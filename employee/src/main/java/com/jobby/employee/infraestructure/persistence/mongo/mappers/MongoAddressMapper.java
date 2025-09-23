@@ -7,4 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {MongoCityMapper.class})
 public interface MongoAddressMapper {
     Address toDomain(MongoAddressEntity mongoAddressEntity);
+    MongoAddressEntity toDocument(Address address);
 }
