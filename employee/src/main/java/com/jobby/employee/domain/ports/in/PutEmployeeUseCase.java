@@ -5,5 +5,5 @@ import com.jobby.domain.mobility.result.Result;
 import com.jobby.employee.domain.model.Employee;
 
 public interface PutEmployeeUseCase {
-    public Result<Employee, Error> execute(Employee employee);
+    Result<Employee, Error> execute(Employee employee);
 }
