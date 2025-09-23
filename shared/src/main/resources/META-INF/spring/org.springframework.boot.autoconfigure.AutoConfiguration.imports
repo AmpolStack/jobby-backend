@@ -3,3 +3,4 @@ com.jobby.infraestructure.autoconfiguration.SafeValidatorAutoConfiguration
 com.jobby.infraestructure.autoconfiguration.CacheAutoConfiguration
 com.jobby.infraestructure.autoconfiguration.HashingAutoConfiguration
 com.jobby.infraestructure.autoconfiguration.MessagePublisherAutoConfiguration
+com.jobby.infraestructure.autoconfiguration.MacAutoConfiguration
