@@ -5,6 +5,7 @@ import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import java.util.Arrays;
 import java.util.function.Function;
+import java.util.function.Consumer;
 
 public sealed interface Result<T,E> permits Success, Failure {
 
@@ -74,11 +75,18 @@ public sealed interface Result<T,E> permits Success, Failure {
         }
     }
 
+    default void fold(Consumer<T> onSuccess, Consumer<E> onFailure) {
+        if (this.isSuccess()) {
+            onSuccess.accept(this.getData());
+        } else {
+            onFailure.accept(this.getError());
+        }
+    }
+
     static <T,U,E> Result<U, E> mapError(Result<T, E> result) {
         if(result.isFailure()) {
             return new Failure<>(result.getError());
         }
         throw new InconsistencyResultException("The result is failure");
     }
-
 }
