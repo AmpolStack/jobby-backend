@@ -14,3 +14,6 @@ encrypt:
   iv:
     length: 12
     t-len: 128
+hashing:
+  mac:
+    algorithm: HmacSHA256
