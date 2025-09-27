@@ -8,6 +8,7 @@ import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;
+import com.jobby.domain.ports.encrypt.MacBuilder;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -19,11 +20,11 @@ public class HmacSha256Service implements MacService {
     private static final Integer[] VALID_KEY_LENGTHS_BITS = {128, 160, 192, 224, 256, 384, 512};
 
     private final SafeResultValidator validator;
-    private final DefaultMacBuilder hmacBuilder;
+    private final MacBuilder macBuilder;
 
-    public HmacSha256Service(SafeResultValidator validator, DefaultMacBuilder hmacBuilder) {
+    public HmacSha256Service(SafeResultValidator validator, MacBuilder macBuilder) {
         this.validator = validator;
-        this.hmacBuilder = hmacBuilder;
+        this.macBuilder = macBuilder;
     }
 
     @Override
@@ -33,7 +34,7 @@ public class HmacSha256Service implements MacService {
                 .flatMap(key -> ValidationChain.create()
                         .validateInternalNotBlank(data, "data")
                         .build()
-                        .flatMap(v -> hmacBuilder
+                        .flatMap(v -> macBuilder
                                 .setData(data.getBytes(StandardCharsets.UTF_8))
                                 .setKey(key)
                                 .setAlgorithm(config.getAlgorithm())
