@@ -32,6 +32,15 @@ public class DefaultMacBuilder implements MacBuilder {
 
     public Result<byte[], Error> build() {
         Mac mac;
+        if(this.algorithm == null){
+            return Result.failure(ErrorType.ITS_INVALID_OPTION_PARAMETER,
+                    new Field(
+                            "algorithm",
+                            "MAC algorithm is null"
+                    )
+            );
+        }
+
         try {
             mac = Mac.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
