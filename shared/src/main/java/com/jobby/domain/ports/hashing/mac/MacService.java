@@ -1,4 +1,4 @@
-package com.jobby.domain.ports;
+package com.jobby.domain.ports.hashing.mac;
 
 import com.jobby.domain.configurations.MacConfig;
 import com.jobby.domain.mobility.error.Error;

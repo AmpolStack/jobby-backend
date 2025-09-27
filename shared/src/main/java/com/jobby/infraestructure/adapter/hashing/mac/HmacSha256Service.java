@@ -1,14 +1,14 @@
-package com.jobby.infraestructure.adapter.encrypt;
+package com.jobby.infraestructure.adapter.hashing.mac;
 
 import com.jobby.domain.configurations.MacConfig;
-import com.jobby.domain.ports.MacService;
+import com.jobby.domain.ports.hashing.mac.MacService;
 import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;
-import com.jobby.domain.ports.encrypt.MacBuilder;
+import com.jobby.domain.ports.hashing.mac.MacBuilder;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;

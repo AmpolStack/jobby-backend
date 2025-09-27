@@ -1,6 +1,6 @@
 package com.jobby.infraestructure.entitytransformers;
 
-import com.jobby.domain.ports.HashingService;
+import com.jobby.domain.ports.hashing.HashingService;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.extern.slf4j.Slf4j;

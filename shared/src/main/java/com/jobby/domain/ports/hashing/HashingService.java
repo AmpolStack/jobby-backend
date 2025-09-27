@@ -1,4 +1,4 @@
-package com.jobby.domain.ports;
+package com.jobby.domain.ports.hashing;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;

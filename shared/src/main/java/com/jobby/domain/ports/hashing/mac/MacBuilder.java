@@ -1,8 +1,8 @@
-package com.jobby.domain.ports.encrypt;
+package com.jobby.domain.ports.hashing.mac;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.infraestructure.adapter.encrypt.DefaultMacBuilder;
+import com.jobby.infraestructure.adapter.hashing.mac.DefaultMacBuilder;
 import java.security.Key;
 
 public interface MacBuilder {
