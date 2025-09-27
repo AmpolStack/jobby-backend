@@ -66,6 +66,23 @@ public class AESEncryptionServiceTest {
     }
 
     @Test
+    public void encrypt_whenTheConfigIsNull_ReturnFailure(){
+        // Arrange
+        var expectedResult = ValidationChain
+                .create()
+                .validateInternalNotNull(null, "encrypt config")
+                .build();
+
+        // Act
+        var result = this.aesEncryptionService.encrypt(VALID_DATA, null);
+
+        // Assert
+        assertTrue(result.isFailure());
+        assertEquals(Result.renewFailure(expectedResult), result);
+    }
+
+
+    @Test
     public void decrypt_whenTheConfigValidationReturnsFailed(){
         // Arrange
         var expectedResult = Result.failure(ErrorType.VALIDATION_ERROR, new Field("expected-instance", "expected-description"));
