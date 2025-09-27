@@ -159,4 +159,58 @@ public class HmacSha256ServiceTest {
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
     }
 
+    @Test
+    public void generateMac_whenDataIsNull_thenReturnFailure() {
+        // Arrange
+        Result<Void, Error> expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(null, "data").build();
+
+        Mockito.when(this.safeResultValidator.validate(VALID_CONFIG))
+                .thenReturn(Result.success(null));
+
+        // Act
+        var result = this.service.generateMac(null, VALID_CONFIG);
+
+        // Assert
+        TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
+    }
+
+    @ParameterizedTest
+    @MethodSource("com.jobby.authorization.TestStreams#blankStringList")
+    public void generateMac_whenDataIsBlank_thenReturnFailure(String invalidData) {
+        // Arrange
+        Result<Void, Error> expectedResult = ValidationChain.create()
+                .validateInternalNotBlank(invalidData, "data").build();
+
+        Mockito.when(this.safeResultValidator.validate(VALID_CONFIG))
+                .thenReturn(Result.success(null));
+
+        // Act
+        var result = this.service.generateMac(invalidData, VALID_CONFIG);
+
+        // Assert
+        TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
+    }
+
+    @Test
+    public void generateMac_whenBuildingIsFailed_thenReturnFailure() {
+        // Arrange
+        var expectedResult = Result.failure(ErrorType.ITS_OPERATION_ERROR,
+                new Field("expected instance", "expected reason"));
+
+        Mockito.when(this.safeResultValidator.validate(VALID_CONFIG))
+                .thenReturn(Result.success(null));
+
+        Mockito.when(this.defaultMacBuilder.setAlgorithm(Mockito.any())).thenReturn(this.defaultMacBuilder);
+        Mockito.when(this.defaultMacBuilder.setData(Mockito.any())).thenReturn(this.defaultMacBuilder);
+        Mockito.when(this.defaultMacBuilder.setKey(Mockito.any())).thenReturn(this.defaultMacBuilder);
+        Mockito.when(this.defaultMacBuilder.build()).thenReturn(Result.renewFailure(expectedResult));
+
+        // Act
+        var result = this.service.generateMac(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
+    }
+
 }
