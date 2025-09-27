@@ -12,6 +12,7 @@ import com.jobby.infraestructure.adapter.encrypt.EncryptUtils;
 import com.jobby.infraestructure.adapter.hashing.mac.DefaultMacBuilder;
 import com.jobby.infraestructure.adapter.hashing.mac.HmacSha256Service;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -211,6 +212,24 @@ public class HmacSha256ServiceTest {
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
+    }
+
+    @RepeatedTest(100)
+    public void generateMac_whenAllIsValid_thenReturnSuccess() {
+        // Arrange
+        Mockito.when(this.safeResultValidator.validate(VALID_CONFIG))
+                .thenReturn(Result.success(null));
+
+        Mockito.when(this.defaultMacBuilder.setAlgorithm(Mockito.any())).thenReturn(this.defaultMacBuilder);
+        Mockito.when(this.defaultMacBuilder.setData(Mockito.any())).thenReturn(this.defaultMacBuilder);
+        Mockito.when(this.defaultMacBuilder.setKey(Mockito.any())).thenReturn(this.defaultMacBuilder);
+        Mockito.when(this.defaultMacBuilder.build()).thenReturn(Result.success(new byte[10]));
+
+        // Act
+        var result = this.service.generateMac(VALID_DATA, VALID_CONFIG);
+
+        // Assert
+        TestAssertions.assertSuccess(result);
     }
 
 }
