@@ -18,6 +18,7 @@ import java.util.Base64;
 public class HmacSha256Service implements MacService {
     private static final String ALGORITHM = "HmacSHA256";
     private static final Integer[] VALID_KEY_LENGTHS_BITS = {128, 160, 192, 224, 256, 384, 512};
+    private static final String[] VALID_ALGORITHMS = {"HmacSHA1", "HmacSHA512", "HmacSHA256"};
 
     private final SafeResultValidator validator;
     private final MacBuilder macBuilder;
@@ -54,13 +55,17 @@ public class HmacSha256Service implements MacService {
     }
 
     private Result<Void, Error> validateConfig(MacConfig config) {
-        return ValidationChain.create()
-                .add(this.validator.validate(config))
-                .validateInternalAnyMatch(
-                        config.getAlgorithm(),
-                        new String[]{ALGORITHM, "HmacSHA1", "HmacSHA512"},
-                        "algorithm")
-                .build();
+        // TODO: Update when ValidationChain is upgraded
+        return ValidationChain
+                .create()
+                .validateInternalNotNull(config, "mac config")
+                .build().flatMap(x -> ValidationChain.create()
+                    .add(this.validator.validate(config))
+                    .validateInternalAnyMatch(
+                            config.getAlgorithm(),
+                            VALID_ALGORITHMS,
+                         "algorithm")
+                    .build());
     }
 
     private Result<Key, Error> validateAndParseKey(String keyBase64) {
