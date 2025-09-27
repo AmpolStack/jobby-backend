@@ -1,4 +1,4 @@
-package com.jobby.authorization.infraestructure.adapters.out;
+package com.jobby.authorization.infraestructure.adapters.out.hashing;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
