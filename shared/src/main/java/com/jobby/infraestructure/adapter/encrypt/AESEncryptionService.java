@@ -82,13 +82,17 @@ public class AESEncryptionService implements EncryptionService {
 
 
     private Result<Void, Error> validateConfig(EncryptConfig config) {
+        // TODO: update when VALIDATION CHAIN is upgraded
         return ValidationChain.create()
+                .validateInternalNotNull(config, "encrypt config")
+                .build()
+                .flatMap(x -> ValidationChain.create()
                 .add(this.validator.validate(config))
                 .validateInternalAnyMatch(
                         config.getIv().getTLen(),
                         VALID_T_LENGTHS_BITS,
                         "t-len")
-                .build();
+                .build());
     }
 
     private Result<Key, Error> validateAndParseKey(String keyBase64){

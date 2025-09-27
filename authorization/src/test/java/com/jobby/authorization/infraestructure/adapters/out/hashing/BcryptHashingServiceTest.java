@@ -1,9 +1,9 @@
-package com.jobby.authorization.infraestructure.adapters.out;
+package com.jobby.authorization.infraestructure.adapters.out.hashing;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;
-import com.jobby.infraestructure.adapter.BcryptHashingService;
+import com.jobby.infraestructure.adapter.hashing.BcryptHashingService;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;

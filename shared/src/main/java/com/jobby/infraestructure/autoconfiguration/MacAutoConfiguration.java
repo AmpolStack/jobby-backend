@@ -1,10 +1,10 @@
 package com.jobby.infraestructure.autoconfiguration;
 
 import com.jobby.domain.ports.SafeResultValidator;
-import com.jobby.domain.ports.MacService;
-import com.jobby.domain.ports.encrypt.MacBuilder;
-import com.jobby.infraestructure.adapter.encrypt.DefaultMacBuilder;
-import com.jobby.infraestructure.adapter.encrypt.HmacSha256Service;
+import com.jobby.domain.ports.hashing.mac.MacService;
+import com.jobby.domain.ports.hashing.mac.MacBuilder;
+import com.jobby.infraestructure.adapter.hashing.mac.DefaultMacBuilder;
+import com.jobby.infraestructure.adapter.hashing.mac.HmacSha256Service;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

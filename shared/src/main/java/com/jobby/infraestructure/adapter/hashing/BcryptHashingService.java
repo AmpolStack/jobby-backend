@@ -1,6 +1,6 @@
-package com.jobby.infraestructure.adapter;
+package com.jobby.infraestructure.adapter.hashing;
 
-import com.jobby.domain.ports.HashingService;
+import com.jobby.domain.ports.hashing.HashingService;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;

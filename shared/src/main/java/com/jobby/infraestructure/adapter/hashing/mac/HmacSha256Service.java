@@ -1,14 +1,14 @@
-package com.jobby.infraestructure.adapter.encrypt;
+package com.jobby.infraestructure.adapter.hashing.mac;
 
 import com.jobby.domain.configurations.MacConfig;
-import com.jobby.domain.ports.MacService;
+import com.jobby.domain.ports.hashing.mac.MacService;
 import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;
-import com.jobby.domain.ports.encrypt.MacBuilder;
+import com.jobby.domain.ports.hashing.mac.MacBuilder;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +18,7 @@ import java.util.Base64;
 public class HmacSha256Service implements MacService {
     private static final String ALGORITHM = "HmacSHA256";
     private static final Integer[] VALID_KEY_LENGTHS_BITS = {128, 160, 192, 224, 256, 384, 512};
+    private static final String[] VALID_ALGORITHMS = {"HmacSHA1", "HmacSHA512", "HmacSHA256"};
 
     private final SafeResultValidator validator;
     private final MacBuilder macBuilder;
@@ -54,13 +55,17 @@ public class HmacSha256Service implements MacService {
     }
 
     private Result<Void, Error> validateConfig(MacConfig config) {
-        return ValidationChain.create()
-                .add(this.validator.validate(config))
-                .validateInternalAnyMatch(
-                        config.getAlgorithm(),
-                        new String[]{ALGORITHM, "HmacSHA1", "HmacSHA512"},
-                        "algorithm")
-                .build();
+        // TODO: Update when ValidationChain is upgraded
+        return ValidationChain
+                .create()
+                .validateInternalNotNull(config, "mac config")
+                .build().flatMap(x -> ValidationChain.create()
+                    .add(this.validator.validate(config))
+                    .validateInternalAnyMatch(
+                            config.getAlgorithm(),
+                            VALID_ALGORITHMS,
+                         "algorithm")
+                    .build());
     }
 
     private Result<Key, Error> validateAndParseKey(String keyBase64) {
