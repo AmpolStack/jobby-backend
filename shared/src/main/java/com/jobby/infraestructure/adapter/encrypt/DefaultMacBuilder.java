@@ -4,13 +4,13 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
-
+import com.jobby.domain.ports.encrypt.MacBuilder;
 import javax.crypto.Mac;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 
-public class DefaultMacBuilder {
+public class DefaultMacBuilder implements MacBuilder {
     private byte[] data;
     private Key key;
     private String algorithm;
