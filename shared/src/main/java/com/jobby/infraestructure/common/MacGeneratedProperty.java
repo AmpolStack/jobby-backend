@@ -9,4 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface MacGeneratedProperty {
     String name();
+    boolean required() default false;
 }
