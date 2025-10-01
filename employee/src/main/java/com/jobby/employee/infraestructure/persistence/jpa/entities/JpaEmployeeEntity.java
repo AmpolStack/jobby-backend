@@ -60,7 +60,7 @@ public class JpaEmployeeEntity {
     @Size(max = 32)
     @NotNull
     @Column(name = "username_hash", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "username")
+    @MacGeneratedProperty(name = "username", required = true)
     private byte[] usernameHash;
 
     @Size(max = 600)

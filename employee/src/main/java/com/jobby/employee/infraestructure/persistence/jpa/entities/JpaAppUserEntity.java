@@ -29,7 +29,7 @@ public class JpaAppUserEntity {
     @Size(max = 32)
     @NotNull
     @Column(name = "first_name_hash", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "firstName")
+    @MacGeneratedProperty(name = "firstName", required = true)
     private byte[] firstNameHash;
 
     @Size(max = 600)
@@ -41,7 +41,7 @@ public class JpaAppUserEntity {
     @Size(max = 32)
     @NotNull
     @Column(name = "last_name_hash", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "lastName")
+    @MacGeneratedProperty(name = "lastName", required = true)
     private byte[] lastNameHash;
 
     @Size(max = 600)
