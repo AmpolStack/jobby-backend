@@ -1,17 +1,19 @@
 package com.jobby.infraestructure.autoconfiguration;
 
+import com.jobby.domain.configurations.MacConfig;
 import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.ports.hashing.mac.MacService;
 import com.jobby.domain.ports.hashing.mac.MacBuilder;
 import com.jobby.infraestructure.adapter.hashing.mac.DefaultMacBuilder;
 import com.jobby.infraestructure.adapter.hashing.mac.HmacSha256Service;
+import com.jobby.infraestructure.common.MacPropertyInitializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass({MacService.class})
+@ConditionalOnClass({MacService.class, MacPropertyInitializer.class})
 public class MacAutoConfiguration {
 
     @Bean
@@ -26,5 +28,14 @@ public class MacAutoConfiguration {
             SafeResultValidator safeResultValidator,
             MacBuilder macBuilder) {
         return new HmacSha256Service(safeResultValidator, macBuilder);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MacPropertyInitializer macListenerTransformer(
+            MacService macService,
+            MacConfig macConfig,
+            SafeResultValidator safeResultValidator) {
+        return new MacPropertyInitializer(macService, macConfig, safeResultValidator);
     }
 }
