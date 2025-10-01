@@ -9,10 +9,10 @@ import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.mobility.validator.ValidationChain;
 import com.jobby.domain.ports.hashing.mac.MacBuilder;
-
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class HmacSha256Service implements MacService {
@@ -29,7 +29,7 @@ public class HmacSha256Service implements MacService {
     }
 
     @Override
-    public Result<String, Error> generateMac(String data, MacConfig config) {
+    public Result<byte[], Error> generateMac(String data, MacConfig config) {
         return validateConfig(config)
                 .flatMap(v -> validateAndParseKey(config.getSecretKey()))
                 .flatMap(key -> ValidationChain.create()
@@ -40,32 +40,27 @@ public class HmacSha256Service implements MacService {
                                 .setKey(key)
                                 .setAlgorithm(config.getAlgorithm())
                                 .build()
-                                .map(hmacBytes -> Base64.getEncoder().encodeToString(hmacBytes))
                         )
                 );
     }
 
     @Override
-    public Result<Boolean, Error> verifyMac(String data, String hmac, MacConfig config) {
+    public Result<Boolean, Error> verifyMac(String data, byte[] hmac, MacConfig config) {
         return generateMac(data, config)
                 .flatMap(generatedHmac -> {
-                    boolean isValid = generatedHmac.equals(hmac);
+                    boolean isValid = Arrays.equals(generatedHmac, hmac);
                     return Result.success(isValid);
                 });
     }
 
     private Result<Void, Error> validateConfig(MacConfig config) {
-        // TODO: Update when ValidationChain is upgraded
         return ValidationChain
                 .create()
-                .validateInternalNotNull(config, "mac config")
-                .build().flatMap(x -> ValidationChain.create()
-                    .add(this.validator.validate(config))
                     .validateInternalAnyMatch(
                             config.getAlgorithm(),
                             VALID_ALGORITHMS,
                          "algorithm")
-                    .build());
+                    .build();
     }
 
     private Result<Key, Error> validateAndParseKey(String keyBase64) {
