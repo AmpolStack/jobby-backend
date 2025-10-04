@@ -1,5 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
+import com.jobby.infraestructure.common.EncryptedProperty;
+import com.jobby.infraestructure.common.HashedProperty;
 import com.jobby.infraestructure.common.MacGeneratedProperty;
 import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
 import com.jobby.infraestructure.entitytransformers.EntityPasswordTransformer;
@@ -48,29 +50,29 @@ public class JpaEmployeeEntity {
     @Size(max = 60)
     @NotNull
     @Column(name = "password", nullable = false, length = 60)
-    @Convert(converter = EntityPasswordTransformer.class)
+    @HashedProperty
     private String password;
 
     @Size(max = 600)
     @NotNull
     @Column(name = "username", nullable = false, length = 600)
-    @Convert(converter = EntityEncryptorTransformer.class)
+    @EncryptedProperty
     private String username;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "username_hash", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "username", required = true)
+    @MacGeneratedProperty(name = "username")
     private byte[] usernameHash;
 
     @Size(max = 600)
     @Column(name = "position_name", length = 600)
-    @Convert(converter = EntityEncryptorTransformer.class)
+    @EncryptedProperty
     private String positionName;
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "position_name_hash", nullable = true, length = 32)
+    @Column(name = "position_name_hash", length = 32)
     @MacGeneratedProperty(name = "positionName")
     private byte[] positionNameHash;
 
