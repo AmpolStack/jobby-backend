@@ -3,14 +3,65 @@ package com.jobby.infraestructure.common;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.result.Result;
-
+import com.jobby.domain.ports.SafeResultValidator;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class ReflexiveSetterProcessor<A extends Annotation>{
+public class ReflexiveSetterProcessor<A extends Annotation, C >{
 
-    protected Result<Void, Error> process(Object entity, Class<A> annotationClass, Function<String, Result<?, Error>> setterFunction) {
+    private boolean validConfig = false;
+    private final Function<String, Result<?, Error>> setterFunction;
+    private final Class<A> annotationClass;
+    private com.jobby.domain.mobility.error.Field errorField = null;
+    private BiFunction<A, Class<?>, Field> customSourceFieldExtractor = null;
+
+    private final List<Object> elements = new ArrayList<>();
+
+    ReflexiveSetterProcessor(C config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
+        this.setterFunction = setterFunction;
+        this.annotationClass = annotationClass;
+        this.errorField = errorField;
+
+        safeResultValidator.validate(config)
+                .fold(
+                        onSuccess -> this.validConfig = true,
+                        onFailure -> this.validConfig = false
+                );
+    }
+
+    ReflexiveSetterProcessor(Function<String, Result<?, Error>> setterFunction, Class<A> annotationClass) {
+        this.setterFunction = setterFunction;
+        this.annotationClass = annotationClass;
+
+        this.validConfig = true;
+    }
+
+    public ReflexiveSetterProcessor<A,C> addElement(Object element) {
+        this.elements.add(element);
+        return this;
+    }
+
+    public Result<Void, Error> processAll() {
+        if (!this.validConfig) {
+            return Result.failure(ErrorType.VALIDATION_ERROR, this.errorField);
+        }
+
+        for (Object element : this.elements) {
+            var result = apply(element, annotationClass);
+            if (result.isFailure()) {
+                return result;
+            }
+        }
+
+        return Result.success(null);
+    }
+
+    private Result<Void, Error> apply(Object entity, Class<A> annotationClass)
+    {
         Class<?> clazz = entity.getClass();
 
         for (Field field : clazz.getDeclaredFields()) {
@@ -21,8 +72,18 @@ public class ReflexiveSetterProcessor<A extends Annotation>{
             }
 
             try {
-                field.setAccessible(true);
-                var sourceValue = field.get(entity);
+                Field fieldTarget;
+
+                if(this.customSourceFieldExtractor != null) {
+                    fieldTarget = this.customSourceFieldExtractor.apply(ann, clazz);
+                }
+                else{
+                    fieldTarget = field;
+                }
+
+                fieldTarget.setAccessible(true);
+                var sourceValue = fieldTarget.get(entity);
+
 
                 if(sourceValue == null) {
                     continue;
@@ -32,7 +93,7 @@ public class ReflexiveSetterProcessor<A extends Annotation>{
                     return Result.failure(ErrorType.ITN_VALIDATION_TYPE, new com.jobby.domain.mobility.error.Field(field.getName(), "Source property must be a String"));
                 }
 
-                setterFunction.apply(sourceStringValue)
+                this.setterFunction.apply(sourceStringValue)
                         .flatMap(encryptedValue -> {
                             try {
                                 field.setAccessible(true);
@@ -50,5 +111,9 @@ public class ReflexiveSetterProcessor<A extends Annotation>{
         }
 
         return Result.success(null);
+    }
+
+    protected void setCustomSourceFieldExtractor(BiFunction<A, Class<?>, Field> extractor) {
+        this.customSourceFieldExtractor = extractor;
     }
 }
