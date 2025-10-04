@@ -1,5 +1,6 @@
 package com.jobby.employee.infraestructure.persistence.mongo.entities;
 
+import com.jobby.infraestructure.common.MacGeneratedProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
@@ -12,6 +13,9 @@ public class MongoAddressEntity {
     private int id;
     private MongoCityEntity city;
     private String value;
+    @Name("value_searchable")
+    @MacGeneratedProperty(name = "value")
+    private byte[] valueSearchable;
     private String description;
     @Name("created_at")
     private Date createdAt;
