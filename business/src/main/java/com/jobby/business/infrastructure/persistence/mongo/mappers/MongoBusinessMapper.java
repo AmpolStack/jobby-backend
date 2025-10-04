@@ -1,7 +1,7 @@
-package com.jobby.employee.infraestructure.persistence.mongo.mappers;
+package com.jobby.business.infrastructure.persistence.mongo.mappers;
 
-import com.jobby.employee.domain.model.Business;
-import com.jobby.employee.infraestructure.persistence.mongo.entities.MongoBusinessEntity;
+import com.jobby.business.domain.Business;
+import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = { MongoBusinessMapper.class })

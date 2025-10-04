@@ -1,4 +1,4 @@
-package com.jobby.employee.infraestructure.persistence.jpa.entities;
+package com.jobby.business.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,15 +10,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity(name = "contact_type")
-public class ContactType {
+@Entity(name = "country")
+public class JpaCountryEntity {
     @Id
-    @Column(name = "contact_type_id", nullable = false)
+    @Column(name = "country_id", nullable = false)
     private Integer id;
 
-    @Size(max = 50)
+    @Size(max = 100)
     @NotNull
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
 }

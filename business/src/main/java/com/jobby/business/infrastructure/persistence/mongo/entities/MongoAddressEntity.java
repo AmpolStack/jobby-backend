@@ -1,9 +1,10 @@
-package com.jobby.employee.infraestructure.persistence.mongo.entities;
+package com.jobby.business.infrastructure.persistence.mongo.entities;
 
 import com.jobby.infraestructure.common.MacGeneratedProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
+
 import java.util.Date;
 
 @Getter

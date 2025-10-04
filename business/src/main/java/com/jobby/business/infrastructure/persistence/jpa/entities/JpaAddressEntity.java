@@ -1,4 +1,4 @@
-package com.jobby.employee.infraestructure.persistence.jpa.entities;
+package com.jobby.business.infrastructure.persistence.jpa.entities;
 
 import com.jobby.infraestructure.common.EncryptedProperty;
 import com.jobby.infraestructure.common.MacGeneratedProperty;
@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+
 import java.time.Instant;
 
 @Getter

@@ -11,7 +11,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "contact")
 public class Contact {
     @Id
     @Column(name = "contact_id", nullable = false)

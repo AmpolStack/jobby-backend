@@ -21,6 +21,7 @@
     <module>/shared</module>
     <module>/employee</module>
     <module>/gateway</module>
+    <module>/business</module>
   </modules>
 
   <repositories>

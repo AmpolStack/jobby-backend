@@ -59,9 +59,9 @@ public class JpaEmployeeEntity {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "username_hash", nullable = false, length = 32)
+    @Column(name = "username_searchable", nullable = false, length = 32)
     @MacGeneratedProperty(name = "username")
-    private byte[] usernameHash;
+    private byte[] usernameSearchable;
 
     @Size(max = 600)
     @Column(name = "position_name", length = 600)
@@ -70,9 +70,9 @@ public class JpaEmployeeEntity {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "position_name_hash", length = 32)
+    @Column(name = "position_name_searchable", length = 32)
     @MacGeneratedProperty(name = "positionName")
-    private byte[] positionNameHash;
+    private byte[] positionNameSearchable;
 
     @Size(max = 250)
     @Column(name = "profile_image_url", length = 250)
