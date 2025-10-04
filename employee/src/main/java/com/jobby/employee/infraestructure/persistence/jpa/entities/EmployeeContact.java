@@ -12,7 +12,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "Employee_Contact")
+@Table(name = "employee_contact")
 public class EmployeeContact {
     @EmbeddedId
     private EmployeeContactId id;

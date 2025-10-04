@@ -2,7 +2,6 @@ package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
 import com.jobby.infraestructure.common.EncryptedProperty;
 import com.jobby.infraestructure.common.MacGeneratedProperty;
-import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -28,9 +27,9 @@ public class JpaAppUserEntity {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "first_name_hash", nullable = false, length = 32)
+    @Column(name = "first_name_searchable", nullable = false, length = 32)
     @MacGeneratedProperty(name = "firstName")
-    private byte[] firstNameHash;
+    private byte[] firstNameSearchable;
 
     @Size(max = 600)
     @NotNull
@@ -40,9 +39,9 @@ public class JpaAppUserEntity {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "last_name_hash", nullable = false, length = 32)
+    @Column(name = "last_name_searchable", nullable = false, length = 32)
     @MacGeneratedProperty(name = "lastName")
-    private byte[] lastNameHash;
+    private byte[] lastNameSearchable;
 
     @Size(max = 600)
     @Column(name = "email", length = 600)
@@ -51,9 +50,9 @@ public class JpaAppUserEntity {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "email_hash", nullable = true, length = 32)
+    @Column(name = "email_searchable", length = 32)
     @MacGeneratedProperty(name = "email")
-    private byte[] emailHash;
+    private byte[] emailSearchable;
 
     @Size(max = 350)
     @Column(name = "phone", length = 350)
@@ -62,9 +61,9 @@ public class JpaAppUserEntity {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "phone_hash", nullable = true, length = 32)
+    @Column(name = "phone_searchable", length = 32)
     @MacGeneratedProperty(name = "phone")
-    private byte[] phoneHash;
+    private byte[] phoneSearchable;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "created_at", insertable = false, updatable = false)

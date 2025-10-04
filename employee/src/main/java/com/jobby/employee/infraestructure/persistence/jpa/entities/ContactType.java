@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "contact_type")
 public class ContactType {
     @Id
     @Column(name = "contact_type_id", nullable = false)

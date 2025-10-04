@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-
 import java.time.Instant;
 
 @Getter
@@ -34,20 +33,14 @@ public class JpaAddressEntity {
 
     @Size(max = 32)
     @NotNull
-    @Column(name = "value_hash", nullable = false, length = 32)
+    @Column(name = "value_searchable", nullable = false, length = 32)
     @MacGeneratedProperty(name = "value")
-    private byte[] valueHash;
+    private byte[] valueSearchable;
 
     @Size(max = 1200)
     @Column(name = "description", length = 1200)
     @Convert(converter = EntityEncryptorTransformer.class)
     private String description;
-
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "description_hash", length = 32)
-    @MacGeneratedProperty(name = "value")
-    private byte[] descriptionHash;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "created_at", insertable = false, updatable = false)
