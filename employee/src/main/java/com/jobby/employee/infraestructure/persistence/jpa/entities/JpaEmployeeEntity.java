@@ -3,8 +3,6 @@ package com.jobby.employee.infraestructure.persistence.jpa.entities;
 import com.jobby.infraestructure.common.EncryptedProperty;
 import com.jobby.infraestructure.common.HashedProperty;
 import com.jobby.infraestructure.common.MacGeneratedProperty;
-import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
-import com.jobby.infraestructure.entitytransformers.EntityPasswordTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

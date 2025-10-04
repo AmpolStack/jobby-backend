@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-
 import java.time.Instant;
 
 @Getter
@@ -36,7 +35,6 @@ public class JpaAppUserEntity {
     @Size(max = 600)
     @NotNull
     @Column(name = "last_name", nullable = false, length = 600)
-    @Convert(converter = EntityEncryptorTransformer.class)
     @EncryptedProperty
     private String lastName;
 
@@ -48,7 +46,6 @@ public class JpaAppUserEntity {
 
     @Size(max = 600)
     @Column(name = "email", length = 600)
-    @Convert(converter = EntityEncryptorTransformer.class)
     @EncryptedProperty
     private String email;
 
@@ -60,7 +57,6 @@ public class JpaAppUserEntity {
 
     @Size(max = 350)
     @Column(name = "phone", length = 350)
-    @Convert(converter = EntityEncryptorTransformer.class)
     @EncryptedProperty
     private String phone;
 
