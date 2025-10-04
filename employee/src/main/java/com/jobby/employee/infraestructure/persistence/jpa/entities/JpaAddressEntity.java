@@ -1,5 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
+import com.jobby.infraestructure.common.EncryptedProperty;
+import com.jobby.infraestructure.common.MacGeneratedProperty;
 import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -27,13 +29,25 @@ public class JpaAddressEntity {
     @Size(max = 600)
     @NotNull
     @Column(name = "value", nullable = false, length = 600)
-    @Convert(converter = EntityEncryptorTransformer.class)
+    @EncryptedProperty
     private String value;
+
+    @Size(max = 32)
+    @NotNull
+    @Column(name = "value_hash", nullable = false, length = 32)
+    @MacGeneratedProperty(name = "value")
+    private byte[] valueHash;
 
     @Size(max = 1200)
     @Column(name = "description", length = 1200)
     @Convert(converter = EntityEncryptorTransformer.class)
     private String description;
+
+    @Size(max = 32)
+    @NotNull
+    @Column(name = "description_hash", length = 32)
+    @MacGeneratedProperty(name = "value")
+    private byte[] descriptionHash;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "created_at", insertable = false, updatable = false)
