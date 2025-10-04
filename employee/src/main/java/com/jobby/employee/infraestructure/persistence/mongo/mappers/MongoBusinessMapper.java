@@ -8,5 +8,4 @@ import org.mapstruct.Mapper;
 public interface MongoBusinessMapper {
     Business toDomain(MongoBusinessEntity mongoBusinessEntity);
     MongoBusinessEntity toDocument(Business business);
-
 }
