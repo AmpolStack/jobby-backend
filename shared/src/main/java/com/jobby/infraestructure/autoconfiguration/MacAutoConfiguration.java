@@ -39,3 +39,4 @@ public class MacAutoConfiguration {
         return new MacPropertyInitializer(macService, macConfig, safeResultValidator);
     }
 }
+
