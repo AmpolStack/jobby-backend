@@ -20,3 +20,4 @@ public class MacConfig {
     @NotEmpty(message = "mac.algorithm must not be empty")
     private String algorithm = "HmacSHA256";
 }
+
