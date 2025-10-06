@@ -28,7 +28,8 @@ public class WriteEmployeeRepository implements EmployeeRepository {
     @Override
     public Result<Employee, Error> save(Employee employee) {
         var jpaEmployeeEntity = this.jpaEmployeeMapper.toJpa(employee);
-        return this.macPropertyInitializer.process(jpaEmployeeEntity)
+        return this.macPropertyInitializer.addElement(jpaEmployeeEntity)
+                .processAll()
                 .flatMap(v ->{
                     try{
                         var resp = this.employeeRepository.save(jpaEmployeeEntity);
