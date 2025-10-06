@@ -6,7 +6,6 @@ import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.dao.*;
 import org.springframework.data.mongodb.MongoTransactionException;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.util.Optional;
 import java.util.function.Function;
@@ -19,7 +18,7 @@ public abstract class MongoGenericRepository<Entity,Domain> extends GenericRepos
         Result<Entity, Error> response;
 
         try {
-            response = Result.success(entity);
+            response = function.apply(entity);
         } catch (DuplicateKeyException ex) {
             response = Result.failure(ErrorType.VALIDATION_ERROR,
                     new Field("duplicate key", "Duplicate key or unique constraint violation"));
@@ -56,7 +55,7 @@ public abstract class MongoGenericRepository<Entity,Domain> extends GenericRepos
         return response;
     }
 
-    @Transactional(readOnly = true)
+    @Override
     public Result<Optional<Entity>, Error> selectionTransactionHandler(Supplier<Optional<Entity>> supplier) {
         Result<Optional<Entity>, Error> response;
 
