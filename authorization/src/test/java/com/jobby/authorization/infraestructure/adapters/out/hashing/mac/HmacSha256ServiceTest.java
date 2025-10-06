@@ -23,6 +23,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Random;
@@ -60,7 +62,7 @@ public class HmacSha256ServiceTest {
                 .validateInternalNotNull(null, "mac config").build();
 
         // Act
-        var result = this.service.verifyMac(VALID_DATA, "thing", null);
+        var result = this.service.verifyMac(VALID_DATA, "thing".getBytes(StandardCharsets.UTF_8), null);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -75,7 +77,7 @@ public class HmacSha256ServiceTest {
         Mockito.when(this.safeResultValidator.validate(VALID_CONFIG)).thenReturn(expectedResult);
 
         // Act
-        var result = this.service.verifyMac(VALID_DATA, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(VALID_DATA, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -94,7 +96,7 @@ public class HmacSha256ServiceTest {
                 .thenReturn(Result.success(null));
 
         // Act
-        var result = this.service.verifyMac(VALID_DATA, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(VALID_DATA, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -113,7 +115,7 @@ public class HmacSha256ServiceTest {
                 .thenReturn(Result.success(null));
 
         // Act
-        var result = this.service.verifyMac(VALID_DATA, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(VALID_DATA, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -132,7 +134,7 @@ public class HmacSha256ServiceTest {
                 .thenReturn(Result.success(null));
 
         // Act
-        var result = this.service.verifyMac(VALID_DATA, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(VALID_DATA, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -155,7 +157,7 @@ public class HmacSha256ServiceTest {
                 .thenReturn(Result.success(null));
 
         // Act
-        var result = this.service.verifyMac(VALID_DATA, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(VALID_DATA, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -171,7 +173,7 @@ public class HmacSha256ServiceTest {
                 .thenReturn(Result.success(null));
 
         // Act
-        var result = this.service.verifyMac(null, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(null, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -188,7 +190,7 @@ public class HmacSha256ServiceTest {
                 .thenReturn(Result.success(null));
 
         // Act
-        var result = this.service.verifyMac(invalidData, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(invalidData, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -209,7 +211,7 @@ public class HmacSha256ServiceTest {
         Mockito.when(this.defaultMacBuilder.build()).thenReturn(Result.renewFailure(expectedResult));
 
         // Act
-        var result = this.service.verifyMac(VALID_DATA, "thing", VALID_CONFIG);
+        var result = this.service.verifyMac(VALID_DATA, "thing".getBytes(StandardCharsets.UTF_8), VALID_CONFIG);
 
         // Assert
         TestAssertions.assertFailure(result, Result.renewFailure(expectedResult));
@@ -409,7 +411,7 @@ public class HmacSha256ServiceTest {
 
         // Act
         var result = this.service.generateMac(VALID_DATA, VALID_CONFIG)
-                .flatMap(x -> this.service.verifyMac(VALID_DATA, "different", VALID_CONFIG));
+                .flatMap(x -> this.service.verifyMac(VALID_DATA, "different".getBytes(StandardCharsets.UTF_8), VALID_CONFIG));
 
         // Assert
         TestAssertions.assertSuccess(result);
@@ -470,7 +472,7 @@ public class HmacSha256ServiceTest {
 
         // Act
         var result = this.service.generateMac(VALID_DATA, VALID_CONFIG)
-                .flatMap(hashed -> this.service.verifyMac(VALID_DATA, hmacInput , VALID_CONFIG));
+                .flatMap(hashed -> this.service.verifyMac(VALID_DATA, hmacInput.getBytes(StandardCharsets.UTF_8) , VALID_CONFIG));
 
         // Assert
         TestAssertions.assertSuccess(result);

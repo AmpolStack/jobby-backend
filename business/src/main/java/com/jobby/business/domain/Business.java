@@ -8,7 +8,7 @@ import java.time.Instant;
 @Getter
 @Setter
 public class Business {
-    private int id;
+    private Integer id;
     private Address address;
     private String name;
     private String bannerImageUrl;
