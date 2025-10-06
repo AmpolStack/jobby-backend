@@ -15,10 +15,11 @@ import java.time.Instant;
 public class JpaBusinessEntity {
     @Id
     @Column(name = "business_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", nullable = false)
     private JpaAddressEntity address;
 
@@ -40,7 +41,7 @@ public class JpaBusinessEntity {
     private String description;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at")
+    @Column(name = "created_at", insertable = false, updatable = false)
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")

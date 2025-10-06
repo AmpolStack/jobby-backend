@@ -1,0 +1,30 @@
+server:
+  port: 8084
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3307/jobbydata
+    username: root
+  data:
+    mongodb:
+      host: localhost
+      port: 27018
+      authentication-database: admin
+      database: jobby
+  kafka:
+    bootstrap-servers:
+      - localhost:9093
+      - localhost:9094
+      - localhost:9095
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: http://localhost:8091
+        specific.avro.reader: true
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: http://localhost:8091
+        auto.register.schemas: true

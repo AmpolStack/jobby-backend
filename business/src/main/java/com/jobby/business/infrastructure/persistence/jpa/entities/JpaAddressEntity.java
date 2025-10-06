@@ -2,7 +2,6 @@ package com.jobby.business.infrastructure.persistence.jpa.entities;
 
 import com.jobby.infraestructure.common.EncryptedProperty;
 import com.jobby.infraestructure.common.MacGeneratedProperty;
-import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -40,7 +39,7 @@ public class JpaAddressEntity {
 
     @Size(max = 1200)
     @Column(name = "description", length = 1200)
-    @Convert(converter = EntityEncryptorTransformer.class)
+    @EncryptedProperty
     private String description;
 
     @ColumnDefault("current_timestamp()")

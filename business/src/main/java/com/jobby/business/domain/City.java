@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class City {
-    private int id;
+    private Integer id;
     private String name;
     private Country country;
 }

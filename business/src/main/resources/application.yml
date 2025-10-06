@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    default: local
+  config:
+    import: classpath:application-secrets.yml
+  application:
+    name: business
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    show-sql: true
+    open-in-view: false
+encrypt:
+  iv:
+    length: 12
+    t-len: 128
+hashing:
+  mac:
+    algorithm: HmacSHA256
