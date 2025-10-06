@@ -3,15 +3,17 @@ package com.jobby.business.infrastructure.persistence.mongo.entities;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
 @Setter
 @Getter
-@Document("business_info")
+@Document(collection = "business_info")
 public class MongoBusinessEntity {
-    @Name("business_id")
+    @Name("_id")
+    @Id
     private int id;
     private MongoAddressEntity address;
     private String name;
