@@ -1,6 +1,6 @@
 package com.jobby.business.application.useCase;
 
-import com.jobby.business.domain.Business;
+import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.in.GetBusinessByIdUseCase;
 import com.jobby.business.domain.ports.out.BusinessRepository;
 import com.jobby.domain.mobility.error.Error;

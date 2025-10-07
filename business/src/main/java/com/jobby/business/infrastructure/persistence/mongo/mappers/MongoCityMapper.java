@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.persistence.mongo.mappers;
 
-import com.jobby.business.domain.City;
+import com.jobby.business.domain.entities.City;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoCityEntity;
 import org.mapstruct.Mapper;
 

@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.adapters.out;
 
-import com.jobby.business.domain.Business;
+import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.BusinessRepository;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.mappers.MongoBusinessMapper;

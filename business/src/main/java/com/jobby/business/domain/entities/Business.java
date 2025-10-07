@@ -1,4 +1,4 @@
-package com.jobby.business.domain;
+package com.jobby.business.domain.entities;
 
 import lombok.Getter;
 import lombok.Setter;

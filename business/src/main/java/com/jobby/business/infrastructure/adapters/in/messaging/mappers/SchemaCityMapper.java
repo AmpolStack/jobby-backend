@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.adapters.in.messaging.mappers;
 
-import com.jobby.business.domain.City;
+import com.jobby.business.domain.entities.City;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = { SchemaCountryMapper.class, CustomMappers.class})

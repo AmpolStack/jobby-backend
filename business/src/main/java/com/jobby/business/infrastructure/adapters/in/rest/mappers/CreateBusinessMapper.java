@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.adapters.in.rest.mappers;
 
-import com.jobby.business.domain.Business;
+import com.jobby.business.domain.entities.Business;
 import com.jobby.business.infrastructure.adapters.in.rest.dto.CreateBusinessDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.persistence.jpa.mappers;
 
-import com.jobby.business.domain.Address;
+import com.jobby.business.domain.entities.Address;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaAddressEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

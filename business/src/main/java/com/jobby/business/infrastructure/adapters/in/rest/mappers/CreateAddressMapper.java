@@ -1,8 +1,8 @@
 package com.jobby.business.infrastructure.adapters.in.rest.mappers;
 
-import com.jobby.business.domain.Address;
-import com.jobby.business.domain.City;
-import com.jobby.business.domain.Country;
+import com.jobby.business.domain.entities.Address;
+import com.jobby.business.domain.entities.City;
+import com.jobby.business.domain.entities.Country;
 import com.jobby.business.infrastructure.adapters.in.rest.dto.CreatedAddressDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
