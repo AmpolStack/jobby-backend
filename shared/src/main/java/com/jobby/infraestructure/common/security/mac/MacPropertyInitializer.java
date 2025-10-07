@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common;
+package com.jobby.infraestructure.common.security.mac;
 
 import com.jobby.domain.configurations.MacConfig;
 import com.jobby.domain.mobility.error.Field;

@@ -1,6 +1,6 @@
 package com.jobby.employee.infraestructure.persistence.mongo.entities;
 
-import com.jobby.infraestructure.common.MacGeneratedProperty;
+import com.jobby.infraestructure.common.security.mac.MacGeneratedProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;

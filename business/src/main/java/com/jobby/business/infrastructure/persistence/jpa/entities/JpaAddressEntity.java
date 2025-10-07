@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.persistence.jpa.entities;
 
 import com.jobby.infraestructure.common.security.encryption.EncryptedProperty;
-import com.jobby.infraestructure.common.MacGeneratedProperty;
+import com.jobby.infraestructure.common.security.mac.MacGeneratedProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

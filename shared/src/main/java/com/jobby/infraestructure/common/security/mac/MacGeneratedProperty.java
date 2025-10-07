@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common;
+package com.jobby.infraestructure.common.security.mac;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

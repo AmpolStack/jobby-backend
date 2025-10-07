@@ -6,7 +6,7 @@ import com.jobby.domain.ports.hashing.mac.MacService;
 import com.jobby.domain.ports.hashing.mac.MacBuilder;
 import com.jobby.infraestructure.adapter.hashing.mac.DefaultMacBuilder;
 import com.jobby.infraestructure.adapter.hashing.mac.HmacSha256Service;
-import com.jobby.infraestructure.common.MacPropertyInitializer;
+import com.jobby.infraestructure.common.security.mac.MacPropertyInitializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

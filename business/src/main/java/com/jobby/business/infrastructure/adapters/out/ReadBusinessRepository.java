@@ -8,7 +8,7 @@ import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDa
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.infraestructure.common.security.encryption.EncryptionPropertyInitializer;
-import com.jobby.infraestructure.common.MacPropertyInitializer;
+import com.jobby.infraestructure.common.security.mac.MacPropertyInitializer;
 import com.jobby.infraestructure.common.repo.MongoGenericRepository;
 import com.jobby.infraestructure.common.transaction.TransactionHandler;
 import org.springframework.stereotype.Service;
