@@ -6,23 +6,23 @@ import com.jobby.business.domain.Country;
 import com.jobby.business.infrastructure.adapters.in.rest.dto.CreatedAddressDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
-public interface AddressRestMapper {
-    
-    // Create DTO to Domain
+public interface CreateAddressMapper {
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "city", source = "cityId", qualifiedByName = "mapCityIdToCity")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "modifiedAt", ignore = true)
-    Address fromCreateDto(CreatedAddressDto dto);
-    
-    // Helper method to create City from ID
-    @org.mapstruct.Named("mapCityIdToCity")
-    default City mapCityIdToCity(Integer cityId) {
-        if (cityId == null) return null;
+    @Mapping(target = "city", expression = "java(fromIdToCity(createdAddressDto.getCityId(), createdAddressDto.getCountryId()))")
+    Address toDomain(CreatedAddressDto createdAddressDto);
+
+    @Named("fromIdToCity")
+    default City fromIdToCity(Integer cityId, Integer countryId) {
         City city = new City();
         city.setId(cityId);
+        Country country = new Country();
+        country.setId(countryId);
+        city.setCountry(country);
         return city;
     }
 }
