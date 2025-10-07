@@ -8,36 +8,31 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.Objects;
 
-public class EntityEnrichmentProcessor<A extends Annotation>{
+public abstract class EntityEnrichmentProcessor<A extends Annotation>
+    implements SourceFieldExtractor<A>{
 
     private boolean validConfig = false;
-    private final Function<String, Result<?, Error>> setterFunction;
     private final Class<A> annotationClass;
-    private com.jobby.domain.mobility.error.Field errorField = null;
-    private BiFunction<A, Class<?>, Field> customSourceFieldExtractor = null;
-
+    private com.jobby.domain.mobility.error.Error validationError;
     private final List<Object> elements = new ArrayList<>();
 
-    public EntityEnrichmentProcessor(Object config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
-        this.setterFunction = setterFunction;
-        this.annotationClass = annotationClass;
-        this.errorField = errorField;
+    protected abstract Result<?, Error> enrichmentOperation(String inputExtracted);
 
-        safeResultValidator.validate(config)
-                .fold(
-                        onSuccess -> this.validConfig = true,
-                        onFailure -> this.validConfig = false
-                );
+    public EntityEnrichmentProcessor(Class<A> annotationClass) {
+        this.annotationClass = annotationClass;
+        this.validConfig = true;
     }
 
-    public EntityEnrichmentProcessor(Function<String, Result<?, Error>> setterFunction, Class<A> annotationClass) {
-        this.setterFunction = setterFunction;
+    public EntityEnrichmentProcessor(Object config, Class<A> annotationClass, SafeResultValidator safeResultValidator) {
         this.annotationClass = annotationClass;
-
-        this.validConfig = true;
+        safeResultValidator.validate(config)
+                .fold((onSuccess) -> this.validConfig = true,
+                        (onFailure) -> {
+                    this.validConfig = false;
+                    this.validationError = onFailure;
+                });
     }
 
     public EntityEnrichmentProcessor<A> addElement(Object element) {
@@ -47,7 +42,7 @@ public class EntityEnrichmentProcessor<A extends Annotation>{
 
     public Result<Void, Error> processAll() {
         if (!this.validConfig) {
-            return Result.failure(ErrorType.VALIDATION_ERROR, this.errorField);
+            return Result.failure(this.validationError);
         }
 
         for (Object element : this.elements) {
@@ -74,12 +69,8 @@ public class EntityEnrichmentProcessor<A extends Annotation>{
             try {
                 Field fieldTarget;
 
-                if(this.customSourceFieldExtractor != null) {
-                    fieldTarget = this.customSourceFieldExtractor.apply(ann, clazz);
-                }
-                else{
-                    fieldTarget = field;
-                }
+                var customExtractor = this.customExtraction(clazz, ann);
+                fieldTarget = Objects.requireNonNullElse(customExtractor, field);
 
                 fieldTarget.setAccessible(true);
                 var sourceValue = fieldTarget.get(entity);
@@ -93,7 +84,7 @@ public class EntityEnrichmentProcessor<A extends Annotation>{
                     return Result.failure(ErrorType.ITN_VALIDATION_TYPE, new com.jobby.domain.mobility.error.Field(field.getName(), "Source property must be a String"));
                 }
 
-                this.setterFunction.apply(sourceStringValue)
+                this.enrichmentOperation(sourceStringValue)
                         .flatMap(encryptedValue -> {
                             try {
                                 field.setAccessible(true);
@@ -113,7 +104,4 @@ public class EntityEnrichmentProcessor<A extends Annotation>{
         return Result.success(null);
     }
 
-    protected void setCustomSourceFieldExtractor(BiFunction<A, Class<?>, Field> extractor) {
-        this.customSourceFieldExtractor = extractor;
-    }
 }
