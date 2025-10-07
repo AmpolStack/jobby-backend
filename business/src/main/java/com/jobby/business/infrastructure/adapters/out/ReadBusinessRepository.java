@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.adapters.out;
 
 import com.jobby.business.domain.Business;
-import com.jobby.business.domain.ports.BusinessRepository;
+import com.jobby.business.domain.ports.out.BusinessRepository;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.mappers.MongoBusinessMapper;
 import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDataMongoBusinessRepository;
@@ -22,12 +22,14 @@ public class ReadBusinessRepository
     private final SpringDataMongoBusinessRepository springDataMongoBusinessRepository;
     private final MacPropertyInitializer macPropertyInitializer;
     private final TransactionHandler transactionHandler;
+    private final EncryptionPropertyInitializer encryptionPropertyInitializer;
 
-    public ReadBusinessRepository(MongoBusinessMapper mongoBusinessMapper, SpringDataMongoBusinessRepository springDataMongoBusinessRepository, EncryptionPropertyInitializer encryptionPropertyInitializer, MacPropertyInitializer macPropertyInitializer, TransactionHandler transactionHandler) {
+    public ReadBusinessRepository(MongoBusinessMapper mongoBusinessMapper, SpringDataMongoBusinessRepository springDataMongoBusinessRepository, EncryptionPropertyInitializer encryptionPropertyInitializer, MacPropertyInitializer macPropertyInitializer, TransactionHandler transactionHandler, EncryptionPropertyInitializer encryptionPropertyInitializer1) {
         this.mongoBusinessMapper = mongoBusinessMapper;
         this.springDataMongoBusinessRepository = springDataMongoBusinessRepository;
         this.macPropertyInitializer = macPropertyInitializer;
         this.transactionHandler = transactionHandler;
+        this.encryptionPropertyInitializer = encryptionPropertyInitializer1;
     }
 
     @Override
@@ -44,6 +46,20 @@ public class ReadBusinessRepository
     @Override
     public Result<Business, Error> findById(int id) {
         return null;
+    }
+
+    @Override
+    public Result<Business, Error> findByAddress_ValueSearchable(byte[] addressValueSearchable) {
+        return this.transactionHandler.executeInRead(
+                () -> this.select(() -> this.springDataMongoBusinessRepository.findByAddress_ValueSearchable(addressValueSearchable),
+                        (jpaBusiness) -> this.macPropertyInitializer
+                                .addElement(jpaBusiness.getAddress())
+                                .processAll()
+                                .flatMap(x ->
+                                        this.encryptionPropertyInitializer
+                                                .addElement(jpaBusiness.getAddress())
+                                                .processAll()))
+        );
     }
 
     @Override
