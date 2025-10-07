@@ -4,9 +4,9 @@ import com.jobby.domain.configurations.MacConfig;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.ports.hashing.mac.MacService;
-import com.jobby.infraestructure.common.security.ReflectivePropertyAssigner;
+import com.jobby.infraestructure.common.security.EntityEnrichmentProcessor;
 
-public class MacPropertyInitializer extends ReflectivePropertyAssigner<MacGenerated, MacConfig> {
+public class MacPropertyInitializer extends EntityEnrichmentProcessor<MacGenerated, MacConfig> {
 
     public MacPropertyInitializer(MacService macService, MacConfig macConfig, SafeResultValidator safeResultValidator) {
         super(macConfig, safeResultValidator,
