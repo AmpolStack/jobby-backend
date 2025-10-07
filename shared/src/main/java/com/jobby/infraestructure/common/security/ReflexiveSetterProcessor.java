@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common;
+package com.jobby.infraestructure.common.security;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
@@ -21,7 +21,7 @@ public class ReflexiveSetterProcessor<A extends Annotation, C >{
 
     private final List<Object> elements = new ArrayList<>();
 
-    ReflexiveSetterProcessor(C config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
+    public ReflexiveSetterProcessor(C config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
         this.setterFunction = setterFunction;
         this.annotationClass = annotationClass;
         this.errorField = errorField;
@@ -33,7 +33,7 @@ public class ReflexiveSetterProcessor<A extends Annotation, C >{
                 );
     }
 
-    ReflexiveSetterProcessor(Function<String, Result<?, Error>> setterFunction, Class<A> annotationClass) {
+    public ReflexiveSetterProcessor(Function<String, Result<?, Error>> setterFunction, Class<A> annotationClass) {
         this.setterFunction = setterFunction;
         this.annotationClass = annotationClass;
 

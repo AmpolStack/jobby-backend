@@ -32,7 +32,7 @@ public class MacAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public MacPropertyInitializer macListenerTransformer(
+    public MacPropertyInitializer macPropertyInitializer(
             MacService macService,
             MacConfig macConfig,
             SafeResultValidator safeResultValidator) {
