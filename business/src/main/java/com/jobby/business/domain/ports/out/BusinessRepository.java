@@ -1,4 +1,4 @@
-package com.jobby.business.domain.ports;
+package com.jobby.business.domain.ports.out;
 
 import com.jobby.business.domain.Business;
 import com.jobby.domain.mobility.error.Error;

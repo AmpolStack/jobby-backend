@@ -26,6 +26,25 @@ public abstract class GenericRepository<Entity, Domain>{
                 );
     }
 
+    protected Result<Domain, Error> select(Supplier<Optional<Entity>> supplier, Function<Entity, Result<Void, Error>> function){
+        return this.selectionTransactionHandler(supplier)
+                .flatMap(optional -> {
+
+                    if(optional.isEmpty()){
+                        return Result.failure(
+                                ErrorType.USER_NOT_FOUND,
+                                new Field("entity", "No entity found with given parameters"));
+                    }
+
+                    var value = optional.get();
+                    return function.apply(value)
+                        .flatMap(v -> {
+                            var domain = this.toDomain(value);
+                            return Result.success(domain);
+                        });
+                });
+    }
+
     protected Result<Domain, Error> modify(Domain domain, Function<Entity, Result<Entity, Error>> function){
         var entity = toEntity(domain);
         return this.modificationTransactionHandler(function, entity)

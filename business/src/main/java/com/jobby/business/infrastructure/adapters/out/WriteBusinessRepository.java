@@ -1,12 +1,13 @@
 package com.jobby.business.infrastructure.adapters.out;
 
 import com.jobby.business.domain.Business;
-import com.jobby.business.domain.ports.BusinessRepository;
+import com.jobby.business.domain.ports.out.BusinessRepository;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.mappers.JpaBusinessMapper;
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
+import com.jobby.infraestructure.common.DecryptionPropertyInitializer;
 import com.jobby.infraestructure.common.EncryptionPropertyInitializer;
 import com.jobby.infraestructure.common.MacPropertyInitializer;
 import com.jobby.infraestructure.common.repo.JpaGenericRepository;
@@ -22,13 +23,15 @@ public class WriteBusinessRepository
     private final MacPropertyInitializer macPropertyInitializer;
     private final SpringDataJpaBusinessRepository springDataJpaBusinessRepository;
     private final EncryptionPropertyInitializer encryptionPropertyInitializer;
+    private final DecryptionPropertyInitializer decryptionPropertyInitializer;
     private final TransactionHandler transactionHandler;
 
-    public WriteBusinessRepository(JpaBusinessMapper jpaBusinessMapper, MacPropertyInitializer macPropertyInitializer, SpringDataJpaBusinessRepository springDataJpaBusinessRepository, EncryptionPropertyInitializer encryptionPropertyInitializer, TransactionHandler transactionHandler) {
+    public WriteBusinessRepository(JpaBusinessMapper jpaBusinessMapper, MacPropertyInitializer macPropertyInitializer, SpringDataJpaBusinessRepository springDataJpaBusinessRepository, EncryptionPropertyInitializer encryptionPropertyInitializer, DecryptionPropertyInitializer decryptionPropertyInitializer, TransactionHandler transactionHandler) {
         this.jpaBusinessMapper = jpaBusinessMapper;
         this.macPropertyInitializer = macPropertyInitializer;
         this.springDataJpaBusinessRepository = springDataJpaBusinessRepository;
         this.encryptionPropertyInitializer = encryptionPropertyInitializer;
+        this.decryptionPropertyInitializer = decryptionPropertyInitializer;
         this.transactionHandler = transactionHandler;
     }
 
@@ -50,8 +53,20 @@ public class WriteBusinessRepository
     @Override
     public Result<Business, Error> findById(int id) {
         return this.transactionHandler.executeInRead(
-                () -> this.select(() -> this.springDataJpaBusinessRepository.findById(id))
+                () -> this.select(() -> this.springDataJpaBusinessRepository.findById(id),
+                        (jpaBusiness) -> this.macPropertyInitializer
+                                .addElement(jpaBusiness.getAddress())
+                                .processAll()
+                                .flatMap(x ->
+                                        this.decryptionPropertyInitializer
+                                                .addElement(jpaBusiness.getAddress())
+                                                .processAll()))
         );
+    }
+
+    @Override
+    public Result<Business, Error> findByAddress_ValueSearchable(byte[] addressValueSearchable) {
+        return null;
     }
 
     @Override

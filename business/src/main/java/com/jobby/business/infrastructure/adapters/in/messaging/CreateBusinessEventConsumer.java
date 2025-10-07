@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.adapters.in.messaging;
 
-import com.jobby.business.domain.ports.BusinessRepository;
+import com.jobby.business.domain.ports.out.BusinessRepository;
 import com.jobby.business.infrastructure.adapters.in.messaging.mappers.SchemaBusinessMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
