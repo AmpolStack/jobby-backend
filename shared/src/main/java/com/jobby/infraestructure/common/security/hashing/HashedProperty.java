@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common;
+package com.jobby.infraestructure.common.security.hashing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
