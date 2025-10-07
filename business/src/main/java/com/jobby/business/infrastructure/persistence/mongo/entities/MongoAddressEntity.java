@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.persistence.mongo.entities;
 
-import com.jobby.infraestructure.common.security.mac.MacGeneratedProperty;
+import com.jobby.infraestructure.common.security.mac.MacGenerated;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
@@ -15,7 +15,7 @@ public class MongoAddressEntity {
     private MongoCityEntity city;
     private String value;
     @Name("value_searchable")
-    @MacGeneratedProperty(name = "value")
+    @MacGenerated(name = "value")
     private byte[] valueSearchable;
     private String description;
     @Name("created_at")

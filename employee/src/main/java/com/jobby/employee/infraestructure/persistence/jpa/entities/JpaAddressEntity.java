@@ -1,7 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import com.jobby.infraestructure.common.security.encryption.EncryptedProperty;
-import com.jobby.infraestructure.common.security.mac.MacGeneratedProperty;
+import com.jobby.infraestructure.common.security.encryption.Encrypted;
+import com.jobby.infraestructure.common.security.mac.MacGenerated;
 import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -28,13 +28,13 @@ public class JpaAddressEntity {
     @Size(max = 600)
     @NotNull
     @Column(name = "value", nullable = false, length = 600)
-    @EncryptedProperty
+    @Encrypted
     private String value;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "value_searchable", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "value")
+    @MacGenerated(name = "value")
     private byte[] valueSearchable;
 
     @Size(max = 1200)

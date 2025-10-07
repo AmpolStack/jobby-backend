@@ -1,7 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import com.jobby.infraestructure.common.security.encryption.EncryptedProperty;
-import com.jobby.infraestructure.common.security.mac.MacGeneratedProperty;
+import com.jobby.infraestructure.common.security.encryption.Encrypted;
+import com.jobby.infraestructure.common.security.mac.MacGenerated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,47 +22,47 @@ public class JpaAppUserEntity {
     @Size(max = 600)
     @NotNull
     @Column(name = "first_name", nullable = false, length = 600)
-    @EncryptedProperty
+    @Encrypted
     private String firstName;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "first_name_searchable", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "firstName")
+    @MacGenerated(name = "firstName")
     private byte[] firstNameSearchable;
 
     @Size(max = 600)
     @NotNull
     @Column(name = "last_name", nullable = false, length = 600)
-    @EncryptedProperty
+    @Encrypted
     private String lastName;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "last_name_searchable", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "lastName")
+    @MacGenerated(name = "lastName")
     private byte[] lastNameSearchable;
 
     @Size(max = 600)
     @Column(name = "email", length = 600)
-    @EncryptedProperty
+    @Encrypted
     private String email;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "email_searchable", length = 32)
-    @MacGeneratedProperty(name = "email")
+    @MacGenerated(name = "email")
     private byte[] emailSearchable;
 
     @Size(max = 350)
     @Column(name = "phone", length = 350)
-    @EncryptedProperty
+    @Encrypted
     private String phone;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "phone_searchable", length = 32)
-    @MacGeneratedProperty(name = "phone")
+    @MacGenerated(name = "phone")
     private byte[] phoneSearchable;
 
     @ColumnDefault("current_timestamp()")

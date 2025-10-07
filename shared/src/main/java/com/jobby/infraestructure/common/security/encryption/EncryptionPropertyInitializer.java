@@ -5,7 +5,7 @@ import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.ports.encrypt.EncryptionService;
 import com.jobby.infraestructure.common.security.ReflexiveSetterProcessor;
 
-public class EncryptionPropertyInitializer extends ReflexiveSetterProcessor<EncryptedProperty, EncryptConfig> {
+public class EncryptionPropertyInitializer extends ReflexiveSetterProcessor<Encrypted, EncryptConfig> {
 
     public EncryptionPropertyInitializer(EncryptConfig encryptConfig,
                                          EncryptionService encryptionService,
@@ -13,7 +13,7 @@ public class EncryptionPropertyInitializer extends ReflexiveSetterProcessor<Encr
         super(encryptConfig, safeResultValidator,
                 (sourceValue) -> encryptionService.encrypt(sourceValue, encryptConfig),
                 new com.jobby.domain.mobility.error.Field("EncryptionPropertyInitializer", "Invalid encryption configuration"),
-                EncryptedProperty.class);
+                Encrypted.class);
     }
 
 }

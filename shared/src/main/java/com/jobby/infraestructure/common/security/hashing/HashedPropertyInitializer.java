@@ -3,8 +3,8 @@ package com.jobby.infraestructure.common.security.hashing;
 import com.jobby.domain.ports.hashing.HashingService;
 import com.jobby.infraestructure.common.security.ReflexiveSetterProcessor;
 
-public class HashedPropertyInitializer extends ReflexiveSetterProcessor<HashedProperty, Void> {
+public class HashedPropertyInitializer extends ReflexiveSetterProcessor<Hashed, Void> {
     HashedPropertyInitializer(HashingService hashingService) {
-        super(hashingService::hash,HashedProperty.class);
+        super(hashingService::hash, Hashed.class);
     }
 }

@@ -1,8 +1,8 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import com.jobby.infraestructure.common.security.encryption.EncryptedProperty;
-import com.jobby.infraestructure.common.security.hashing.HashedProperty;
-import com.jobby.infraestructure.common.security.mac.MacGeneratedProperty;
+import com.jobby.infraestructure.common.security.encryption.Encrypted;
+import com.jobby.infraestructure.common.security.hashing.Hashed;
+import com.jobby.infraestructure.common.security.mac.MacGenerated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -48,30 +48,30 @@ public class JpaEmployeeEntity {
     @Size(max = 60)
     @NotNull
     @Column(name = "password", nullable = false, length = 60)
-    @HashedProperty
+    @Hashed
     private String password;
 
     @Size(max = 600)
     @NotNull
     @Column(name = "username", nullable = false, length = 600)
-    @EncryptedProperty
+    @Encrypted
     private String username;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "username_searchable", nullable = false, length = 32)
-    @MacGeneratedProperty(name = "username")
+    @MacGenerated(name = "username")
     private byte[] usernameSearchable;
 
     @Size(max = 600)
     @Column(name = "position_name", length = 600)
-    @EncryptedProperty
+    @Encrypted
     private String positionName;
 
     @Size(max = 32)
     @NotNull
     @Column(name = "position_name_searchable", length = 32)
-    @MacGeneratedProperty(name = "positionName")
+    @MacGenerated(name = "positionName")
     private byte[] positionNameSearchable;
 
     @Size(max = 250)
