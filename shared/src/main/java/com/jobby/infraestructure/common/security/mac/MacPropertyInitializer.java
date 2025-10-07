@@ -6,7 +6,7 @@ import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.ports.hashing.mac.MacService;
 import com.jobby.infraestructure.common.security.EntityEnrichmentProcessor;
 
-public class MacPropertyInitializer extends EntityEnrichmentProcessor<MacGenerated, MacConfig> {
+public class MacPropertyInitializer extends EntityEnrichmentProcessor<MacGenerated> {
 
     public MacPropertyInitializer(MacService macService, MacConfig macConfig, SafeResultValidator safeResultValidator) {
         super(macConfig, safeResultValidator,

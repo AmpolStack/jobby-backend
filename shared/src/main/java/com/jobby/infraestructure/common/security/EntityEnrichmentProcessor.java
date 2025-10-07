@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class EntityEnrichmentProcessor<A extends Annotation, C >{
+public class EntityEnrichmentProcessor<A extends Annotation>{
 
     private boolean validConfig = false;
     private final Function<String, Result<?, Error>> setterFunction;
@@ -21,7 +21,7 @@ public class EntityEnrichmentProcessor<A extends Annotation, C >{
 
     private final List<Object> elements = new ArrayList<>();
 
-    public EntityEnrichmentProcessor(C config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
+    public EntityEnrichmentProcessor(Object config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
         this.setterFunction = setterFunction;
         this.annotationClass = annotationClass;
         this.errorField = errorField;
@@ -40,7 +40,7 @@ public class EntityEnrichmentProcessor<A extends Annotation, C >{
         this.validConfig = true;
     }
 
-    public EntityEnrichmentProcessor<A,C> addElement(Object element) {
+    public EntityEnrichmentProcessor<A> addElement(Object element) {
         this.elements.add(element);
         return this;
     }
