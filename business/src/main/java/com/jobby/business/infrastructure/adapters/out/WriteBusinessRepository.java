@@ -7,8 +7,8 @@ import com.jobby.business.infrastructure.persistence.jpa.mappers.JpaBusinessMapp
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.infraestructure.common.DecryptionPropertyInitializer;
-import com.jobby.infraestructure.common.EncryptionPropertyInitializer;
+import com.jobby.infraestructure.common.security.encryption.DecryptionPropertyInitializer;
+import com.jobby.infraestructure.common.security.encryption.EncryptionPropertyInitializer;
 import com.jobby.infraestructure.common.MacPropertyInitializer;
 import com.jobby.infraestructure.common.repo.JpaGenericRepository;
 import com.jobby.infraestructure.common.transaction.TransactionHandler;

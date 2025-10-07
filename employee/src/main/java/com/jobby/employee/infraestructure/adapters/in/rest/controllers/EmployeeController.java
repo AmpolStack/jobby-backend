@@ -1,14 +1,12 @@
 package com.jobby.employee.infraestructure.adapters.in.rest.controllers;
 
-import com.jobby.domain.ports.encrypt.EncryptionService;
-import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.ports.in.GetEmployeeByIdUseCase;
 import com.jobby.employee.domain.ports.in.PutEmployeeUseCase;
 import com.jobby.employee.infraestructure.adapters.in.rest.dto.created.EmployeeCreated;
 import com.jobby.employee.infraestructure.adapters.in.rest.mappers.EmployeeCreatedMapper;
 import com.jobby.employee.infraestructure.persistence.jpa.entities.JpaAppUserEntity;
 import com.jobby.employee.infraestructure.persistence.jpa.entities.JpaEmployeeEntity;
-import com.jobby.infraestructure.common.EncryptionPropertyInitializer;
+import com.jobby.infraestructure.common.security.encryption.EncryptionPropertyInitializer;
 import com.jobby.infraestructure.common.MacPropertyInitializer;
 import com.jobby.infraestructure.response.definition.ApiResponseMapper;
 import org.springframework.http.ResponseEntity;

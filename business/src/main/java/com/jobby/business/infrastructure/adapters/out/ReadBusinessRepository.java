@@ -7,7 +7,7 @@ import com.jobby.business.infrastructure.persistence.mongo.mappers.MongoBusiness
 import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDataMongoBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.infraestructure.common.EncryptionPropertyInitializer;
+import com.jobby.infraestructure.common.security.encryption.EncryptionPropertyInitializer;
 import com.jobby.infraestructure.common.MacPropertyInitializer;
 import com.jobby.infraestructure.common.repo.MongoGenericRepository;
 import com.jobby.infraestructure.common.transaction.TransactionHandler;

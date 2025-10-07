@@ -1,6 +1,6 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import com.jobby.infraestructure.common.EncryptedProperty;
+import com.jobby.infraestructure.common.security.encryption.EncryptedProperty;
 import com.jobby.infraestructure.common.HashedProperty;
 import com.jobby.infraestructure.common.MacGeneratedProperty;
 import jakarta.persistence.*;
