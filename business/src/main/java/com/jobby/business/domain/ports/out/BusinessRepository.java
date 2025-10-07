@@ -7,4 +7,5 @@ import com.jobby.domain.mobility.result.Result;
 public interface BusinessRepository {
     Result<Business, Error> save(Business business);
     Result<Business, Error> findById(int id);
+    Result<Business, Error> findByAddress_ValueSearchable(byte[] addressValueSearchable);
 }
