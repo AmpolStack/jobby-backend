@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class ReflexiveSetterProcessor<A extends Annotation, C >{
+public class ReflectivePropertyAssigner<A extends Annotation, C >{
 
     private boolean validConfig = false;
     private final Function<String, Result<?, Error>> setterFunction;
@@ -21,7 +21,7 @@ public class ReflexiveSetterProcessor<A extends Annotation, C >{
 
     private final List<Object> elements = new ArrayList<>();
 
-    public ReflexiveSetterProcessor(C config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
+    public ReflectivePropertyAssigner(C config, SafeResultValidator safeResultValidator, Function<String, Result<?, Error>> setterFunction, com.jobby.domain.mobility.error.Field errorField, Class<A> annotationClass) {
         this.setterFunction = setterFunction;
         this.annotationClass = annotationClass;
         this.errorField = errorField;
@@ -33,14 +33,14 @@ public class ReflexiveSetterProcessor<A extends Annotation, C >{
                 );
     }
 
-    public ReflexiveSetterProcessor(Function<String, Result<?, Error>> setterFunction, Class<A> annotationClass) {
+    public ReflectivePropertyAssigner(Function<String, Result<?, Error>> setterFunction, Class<A> annotationClass) {
         this.setterFunction = setterFunction;
         this.annotationClass = annotationClass;
 
         this.validConfig = true;
     }
 
-    public ReflexiveSetterProcessor<A,C> addElement(Object element) {
+    public ReflectivePropertyAssigner<A,C> addElement(Object element) {
         this.elements.add(element);
         return this;
     }
