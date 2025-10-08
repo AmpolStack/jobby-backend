@@ -1,7 +1,7 @@
 package com.jobby.business.application.useCase;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.domain.ports.in.GetBusinessByAddressValueUseCase;
+import com.jobby.business.domain.ports.in.FindBusinessByAddressValueQuery;
 import com.jobby.business.domain.ports.out.BusinessRepository;
 import com.jobby.domain.configurations.MacConfig;
 import com.jobby.domain.mobility.error.Error;
@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GetBusinessByAddressValueUseCaseImpl implements GetBusinessByAddressValueUseCase {
+public class FindBusinessByAddressValueQueryImpl implements FindBusinessByAddressValueQuery {
 
     private final BusinessRepository businessRepository;
     private final MacService macService;
     private final MacConfig macConfig;
 
-    public GetBusinessByAddressValueUseCaseImpl(@Qualifier("read") BusinessRepository businessRepository, MacService macService, MacConfig macConfig) {
+    public FindBusinessByAddressValueQueryImpl(@Qualifier("read") BusinessRepository businessRepository, MacService macService, MacConfig macConfig) {
         this.businessRepository = businessRepository;
         this.macService = macService;
         this.macConfig = macConfig;
