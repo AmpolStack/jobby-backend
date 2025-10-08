@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GetBusinessByIdUseCaseImpl implements FindBusinessByIdQuery {
+public class FindBusinessByIdQueryImpl implements FindBusinessByIdQuery {
 
     private final BusinessRepository businessRepository;
 
-    public GetBusinessByIdUseCaseImpl(@Qualifier("read") BusinessRepository businessRepository) {
+    public FindBusinessByIdQueryImpl(@Qualifier("read") BusinessRepository businessRepository) {
         this.businessRepository = businessRepository;
     }
-    
+
     @Override
     public Result<Business, Error> execute(int id) {
         return this.businessRepository.findById(id);
