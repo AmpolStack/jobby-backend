@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.adapters.out;
+package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.BusinessRepository;
@@ -63,12 +63,7 @@ public class WriteBusinessRepository
                                                 .processAll()))
         );
     }
-
-    @Override
-    public Result<Business, Error> findByAddress_ValueSearchable(byte[] addressValueSearchable) {
-        return null;
-    }
-
+    
     @Override
     protected Business toDomain(JpaBusinessEntity jpaBusinessEntity) {
         return this.jpaBusinessMapper.toDomain(jpaBusinessEntity);
