@@ -6,7 +6,6 @@ import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.dao.*;
 import org.springframework.data.mongodb.MongoTransactionException;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -48,10 +47,6 @@ public abstract class MongoGenericRepository<Entity,Domain> extends GenericRepos
                     new Field("unexpected", "Unexpected error: " + ex.getMessage()));
         }
 
-        if (response.isFailure()) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-        }
-
         return response;
     }
 
@@ -78,10 +73,6 @@ public abstract class MongoGenericRepository<Entity,Domain> extends GenericRepos
         } catch (Exception ex) {
             response = Result.failure(ErrorType.VALIDATION_ERROR,
                     new Field("unexpected", "Unexpected error: " + ex.getMessage()));
-        }
-
-        if (response.isFailure()) {
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         }
 
         return response;
