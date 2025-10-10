@@ -19,6 +19,6 @@ public class FindBusinessByIdQueryImpl implements FindBusinessByIdQuery {
 
     @Override
     public Result<Business, Error> execute(int id) {
-        return this.businessRepository.findById(id);
+        return this.businessRepository.findById(id, false);
     }
 }
