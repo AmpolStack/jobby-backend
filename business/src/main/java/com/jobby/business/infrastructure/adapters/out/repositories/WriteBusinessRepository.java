@@ -51,9 +51,9 @@ public class WriteBusinessRepository
     }
 
     @Override
-    public Result<Business, Error> findById(int id) {
+    public Result<Business, Error> findById(int id, boolean nullable) {
         return this.transactionHandler.executeInRead(
-                () -> this.select(() -> this.springDataJpaBusinessRepository.findById(id),
+                () -> this.select(nullable, () -> this.springDataJpaBusinessRepository.findById(id),
                         (jpaBusiness) -> this.macPropertyInitializer
                                 .addElement(jpaBusiness.getAddress())
                                 .processAll()
@@ -63,7 +63,7 @@ public class WriteBusinessRepository
                                                 .processAll()))
         );
     }
-    
+
     @Override
     protected Business toDomain(JpaBusinessEntity jpaBusinessEntity) {
         return this.jpaBusinessMapper.toDomain(jpaBusinessEntity);
