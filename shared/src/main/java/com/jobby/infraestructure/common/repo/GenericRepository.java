@@ -26,14 +26,17 @@ public abstract class GenericRepository<Entity, Domain>{
                 );
     }
 
-    protected Result<Domain, Error> select(Supplier<Optional<Entity>> supplier, Function<Entity, Result<Void, Error>> function){
+    protected Result<Domain, Error> select( boolean nullable, Supplier<Optional<Entity>> supplier, Function<Entity, Result<Void, Error>> function){
         return this.selectionTransactionHandler(supplier)
                 .flatMap(optional -> {
 
+
                     if(optional.isEmpty()){
-                        return Result.failure(
+                        return (!nullable) ?
+                                 Result.failure(
                                 ErrorType.USER_NOT_FOUND,
-                                new Field("entity", "No entity found with given parameters"));
+                                new Field("entity", "No entity found with given parameters"))
+                                : null;
                     }
 
                     var value = optional.get();
