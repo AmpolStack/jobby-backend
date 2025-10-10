@@ -23,8 +23,7 @@ public class CreateBusinessCommandImpl implements CreateBusinessCommand {
     @Override
     public Result<Business, Error> execute(Business business) {
         var resp = this.businessRepository.save(business)
-            .flatMap(businessSaved -> this.businessRepository.findById(businessSaved.getId()));
-
+            .flatMap(businessSaved -> this.businessRepository.findById(businessSaved.getId(), false));
         resp.fold(
                 this.businessPublisher::sendBusiness,
                 null

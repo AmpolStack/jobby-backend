@@ -47,13 +47,15 @@ public class ReadBusinessRepository
     }
 
     @Override
-    public Result<Business, Error> findById(int id) {
-        return this.select(() -> this.springDataMongoBusinessRepository.findById(id),
+    public Result<Business, Error> findById(int id, boolean nullable) {
+        return this.select(nullable, () -> this.springDataMongoBusinessRepository.findById(id),
                 (jpaBusiness) ->
                                 this.decryptionPropertyInitializer
                                         .addElement(jpaBusiness.getAddress())
                                         .processAll());
     }
+
+
 
     @Override
     protected Business toDomain(MongoBusinessEntity entity) {
