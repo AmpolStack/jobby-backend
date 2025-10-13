@@ -1,6 +1,7 @@
 package com.jobby.business.infrastructure.common;
 
 import com.jobby.business.domain.entities.Business;
+import com.jobby.business.infrastructure.common.repository.pipeline.PipelinePersistenceProcess;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.mappers.JpaBusinessMapper;
 import com.jobby.business.infrastructure.secure.SecurityStrategyImplementer;

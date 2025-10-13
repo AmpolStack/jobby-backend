@@ -2,8 +2,8 @@ package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.BusinessRepository;
-import com.jobby.business.infrastructure.common.AfterPersistProcess;
-import com.jobby.business.infrastructure.common.BeforePersistProcess;
+import com.jobby.business.infrastructure.common.repository.pipeline.AfterPersistProcess;
+import com.jobby.business.infrastructure.common.repository.pipeline.BeforePersistProcess;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDataMongoBusinessRepository;
