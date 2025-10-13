@@ -6,6 +6,7 @@ import com.jobby.domain.mobility.result.Result;
 import com.jobby.infraestructure.common.security.encryption.DecryptionPropertyInitializer;
 import com.jobby.infraestructure.common.security.encryption.EncryptionPropertyInitializer;
 import com.jobby.infraestructure.common.security.mac.MacPropertyInitializer;
+import com.jobby.infraestructure.security.SecurityStrategyComposer;
 import org.springframework.stereotype.Component;
 
 @Component

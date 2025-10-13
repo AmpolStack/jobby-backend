@@ -1,11 +1,11 @@
-package com.jobby.business.infrastructure.common;
+package com.jobby.business.infrastructure.repository.pipeline;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.infraestructure.repository.pipeline.PipelinePersistenceProcess;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.mappers.MongoBusinessMapper;
-import com.jobby.business.infrastructure.security.SecurityStrategyImplementer;
-import com.jobby.business.infrastructure.security.SecurityStrategyReverter;
+import com.jobby.infraestructure.security.SecurityStrategyImplementer;
+import com.jobby.infraestructure.security.SecurityStrategyReverter;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
