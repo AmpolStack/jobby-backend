@@ -28,7 +28,7 @@ public class JpaBusinessPipelinePersistenceProcess implements
     }
 
     @Override
-    public Result<Business, Error> use(Optional<JpaBusinessEntity> jpaBusinessOptional) {
+    public Result<Business, Error> after(Optional<JpaBusinessEntity> jpaBusinessOptional) {
         if(jpaBusinessOptional.isEmpty()){
             return Result.failure(ErrorType.USER_NOT_FOUND,
                     new Field("business", "entity not foud"));
@@ -40,7 +40,7 @@ public class JpaBusinessPipelinePersistenceProcess implements
     }
 
     @Override
-    public Result<JpaBusinessEntity, Error> use(Business business) {
+    public Result<JpaBusinessEntity, Error> before(Business business) {
         var mapped = this.jpaBusinessMapper.toJpa(business);
         return this.securityStrategyImplementer.apply(mapped)
                 .map(v -> mapped);

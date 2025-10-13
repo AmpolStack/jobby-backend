@@ -30,7 +30,7 @@ public class MongoBusinessPipelinePersistenceProcess implements
     }
 
     @Override
-    public Result<Business, Error> use(Optional<MongoBusinessEntity> mongoBusinessOptional) {
+    public Result<Business, Error> after(Optional<MongoBusinessEntity> mongoBusinessOptional) {
         if(mongoBusinessOptional.isEmpty()){
             return Result.failure(ErrorType.USER_NOT_FOUND,
                     new Field("business", "entity not foud"));
@@ -42,7 +42,7 @@ public class MongoBusinessPipelinePersistenceProcess implements
     }
 
     @Override
-    public Result<MongoBusinessEntity, Error> use(Business infra) {
+    public Result<MongoBusinessEntity, Error> before(Business infra) {
         var mapped = this.mongoBusinessMapper.toDocument(infra);
         return this.securityStrategyImplementer.apply(mapped)
                 .map(v -> mapped);

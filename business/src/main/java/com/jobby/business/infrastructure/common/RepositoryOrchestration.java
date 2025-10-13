@@ -24,14 +24,14 @@ public class RepositoryOrchestration<Infra, Domain> {
 
     public Result<Domain, Error> selection(Supplier<Optional<Infra>> supplier){
         return this.persistenceErrorHandler.handleReading(supplier)
-                .flatMap(this.afterPersistProcess::use);
+                .flatMap(this.afterPersistProcess::after);
     }
 
     public Result<Domain, Error> modification(Domain domain,
                                               Function<Infra, Optional<Infra>> function){
-        return this.beforePersistProcess.use(domain)
+        return this.beforePersistProcess.before(domain)
                 .flatMap(infra -> this.persistenceErrorHandler.handleWriting(function, infra))
-                .flatMap(this.afterPersistProcess::use);
+                .flatMap(this.afterPersistProcess::after);
     }
 
 }
