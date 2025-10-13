@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.common;
+package com.jobby.business.infrastructure.autoconfigurations;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
