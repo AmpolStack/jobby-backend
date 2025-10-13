@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.common.repository.orchestation;
+package com.jobby.infraestructure.repository.orchestation;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;

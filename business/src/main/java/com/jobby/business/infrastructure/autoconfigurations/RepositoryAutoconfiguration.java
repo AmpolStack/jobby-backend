@@ -1,10 +1,10 @@
 package com.jobby.business.infrastructure.autoconfigurations;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
-import com.jobby.business.infrastructure.common.repository.orchestation.RepositoryOrchestrationFactory;
-import com.jobby.business.infrastructure.common.repository.orchestation.RepositoryOrchestrator;
-import com.jobby.business.infrastructure.common.repository.pipeline.PipelinePersistenceProcess;
+import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
+import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrationFactory;
+import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
+import com.jobby.infraestructure.repository.pipeline.PipelinePersistenceProcess;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.common.repository.pipeline;
+package com.jobby.infraestructure.repository.pipeline;
 
 public interface PipelinePersistenceProcess<Domain, Infra>
         extends AfterPersistProcess<Domain, Infra>,

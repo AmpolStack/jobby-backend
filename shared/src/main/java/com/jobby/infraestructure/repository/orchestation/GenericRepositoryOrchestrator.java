@@ -1,8 +1,8 @@
-package com.jobby.business.infrastructure.common.repository.orchestation;
+package com.jobby.infraestructure.repository.orchestation;
 
-import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
-import com.jobby.business.infrastructure.common.repository.pipeline.AfterPersistProcess;
-import com.jobby.business.infrastructure.common.repository.pipeline.BeforePersistProcess;
+import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
+import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
+import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import java.util.Optional;

@@ -1,7 +1,7 @@
-package com.jobby.business.infrastructure.common.repository.orchestation;
+package com.jobby.infraestructure.repository.orchestation;
 
-import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
-import com.jobby.business.infrastructure.common.repository.pipeline.PipelinePersistenceProcess;
+import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
+import com.jobby.infraestructure.repository.pipeline.PipelinePersistenceProcess;
 
 public class RepositoryOrchestrationFactory<Infra, Domain> {
     private PipelinePersistenceProcess<Infra, Domain> pipelinePersistenceProcess;
