@@ -15,8 +15,7 @@ import java.util.Optional;
 
 @Component
 public class JpaBusinessPipelinePersistProcess implements
-        AfterPersistProcess<Business, JpaBusinessEntity>,
-        BeforePersistProcess<Business, JpaBusinessEntity>
+        PersistPipelineProcess<Business, JpaBusinessEntity>
 {
     private final JpaBusinessMapper jpaBusinessMapper;
     private final SecurityStrategyReverter<JpaBusinessEntity> securityStrategyReverter;

@@ -1,7 +1,6 @@
 package com.jobby.business.infrastructure.common;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.mappers.MongoBusinessMapper;
 import com.jobby.business.infrastructure.secure.SecurityStrategyImplementer;
@@ -10,12 +9,12 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
-
+import org.springframework.stereotype.Component;
 import java.util.Optional;
 
+@Component
 public class MongoBusinessPipelinePersistProcess implements
-        AfterPersistProcess<Business, MongoBusinessEntity>,
-        BeforePersistProcess<Business, MongoBusinessEntity>
+        PersistPipelineProcess<Business, MongoBusinessEntity>
 {
 
     private final MongoBusinessMapper mongoBusinessMapper;
