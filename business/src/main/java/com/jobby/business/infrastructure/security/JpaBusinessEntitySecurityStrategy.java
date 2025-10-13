@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.secure;
+package com.jobby.business.infrastructure.security;
 
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.domain.mobility.error.Error;

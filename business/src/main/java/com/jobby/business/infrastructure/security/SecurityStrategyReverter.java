@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.secure;
+package com.jobby.business.infrastructure.security;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
