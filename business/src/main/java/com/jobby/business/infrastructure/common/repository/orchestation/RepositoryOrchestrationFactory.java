@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.common;
+package com.jobby.business.infrastructure.common.repository.orchestation;
 
 import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
 import com.jobby.business.infrastructure.common.repository.pipeline.PipelinePersistenceProcess;
@@ -19,8 +19,8 @@ public class RepositoryOrchestrationFactory<Infra, Domain> {
         return this;
     }
 
-    public RepositoryOrchestration<Infra, Domain> build(){
-        return new RepositoryOrchestration<>(
+    public GenericRepositoryOrchestrator<Infra, Domain> build(){
+        return new GenericRepositoryOrchestrator<>(
                 this.pipelinePersistenceProcess,
                 this.pipelinePersistenceProcess,
                 this.persistenceErrorHandler);

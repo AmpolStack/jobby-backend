@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.common;
+package com.jobby.business.infrastructure.common.repository.orchestation;
 
 import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
 import com.jobby.business.infrastructure.common.repository.pipeline.AfterPersistProcess;
@@ -9,12 +9,12 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class RepositoryOrchestration<Infra, Domain> {
+public class GenericRepositoryOrchestrator<Infra, Domain>  implements RepositoryOrchestrator<Infra,Domain> {
     private final AfterPersistProcess<Infra, Domain> afterPersistProcess;
     private final BeforePersistProcess<Infra, Domain> beforePersistProcess;
     private final PersistenceErrorHandler persistenceErrorHandler;
 
-    public RepositoryOrchestration(
+    public GenericRepositoryOrchestrator(
             AfterPersistProcess<Infra, Domain> afterPersistProcess,
             BeforePersistProcess<Infra, Domain> beforePersistProcess,
             PersistenceErrorHandler persistenceErrorHandler) {
@@ -24,11 +24,13 @@ public class RepositoryOrchestration<Infra, Domain> {
         this.persistenceErrorHandler = persistenceErrorHandler;
     }
 
+    @Override
     public Result<Domain, Error> selection(Supplier<Optional<Infra>> supplier){
         return this.persistenceErrorHandler.handleReading(supplier)
                 .flatMap(this.afterPersistProcess::after);
     }
 
+    @Override
     public Result<Domain, Error> modification(Domain domain,
                                               Function<Infra, Optional<Infra>> function){
         return this.beforePersistProcess.before(domain)
