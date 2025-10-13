@@ -10,8 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JpaBusinessEntitySecurityStrategy implements
-        SecurityStrategyImplementer<JpaBusinessEntity>,
-        SecurityStrategyReverter<JpaBusinessEntity>
+        SecurityStrategyComposer<JpaBusinessEntity>
 {
     private final EncryptionPropertyInitializer encryptionPropertyInitializer;
     private final MacPropertyInitializer macPropertyInitializer;

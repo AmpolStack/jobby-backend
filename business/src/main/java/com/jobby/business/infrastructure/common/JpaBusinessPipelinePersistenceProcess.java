@@ -14,15 +14,14 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class JpaBusinessPipelinePersistProcess implements
-        AfterPersistProcess<Business, JpaBusinessEntity>,
-        BeforePersistProcess<Business, JpaBusinessEntity>
+public class JpaBusinessPipelinePersistenceProcess implements
+        PipelinePersistenceProcess<JpaBusinessEntity, Business>
 {
     private final JpaBusinessMapper jpaBusinessMapper;
     private final SecurityStrategyReverter<JpaBusinessEntity> securityStrategyReverter;
     private final SecurityStrategyImplementer<JpaBusinessEntity> securityStrategyImplementer;
 
-    public JpaBusinessPipelinePersistProcess(JpaBusinessMapper jpaBusinessMapper, SecurityStrategyReverter<JpaBusinessEntity> securityStrategyReverter, SecurityStrategyImplementer<JpaBusinessEntity> securityStrategyImplementer) {
+    public JpaBusinessPipelinePersistenceProcess(JpaBusinessMapper jpaBusinessMapper, SecurityStrategyReverter<JpaBusinessEntity> securityStrategyReverter, SecurityStrategyImplementer<JpaBusinessEntity> securityStrategyImplementer) {
         this.jpaBusinessMapper = jpaBusinessMapper;
         this.securityStrategyReverter = securityStrategyReverter;
         this.securityStrategyImplementer = securityStrategyImplementer;

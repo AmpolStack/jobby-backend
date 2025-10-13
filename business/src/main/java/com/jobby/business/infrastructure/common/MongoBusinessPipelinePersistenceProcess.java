@@ -1,7 +1,6 @@
 package com.jobby.business.infrastructure.common;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.mappers.MongoBusinessMapper;
 import com.jobby.business.infrastructure.secure.SecurityStrategyImplementer;
@@ -10,21 +9,21 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
-
+import org.springframework.stereotype.Component;
 import java.util.Optional;
 
-public class MongoBusinessPipelinePersistProcess implements
-        AfterPersistProcess<Business, MongoBusinessEntity>,
-        BeforePersistProcess<Business, MongoBusinessEntity>
+@Component
+public class MongoBusinessPipelinePersistenceProcess implements
+        PipelinePersistenceProcess<MongoBusinessEntity, Business>
 {
 
     private final MongoBusinessMapper mongoBusinessMapper;
     private final SecurityStrategyReverter<MongoBusinessEntity> securityStrategyReverter;
     private final SecurityStrategyImplementer<MongoBusinessEntity> securityStrategyImplementer;
 
-    public MongoBusinessPipelinePersistProcess(MongoBusinessMapper mongoBusinessMapper,
-                                               SecurityStrategyReverter<MongoBusinessEntity> securityStrategyReverter,
-                                               SecurityStrategyImplementer<MongoBusinessEntity> securityStrategyImplementer) {
+    public MongoBusinessPipelinePersistenceProcess(MongoBusinessMapper mongoBusinessMapper,
+                                                   SecurityStrategyReverter<MongoBusinessEntity> securityStrategyReverter,
+                                                   SecurityStrategyImplementer<MongoBusinessEntity> securityStrategyImplementer) {
         this.mongoBusinessMapper = mongoBusinessMapper;
         this.securityStrategyReverter = securityStrategyReverter;
         this.securityStrategyImplementer = securityStrategyImplementer;

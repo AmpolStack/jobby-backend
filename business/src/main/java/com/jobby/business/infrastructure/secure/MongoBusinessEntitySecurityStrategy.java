@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MongoBusinessEntitySecurityStrategy implements
-        SecurityStrategyImplementer<MongoBusinessEntity>,
-        SecurityStrategyReverter<MongoBusinessEntity>
+        SecurityStrategyComposer<MongoBusinessEntity>
 {
     private final EncryptionPropertyInitializer encryptionPropertyInitializer;
     private final MacPropertyInitializer macPropertyInitializer;
