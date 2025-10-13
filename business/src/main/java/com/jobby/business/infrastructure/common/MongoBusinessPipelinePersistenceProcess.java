@@ -13,17 +13,17 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class MongoBusinessPipelinePersistProcess implements
-        PersistPipelineProcess<Business, MongoBusinessEntity>
+public class MongoBusinessPipelinePersistenceProcess implements
+        PipelinePersistenceProcess<MongoBusinessEntity, Business>
 {
 
     private final MongoBusinessMapper mongoBusinessMapper;
     private final SecurityStrategyReverter<MongoBusinessEntity> securityStrategyReverter;
     private final SecurityStrategyImplementer<MongoBusinessEntity> securityStrategyImplementer;
 
-    public MongoBusinessPipelinePersistProcess(MongoBusinessMapper mongoBusinessMapper,
-                                               SecurityStrategyReverter<MongoBusinessEntity> securityStrategyReverter,
-                                               SecurityStrategyImplementer<MongoBusinessEntity> securityStrategyImplementer) {
+    public MongoBusinessPipelinePersistenceProcess(MongoBusinessMapper mongoBusinessMapper,
+                                                   SecurityStrategyReverter<MongoBusinessEntity> securityStrategyReverter,
+                                                   SecurityStrategyImplementer<MongoBusinessEntity> securityStrategyImplementer) {
         this.mongoBusinessMapper = mongoBusinessMapper;
         this.securityStrategyReverter = securityStrategyReverter;
         this.securityStrategyImplementer = securityStrategyImplementer;
