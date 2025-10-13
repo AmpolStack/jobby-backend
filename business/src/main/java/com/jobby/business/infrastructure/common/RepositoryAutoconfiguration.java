@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.common;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.infrastructure.common.errorHandling.PersistenceErrorHandler;
+import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import org.springframework.beans.factory.annotation.Qualifier;

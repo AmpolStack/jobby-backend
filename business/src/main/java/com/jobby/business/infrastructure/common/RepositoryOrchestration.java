@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.common;
 
-import com.jobby.business.infrastructure.common.errorHandling.PersistenceErrorHandler;
+import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import java.util.Optional;

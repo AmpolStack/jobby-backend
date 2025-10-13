@@ -1,5 +1,6 @@
 package com.jobby.business.infrastructure.common.errorHandling;
 
+import com.jobby.business.infrastructure.common.repository.error.PersistenceErrorHandler;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
@@ -12,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component("MongoPersistenceErrorHandler")
-public class MongoPersistenceErrorHandler implements PersistenceErrorHandler{
+public class MongoPersistenceErrorHandler implements PersistenceErrorHandler {
     @Override
     public <Entity> Result<Optional<Entity>, Error> handleWriting(Function<Entity, Optional<Entity>> function, Entity entity) {
         try {
