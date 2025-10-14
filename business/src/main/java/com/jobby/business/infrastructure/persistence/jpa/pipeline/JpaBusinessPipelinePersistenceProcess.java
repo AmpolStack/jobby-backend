@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.repository.pipeline;
+package com.jobby.business.infrastructure.persistence.jpa.pipeline;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.infraestructure.repository.pipeline.PipelinePersistenceProcess;

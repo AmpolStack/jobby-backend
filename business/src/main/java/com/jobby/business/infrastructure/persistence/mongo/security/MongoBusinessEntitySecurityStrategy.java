@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.security;
+package com.jobby.business.infrastructure.persistence.mongo.security;
 
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.domain.mobility.error.Error;
