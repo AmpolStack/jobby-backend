@@ -6,4 +6,7 @@ import java.util.Optional;
 
 public interface AfterPersistProcess<Infra, Domain> {
     Result<Domain, Error> after(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<Infra> infraOptional);
+    default Result<Domain, Error> after(Infra infra){
+        return after(Optional.of(infra));
+    }
 }
