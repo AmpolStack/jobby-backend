@@ -2,8 +2,8 @@ package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.BusinessRepository;
-import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
-import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
+import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
+import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDataMongoBusinessRepository;
@@ -16,37 +16,35 @@ public class DefaultBusinessRepository implements BusinessRepository {
 
     private final SpringDataMongoBusinessRepository springDataMongoBusinessRepository;
     private final SpringDataJpaBusinessRepository springDataJpaBusinessRepository;
-    private final BeforePersistProcess<JpaBusinessEntity, Business> beforePersistProcess;
-    private final AfterPersistProcess<JpaBusinessEntity, Business> afterPersistProcess;
+    private final RepositoryOrchestrator<JpaBusinessEntity, Business> jpaRepositoryOrchestrator;
+    private final RepositoryOrchestrator<MongoBusinessEntity, Business> mongoRepositoryOrchestrator;
 
-    public DefaultBusinessRepository(SpringDataMongoBusinessRepository springDataMongoBusinessRepository,
-                                     SpringDataJpaBusinessRepository springDataJpaBusinessRepository,
-                                     BeforePersistProcess<JpaBusinessEntity, Business> beforePersistProcess,
-                                     AfterPersistProcess<JpaBusinessEntity, Business> afterPersistProcess) {
+    public DefaultBusinessRepository(SpringDataMongoBusinessRepository springDataMongoBusinessRepository, SpringDataJpaBusinessRepository springDataJpaBusinessRepository, RepositoryOrchestrator<JpaBusinessEntity, Business> jpaRepositoryOrchestrator, RepositoryOrchestrator<MongoBusinessEntity, Business> mongoRepositoryOrchestrator) {
         this.springDataMongoBusinessRepository = springDataMongoBusinessRepository;
         this.springDataJpaBusinessRepository = springDataJpaBusinessRepository;
-        this.beforePersistProcess = beforePersistProcess;
-        this.afterPersistProcess = afterPersistProcess;
+        this.jpaRepositoryOrchestrator = jpaRepositoryOrchestrator;
+        this.mongoRepositoryOrchestrator = mongoRepositoryOrchestrator;
     }
 
     @Override
     public Result<Business, Error> save(Business business) {
-        return this.beforePersistProcess.before(business)
-                .map(jpaBusiness -> {
-                    var savedBusiness = this.springDataJpaBusinessRepository.save(jpaBusiness);
-                    return this.springDataJpaBusinessRepository.findById(savedBusiness.getId());
-                })
-                .flatMap(this.afterPersistProcess::after);
+        return this.jpaRepositoryOrchestrator.modification(business,
+                (jpaBusiness)
+                        -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId())
+                .flatMap((savedBusinessId)
+                        -> this.jpaRepositoryOrchestrator.selection(
+                                ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
     }
 
     @Override
     public Result<Business, Error> findById(int id) {
-        var x = this.springDataMongoBusinessRepository.findById(id);
-        return null;
+        return this.mongoRepositoryOrchestrator
+                .selection(()-> this.springDataMongoBusinessRepository.findById(id));
     }
 
     @Override
     public Result<Boolean, Error> existByUsername(String name) {
-        return null;
+        return this.mongoRepositoryOrchestrator
+                .operation(()-> this.springDataMongoBusinessRepository.existsByName(name));
     }
 }
