@@ -29,18 +29,25 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
 
     @Override
     public Result<Domain, Error> selection(Supplier<Optional<Infra>> supplier){
-        return this.persistenceErrorHandler.handleReading(supplier)
+        return this.persistenceTransactionHandler.executeInRead(() ->
+                        this.persistenceErrorHandler.handleReading(supplier)
+                )
                 .flatMap(this.afterPersistProcess::after);
     }
 
     @Override
-    public Result<Domain, Error> modification(Domain domain,
-                                              Function<Infra, Optional<Infra>> function){
+    public <T> Result<T, Error> operation(Supplier<T> supplier) {
+        return this.persistenceTransactionHandler.executeInRead(() ->
+                this.persistenceErrorHandler.handleReading(supplier)
+        );
+    }
+
+    @Override
+    public Result<Integer, Error> modification(Domain domain,
+                                              Function<Infra, Integer> function){
         return this.beforePersistProcess.before(domain)
                 .flatMap(infra ->
-                        this.persistenceTransactionHandler.execute(() ->
-                                this.persistenceErrorHandler.handleWriting(function, infra)
-                                .flatMap(this.afterPersistProcess::after))
+                        this.persistenceErrorHandler.handleWriting(function, infra)
                 );
     }
 }
