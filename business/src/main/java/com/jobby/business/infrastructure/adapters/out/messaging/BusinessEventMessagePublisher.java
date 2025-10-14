@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.adapters.out.publisher;
+package com.jobby.business.infrastructure.adapters.out.messaging;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.BusinessMessagePublisher;
@@ -9,12 +9,12 @@ import com.jobby.domain.ports.MessagingPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BusinessEventPublisher implements BusinessMessagePublisher {
+public class BusinessEventMessagePublisher implements BusinessMessagePublisher {
 
     private final MessagingPublisher messagingPublisher;
     private final SchemaBusinessMapper schemaBusinessMapper;
 
-    public BusinessEventPublisher(MessagingPublisher messagingPublisher, SchemaBusinessMapper schemaBusinessMapper) {
+    public BusinessEventMessagePublisher(MessagingPublisher messagingPublisher, SchemaBusinessMapper schemaBusinessMapper) {
         this.messagingPublisher = messagingPublisher;
         this.schemaBusinessMapper = schemaBusinessMapper;
     }
