@@ -33,6 +33,16 @@ public class GenericReadOnlyBusinessRepository implements ReadOnlyBusinessReposi
     }
 
     @Override
+    public Result<Void, Error> update(Business business, int id) {
+        return this.mongoRepositoryOrchestrator.modification(business,
+                (mongoBusiness) -> {
+                    this.springDataMongoBusinessRepository.save(mongoBusiness);
+                    return null;
+                });
+    }
+
+
+    @Override
     public Result<Business, Error> findById(int id) {
         return this.mongoRepositoryOrchestrator
                 .selection(()-> this.springDataMongoBusinessRepository.findById(id));

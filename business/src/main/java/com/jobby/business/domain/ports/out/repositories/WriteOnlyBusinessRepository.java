@@ -6,5 +6,5 @@ import com.jobby.domain.mobility.result.Result;
 
 public interface WriteOnlyBusinessRepository {
     Result<Business, Error> save(Business business);
-    Result<Business, Error> update(Business business);
+    Result<Business, Error> update(Business business, int id);
 }
