@@ -8,5 +8,6 @@ import java.util.function.Supplier;
 
 public interface RepositoryOrchestrator<Infra,Domain> {
     Result<Domain, com.jobby.domain.mobility.error.Error> selection(Supplier<Optional<Infra>> supplier);
-    Result<Domain, Error> modification(Domain domain, Function<Infra, Optional<Infra>> function);
+    <T> Result<T, com.jobby.domain.mobility.error.Error> operation(Supplier<T> supplier);
+    Result<Integer, Error> modification(Domain domain, Function<Infra, Integer> function);
 }
