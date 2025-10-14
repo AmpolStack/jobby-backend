@@ -31,8 +31,8 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
     public Result<Domain, Error> selection(Supplier<Optional<Infra>> supplier){
         return this.persistenceTransactionHandler.executeInRead(() ->
                         this.persistenceErrorHandler.handleReading(supplier)
-                )
-                .flatMap(this.afterPersistProcess::after);
+                                .flatMap(this.afterPersistProcess::after)
+                );
     }
 
     @Override
