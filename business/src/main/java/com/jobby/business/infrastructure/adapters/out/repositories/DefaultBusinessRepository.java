@@ -2,8 +2,8 @@ package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.BusinessRepository;
-import com.jobby.business.infrastructure.common.AfterPersistProcess;
-import com.jobby.business.infrastructure.common.BeforePersistProcess;
+import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
+import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDataMongoBusinessRepository;
@@ -16,13 +16,13 @@ public class DefaultBusinessRepository implements BusinessRepository {
 
     private final SpringDataMongoBusinessRepository springDataMongoBusinessRepository;
     private final SpringDataJpaBusinessRepository springDataJpaBusinessRepository;
-    private final BeforePersistProcess<Business, JpaBusinessEntity> beforePersistProcess;
-    private final AfterPersistProcess<Business, JpaBusinessEntity> afterPersistProcess;
+    private final BeforePersistProcess<JpaBusinessEntity, Business> beforePersistProcess;
+    private final AfterPersistProcess<JpaBusinessEntity, Business> afterPersistProcess;
 
     public DefaultBusinessRepository(SpringDataMongoBusinessRepository springDataMongoBusinessRepository,
                                      SpringDataJpaBusinessRepository springDataJpaBusinessRepository,
-                                     BeforePersistProcess<Business, JpaBusinessEntity> beforePersistProcess,
-                                     AfterPersistProcess<Business, JpaBusinessEntity> afterPersistProcess) {
+                                     BeforePersistProcess<JpaBusinessEntity, Business> beforePersistProcess,
+                                     AfterPersistProcess<JpaBusinessEntity, Business> afterPersistProcess) {
         this.springDataMongoBusinessRepository = springDataMongoBusinessRepository;
         this.springDataJpaBusinessRepository = springDataJpaBusinessRepository;
         this.beforePersistProcess = beforePersistProcess;
@@ -31,12 +31,12 @@ public class DefaultBusinessRepository implements BusinessRepository {
 
     @Override
     public Result<Business, Error> save(Business business) {
-        return this.beforePersistProcess.use(business)
+        return this.beforePersistProcess.before(business)
                 .map(jpaBusiness -> {
                     var savedBusiness = this.springDataJpaBusinessRepository.save(jpaBusiness);
                     return this.springDataJpaBusinessRepository.findById(savedBusiness.getId());
                 })
-                .flatMap(this.afterPersistProcess::use);
+                .flatMap(this.afterPersistProcess::after);
     }
 
     @Override

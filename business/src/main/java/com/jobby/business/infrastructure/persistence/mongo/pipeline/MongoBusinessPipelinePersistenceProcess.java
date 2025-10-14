@@ -1,10 +1,11 @@
-package com.jobby.business.infrastructure.common;
+package com.jobby.business.infrastructure.persistence.mongo.pipeline;
 
 import com.jobby.business.domain.entities.Business;
+import com.jobby.infraestructure.repository.pipeline.PipelinePersistenceProcess;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.mappers.MongoBusinessMapper;
-import com.jobby.business.infrastructure.secure.SecurityStrategyImplementer;
-import com.jobby.business.infrastructure.secure.SecurityStrategyReverter;
+import com.jobby.infraestructure.security.SecurityStrategyImplementer;
+import com.jobby.infraestructure.security.SecurityStrategyReverter;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
@@ -30,7 +31,7 @@ public class MongoBusinessPipelinePersistenceProcess implements
     }
 
     @Override
-    public Result<Business, Error> use(Optional<MongoBusinessEntity> mongoBusinessOptional) {
+    public Result<Business, Error> after(Optional<MongoBusinessEntity> mongoBusinessOptional) {
         if(mongoBusinessOptional.isEmpty()){
             return Result.failure(ErrorType.USER_NOT_FOUND,
                     new Field("business", "entity not foud"));
@@ -42,7 +43,7 @@ public class MongoBusinessPipelinePersistenceProcess implements
     }
 
     @Override
-    public Result<MongoBusinessEntity, Error> use(Business infra) {
+    public Result<MongoBusinessEntity, Error> before(Business infra) {
         var mapped = this.mongoBusinessMapper.toDocument(infra);
         return this.securityStrategyImplementer.apply(mapped)
                 .map(v -> mapped);
