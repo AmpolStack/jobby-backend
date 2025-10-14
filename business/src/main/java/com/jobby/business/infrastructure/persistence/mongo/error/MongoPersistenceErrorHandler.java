@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @Component("MongoPersistenceErrorHandler")
 public class MongoPersistenceErrorHandler implements PersistenceErrorHandler {
     @Override
-    public <Entity> Result<Integer, Error> handleWriting(Function<Entity, Integer> function, Entity entity) {
+    public <Entity, R> Result<R, Error> handleWriting(Function<Entity, R> function, Entity entity) {
         try {
             var applied = function.apply(entity);
             return Result.success(applied);
