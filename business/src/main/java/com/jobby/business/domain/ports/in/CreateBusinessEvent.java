@@ -5,5 +5,5 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 
 public interface CreateBusinessEvent {
-    public Result<Business, Error> execute(Business business);
+    Result<Void, Error> execute(Business business);
 }

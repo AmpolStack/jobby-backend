@@ -14,7 +14,7 @@ public class BusinessApplicationEventService {
         this.createBusinessEvent = createBusinessEvent;
     }
 
-    public Result<Business, Error> createBusiness(Business business) {
+    public Result<Void, Error> createBusiness(Business business) {
         return this.createBusinessEvent.execute(business);
     }
 }

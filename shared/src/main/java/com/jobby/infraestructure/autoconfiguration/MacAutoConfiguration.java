@@ -30,13 +30,6 @@ public class MacAutoConfiguration {
         return new HmacSha256Service(safeResultValidator, macBuilder);
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public MacPropertyInitializer macPropertyInitializer(
-            MacService macService,
-            MacConfig macConfig,
-            SafeResultValidator safeResultValidator) {
-        return new MacPropertyInitializer(macService, macConfig, safeResultValidator);
-    }
+
 }
 

@@ -7,14 +7,13 @@ import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.dao.*;
 import org.springframework.stereotype.Component;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component("JpaPersistenceErrorHandler")
 public class JpaPersistenceErrorHandler implements PersistenceErrorHandler {
     @Override
-    public <Entity> Result<Optional<Entity>, Error> handleWriting(Function<Entity, Optional<Entity>> function, Entity entity) {
+    public <Entity, R> Result<R, Error> handleWriting(Function<Entity, R> function, Entity entity) {
         try {
             var applied = function.apply(entity);
             return Result.success(applied);
@@ -55,10 +54,10 @@ public class JpaPersistenceErrorHandler implements PersistenceErrorHandler {
     }
 
     @Override
-    public <Entity> Result<Optional<Entity>, Error> handleReading(Supplier<Optional<Entity>> supplier) {
+    public <Entity> Result<Entity, Error> handleReading(Supplier<Entity> supplier) {
         try {
-            Optional<Entity> result = supplier.get();
-            return Result.success(result);
+            var applied = supplier.get();
+            return Result.success(applied);
 
         } catch (EmptyResultDataAccessException ex) {
             return Result.failure(ErrorType.VALIDATION_ERROR,

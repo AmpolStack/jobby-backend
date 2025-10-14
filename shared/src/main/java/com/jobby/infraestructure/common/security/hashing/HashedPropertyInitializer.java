@@ -9,7 +9,7 @@ public class HashedPropertyInitializer extends EntityEnrichmentProcessor<Hashed>
 
     private final HashingService hashingService;
 
-    HashedPropertyInitializer(HashingService hashingService) {
+    public HashedPropertyInitializer(HashingService hashingService) {
         super(Hashed.class);
         this.hashingService = hashingService;
     }
