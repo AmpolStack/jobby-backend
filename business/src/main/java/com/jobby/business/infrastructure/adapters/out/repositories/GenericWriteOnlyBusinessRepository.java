@@ -5,8 +5,6 @@ import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessReposit
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
-import com.jobby.domain.mobility.error.ErrorType;
-import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
 import org.springframework.stereotype.Repository;
@@ -34,21 +32,11 @@ public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepo
 
     @Override
     public Result<Business, Error> update(Business business, int id) {
-        return this.jpaRepositoryOrchestrator.operation(
-                () -> this.springDataJpaBusinessRepository.existsById(id))
-                .flatMap((exist) -> {
-                    if(!exist){
-                        return Result.failure(
-                                ErrorType.USER_NOT_FOUND,
-                                new Field("business", "no exist business with id"));
-                    }
-
-                    return this.jpaRepositoryOrchestrator.modification(business,
-                                    (jpaBusiness)
-                                            -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId())
-                            .flatMap((savedBusinessId)
-                                    -> this.jpaRepositoryOrchestrator.selection(
-                                    ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
-                });
+        return this.jpaRepositoryOrchestrator.modification(business,
+                        (jpaBusiness)
+                                -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId())
+                .flatMap((savedBusinessId)
+                        -> this.jpaRepositoryOrchestrator.selection(
+                        ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
     }
 }
