@@ -8,14 +8,13 @@ import com.jobby.domain.mobility.result.Result;
 import org.springframework.dao.*;
 import org.springframework.data.mongodb.MongoTransactionException;
 import org.springframework.stereotype.Component;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component("MongoPersistenceErrorHandler")
 public class MongoPersistenceErrorHandler implements PersistenceErrorHandler {
     @Override
-    public <Entity> Result<Optional<Entity>, Error> handleWriting(Function<Entity, Optional<Entity>> function, Entity entity) {
+    public <Entity> Result<Integer, Error> handleWriting(Function<Entity, Integer> function, Entity entity) {
         try {
             var applied = function.apply(entity);
             return Result.success(applied);
@@ -50,11 +49,10 @@ public class MongoPersistenceErrorHandler implements PersistenceErrorHandler {
     }
 
     @Override
-    public <Entity> Result<Optional<Entity>, Error> handleReading(Supplier<Optional<Entity>> supplier) {
+    public <Entity> Result<Entity, Error> handleReading(Supplier<Entity> supplier) {
         try {
-            Optional<Entity> result = supplier.get();
+            var result = supplier.get();
             return Result.success(result);
-
         } catch (QueryTimeoutException ex) {
            return Result.failure(ErrorType.VALIDATION_ERROR,
                     new Field("timeout", "Query execution exceeded maximum allowed time"));
