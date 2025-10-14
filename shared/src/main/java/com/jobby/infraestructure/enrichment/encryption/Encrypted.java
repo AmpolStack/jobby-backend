@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common.security.mac;
+package com.jobby.infraestructure.enrichment.encryption;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface MacGenerated {
-    String name();
-    boolean required() default false;
+public @interface Encrypted {
 }

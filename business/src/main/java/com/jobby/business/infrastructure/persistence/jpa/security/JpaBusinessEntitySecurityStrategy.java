@@ -3,9 +3,9 @@ package com.jobby.business.infrastructure.persistence.jpa.security;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.infraestructure.common.security.encryption.DecryptionPropertyInitializer;
-import com.jobby.infraestructure.common.security.encryption.EncryptionPropertyInitializer;
-import com.jobby.infraestructure.common.security.mac.MacPropertyInitializer;
+import com.jobby.infraestructure.enrichment.encryption.DecryptionPropertyInitializer;
+import com.jobby.infraestructure.enrichment.encryption.EncryptionPropertyInitializer;
+import com.jobby.infraestructure.enrichment.mac.MacPropertyInitializer;
 import com.jobby.infraestructure.security.SecurityStrategyComposer;
 import org.springframework.stereotype.Component;
 

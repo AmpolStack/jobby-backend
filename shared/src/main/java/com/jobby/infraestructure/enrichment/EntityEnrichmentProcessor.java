@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common.security;
+package com.jobby.infraestructure.enrichment;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
