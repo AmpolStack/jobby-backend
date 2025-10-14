@@ -43,8 +43,8 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
     }
 
     @Override
-    public Result<Integer, Error> modification(Domain domain,
-                                              Function<Infra, Integer> function){
+    public <T> Result<T, Error> modification(Domain domain,
+                                              Function<Infra, T> function){
         return this.beforePersistProcess.before(domain)
                 .flatMap(infra ->
                         this.persistenceErrorHandler.handleWriting(function, infra)
