@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.adapters.out.publisher;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.domain.ports.out.BusinessPublisher;
+import com.jobby.business.domain.ports.out.BusinessMessagePublisher;
 import com.jobby.business.infrastructure.adapters.in.messaging.mappers.SchemaBusinessMapper;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
@@ -9,7 +9,7 @@ import com.jobby.domain.ports.MessagingPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BusinessEventPublisher implements BusinessPublisher {
+public class BusinessEventPublisher implements BusinessMessagePublisher {
 
     private final MessagingPublisher messagingPublisher;
     private final SchemaBusinessMapper schemaBusinessMapper;

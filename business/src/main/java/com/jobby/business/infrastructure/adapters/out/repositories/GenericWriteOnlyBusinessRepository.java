@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.domain.ports.out.WriteOnlyBusinessRepository;
+import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.domain.mobility.error.Error;

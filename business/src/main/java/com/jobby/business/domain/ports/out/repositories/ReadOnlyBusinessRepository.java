@@ -1,4 +1,4 @@
-package com.jobby.business.domain.ports.out;
+package com.jobby.business.domain.ports.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.domain.mobility.error.Error;
