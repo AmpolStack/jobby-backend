@@ -3,7 +3,7 @@ package com.jobby.business.application.useCase;
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.in.CreateBusinessCommand;
 import com.jobby.business.domain.ports.out.BusinessPublisher;
-import com.jobby.business.domain.ports.out.BusinessRepository;
+import com.jobby.business.domain.ports.out.WriteOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.stereotype.Service;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CreateBusinessCommandImpl implements CreateBusinessCommand {
 
-    private final BusinessRepository businessRepository;
+    private final WriteOnlyBusinessRepository businessRepository;
     private final BusinessPublisher businessPublisher;
 
-    public CreateBusinessCommandImpl(BusinessRepository businessRepository, BusinessPublisher businessPublisher) {
+    public CreateBusinessCommandImpl(WriteOnlyBusinessRepository businessRepository, BusinessPublisher businessPublisher) {
         this.businessRepository = businessRepository;
         this.businessPublisher = businessPublisher;
     }

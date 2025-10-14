@@ -2,7 +2,7 @@ package com.jobby.business.application.useCase;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.in.FindBusinessByIdQuery;
-import com.jobby.business.domain.ports.out.BusinessRepository;
+import com.jobby.business.domain.ports.out.ReadOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.stereotype.Service;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class FindBusinessByIdQueryImpl implements FindBusinessByIdQuery {
 
-    private final BusinessRepository businessRepository;
+    private final ReadOnlyBusinessRepository businessRepository;
 
-    public FindBusinessByIdQueryImpl(BusinessRepository businessRepository) {
+    public FindBusinessByIdQueryImpl(ReadOnlyBusinessRepository businessRepository) {
         this.businessRepository = businessRepository;
     }
 
