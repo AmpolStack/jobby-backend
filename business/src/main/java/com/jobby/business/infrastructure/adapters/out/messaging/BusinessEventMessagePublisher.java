@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.adapters.out.messaging;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.domain.ports.out.BusinessMessagePublisher;
+import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.infrastructure.adapters.in.messaging.mappers.SchemaBusinessMapper;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;

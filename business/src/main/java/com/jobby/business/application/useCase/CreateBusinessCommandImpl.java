@@ -2,7 +2,7 @@ package com.jobby.business.application.useCase;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.in.CreateBusinessCommand;
-import com.jobby.business.domain.ports.out.BusinessMessagePublisher;
+import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
@@ -21,13 +21,9 @@ public class CreateBusinessCommandImpl implements CreateBusinessCommand {
 
     @Override
     public Result<Business, Error> execute(Business business) {
-        var resp = this.businessRepository.save(business);
-
-        resp.fold(
-                this.businessMessagePublisher::sendBusiness,
-                null
-        );
-
-        return resp;
+        return this.businessRepository.save(business)
+                .flatMap(businessSaved ->
+                        this.businessMessagePublisher.sendBusiness(businessSaved)
+                        .map(v -> businessSaved));
     }
 }
