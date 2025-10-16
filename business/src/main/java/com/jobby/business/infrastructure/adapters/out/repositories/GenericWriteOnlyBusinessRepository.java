@@ -32,9 +32,11 @@ public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepo
 
     @Override
     public Result<Business, Error> update(Business business, int id) {
-        return this.jpaRepositoryOrchestrator.modification(business,
+        return this.jpaRepositoryOrchestrator.exist(
+                ()-> this.springDataJpaBusinessRepository.existsById(id), "business")
+                .flatMap(v -> this.jpaRepositoryOrchestrator.modification(business,
                         (jpaBusiness)
-                                -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId())
+                                -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId()))
                 .flatMap((savedBusinessId)
                         -> this.jpaRepositoryOrchestrator.selection(
                         ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
