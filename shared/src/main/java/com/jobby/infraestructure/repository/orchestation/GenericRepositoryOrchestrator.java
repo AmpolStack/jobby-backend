@@ -1,5 +1,7 @@
 package com.jobby.infraestructure.repository.orchestation;
 
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
 import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
 import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
 import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
@@ -40,6 +42,20 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
         return this.persistenceTransactionHandler.executeInRead(() ->
                 this.persistenceErrorHandler.handleReading(supplier)
         );
+    }
+
+    @Override
+    public Result<Void, Error> exist(Supplier<Boolean> supplier, String name){
+        return this.persistenceTransactionHandler.executeInRead(() ->
+                this.persistenceErrorHandler.handleReading(supplier))
+                .flatMap((isFind)-> {
+                    if(!isFind){
+                        return Result.failure(ErrorType.USER_NOT_FOUND,
+                                new Field(name, "There is no record related to this id"));
+                    }
+
+                    return Result.success(null);
+                });
     }
 
     @Override
