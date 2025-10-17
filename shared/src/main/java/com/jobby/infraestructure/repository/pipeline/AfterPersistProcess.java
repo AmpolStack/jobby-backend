@@ -7,12 +7,20 @@ import com.jobby.domain.mobility.result.Result;
 import java.util.Optional;
 
 public interface AfterPersistProcess<Infra, Domain> {
-    default Result<Domain, Error> map(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<Infra> infra){
+    default Result<Infra, Error> exist(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<Infra> infra){
         return infra
-                .map(this::map)
-                .map(Result::<Domain, Error>success)
+                .map(Result::<Infra, Error>success)
                 .orElseGet(() -> Result.failure(ErrorType.USER_NOT_FOUND,
-                        new Field(getEntityName(), "entity not foud")));
+                        new Field(this.getEntityName(), "entity not foud")));
+    }
+
+    default Result<Void, Error> exist(Boolean isFind){
+        if(!isFind){
+            return Result.failure(ErrorType.USER_NOT_FOUND,
+                    new Field(this.getEntityName(), "entity not foud"));
+        }
+
+        return Result.success(null);
     }
 
     Domain map(Infra infra);
