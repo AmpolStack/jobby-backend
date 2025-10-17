@@ -7,8 +7,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface RepositoryOrchestrator<Infra,Domain> {
-    Result<Domain, Error> selection(Supplier<Optional<Infra>> supplier);
-    <T> Result<T, Error> operation(Supplier<T> supplier);
-    <T> Result<T, Error> modification(Domain domain, Function<Infra, T> function);
-    Result<Void, Error> exist(Supplier<Boolean> supplier, String name);
+    Result<Domain, Error> onSelect(Supplier<Optional<Infra>> supplier);
+    Result<Domain, Error> onSelectNoMutate(Supplier<Optional<Infra>> supplier);
+    <T> Result<T, Error> onModify(Domain domain, Function<Infra, T> function);
+    <T> Result<T, Error> onOperation(Supplier<T> supplier);
+
 }

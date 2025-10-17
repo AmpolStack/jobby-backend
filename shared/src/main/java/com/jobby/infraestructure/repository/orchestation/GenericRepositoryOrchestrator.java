@@ -21,7 +21,8 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
     public GenericRepositoryOrchestrator(
             AfterPersistProcess<Infra, Domain> afterPersistProcess,
             BeforePersistProcess<Infra, Domain> beforePersistProcess,
-            PersistenceErrorHandler persistenceErrorHandler, PersistenceTransactionHandler persistenceTransactionHandler) {
+            PersistenceErrorHandler persistenceErrorHandler,
+            PersistenceTransactionHandler persistenceTransactionHandler) {
 
         this.afterPersistProcess = afterPersistProcess;
         this.beforePersistProcess = beforePersistProcess;
@@ -30,40 +31,43 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
     }
 
     @Override
-    public Result<Domain, Error> selection(Supplier<Optional<Infra>> supplier){
+    public Result<Domain, Error> onSelect(Supplier<Optional<Infra>> supplier){
         return this.persistenceTransactionHandler.executeInRead(() ->
-                        this.persistenceErrorHandler.handleReading(supplier)
-                                .flatMap(this.afterPersistProcess::after)
-                );
+                this.persistenceErrorHandler.handleReading(supplier)
+                        .flatMap(this.afterPersistProcess::exist)
+                        .flatMap(infra ->
+                            this.afterPersistProcess.mutate(infra)
+                                    .map(v -> this.afterPersistProcess.map(infra))
+                        ));
     }
 
     @Override
-    public <T> Result<T, Error> operation(Supplier<T> supplier) {
+    public Result<Domain, Error> onSelectNoMutate(Supplier<Optional<Infra>> supplier){
+        return this.persistenceTransactionHandler.executeInRead(() ->
+                this.persistenceErrorHandler.handleReading(supplier)
+                        .flatMap(this.afterPersistProcess::exist)
+                        .map(this.afterPersistProcess::map));
+    }
+
+//    @Override
+//    public Result<Void, Error> exist(Supplier<Boolean> supplier, String name){
+//        return this.persistenceTransactionHandler.executeInRead(() ->
+//                this.persistenceErrorHandler.handleReading(supplier))
+//                .flatMap(this.afterPersistProcess::exist);
+//    }
+
+    @Override
+    public <T> Result<T, Error> onModify(Domain domain,
+                                             Function<Infra, T> function){
+        var mapped = this.beforePersistProcess.map(domain);
+        return this.beforePersistProcess.mutate(mapped)
+                .flatMap(v -> this.persistenceErrorHandler.handleWriting(function, mapped));
+    }
+
+    @Override
+    public <T> Result<T, Error> onOperation(Supplier<T> supplier) {
         return this.persistenceTransactionHandler.executeInRead(() ->
                 this.persistenceErrorHandler.handleReading(supplier)
         );
-    }
-
-    @Override
-    public Result<Void, Error> exist(Supplier<Boolean> supplier, String name){
-        return this.persistenceTransactionHandler.executeInRead(() ->
-                this.persistenceErrorHandler.handleReading(supplier))
-                .flatMap((isFind)-> {
-                    if(!isFind){
-                        return Result.failure(ErrorType.USER_NOT_FOUND,
-                                new Field(name, "There is no record related to this id"));
-                    }
-
-                    return Result.success(null);
-                });
-    }
-
-    @Override
-    public <T> Result<T, Error> modification(Domain domain,
-                                              Function<Infra, T> function){
-        return this.beforePersistProcess.before(domain)
-                .flatMap(infra ->
-                        this.persistenceErrorHandler.handleWriting(function, infra)
-                );
     }
 }
