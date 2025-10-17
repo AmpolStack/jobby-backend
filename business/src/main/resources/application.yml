@@ -1,3 +1,7 @@
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 spring:
   profiles:
     default: local
@@ -8,6 +12,8 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
+    properties:
+      jakarta.persistence.validation.mode: none
     show-sql: true
     open-in-view: false
 encrypt:
