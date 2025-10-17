@@ -1,17 +1,21 @@
 package com.jobby.infraestructure.repository.orchestation;
 
 import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
-import com.jobby.infraestructure.repository.pipeline.PipelinePersistenceProcess;
+import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
+import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
 import com.jobby.infraestructure.repository.transaction.PersistenceTransactionHandler;
 
 public class RepositoryOrchestrationFactory<Infra, Domain> {
-    private PipelinePersistenceProcess<Infra, Domain> pipelinePersistenceProcess;
+    private AfterPersistProcess<Infra, Domain> afterPersistProcess;
+    private BeforePersistProcess<Infra, Domain> beforePersistProcess;
     private PersistenceErrorHandler persistenceErrorHandler;
     private PersistenceTransactionHandler persistenceTransactionHandler;
 
-    public RepositoryOrchestrationFactory<Infra, Domain> setPipelinePersistenceProcess
-            (PipelinePersistenceProcess<Infra, Domain> pipelinePersistenceProcess) {
-        this.pipelinePersistenceProcess = pipelinePersistenceProcess;
+    public RepositoryOrchestrationFactory<Infra, Domain> setProcessPipeline(
+            AfterPersistProcess<Infra, Domain> after,
+            BeforePersistProcess<Infra, Domain> before){
+        this.afterPersistProcess = after;
+        this.beforePersistProcess = before;
         return this;
     }
 
@@ -29,8 +33,8 @@ public class RepositoryOrchestrationFactory<Infra, Domain> {
 
     public GenericRepositoryOrchestrator<Infra, Domain> build(){
         return new GenericRepositoryOrchestrator<>(
-                this.pipelinePersistenceProcess,
-                this.pipelinePersistenceProcess,
+                this.afterPersistProcess,
+                this.beforePersistProcess,
                 this.persistenceErrorHandler,
                 this.persistenceTransactionHandler);
     }
