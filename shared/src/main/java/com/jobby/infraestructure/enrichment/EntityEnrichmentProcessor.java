@@ -46,6 +46,9 @@ public abstract class EntityEnrichmentProcessor<A extends Annotation>
         }
 
         for (Object element : this.elements) {
+            if(element == null){
+                continue;
+            }
             var result = apply(element, annotationClass);
             if (result.isFailure()) {
                 return result;
