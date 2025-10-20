@@ -8,5 +8,5 @@ public interface ReadOnlyBusinessRepository {
     Result<Business, Error> findById(int id);
     Result<Boolean, Error> existByUsername(String name);
     Result<Void, Error> save(Business business);
-    Result<Void, Error> update(Business business, int id);
+    Result<Void, Error> update(Business business);
 }
