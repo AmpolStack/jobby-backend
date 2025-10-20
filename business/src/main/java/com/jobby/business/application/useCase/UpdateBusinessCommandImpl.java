@@ -22,10 +22,48 @@ public class UpdateBusinessCommandImpl implements UpdateBusinessCommand {
 
 
     @Override
-    public Result<Business, Error> updateProperties(Business business) {
-        return this.businessRepository.update(business, business.getId())
+    public Result<Business, Error> updatePictures(int id, String bannerImageUrl, String profileImageUrl) {
+        return this.businessRepository.findById(id)
+                .flatMap(business -> {
+                    business.setBannerImageUrl(bannerImageUrl);
+                    business.setProfileImageUrl(profileImageUrl);
+                    return this.businessRepository.update(business);
+                })
+                .flatMap(businessSaved ->
+                    this.businessMessagePublisher.sendBusiness(businessSaved)
+                            .map(v -> businessSaved)
+                );
+    }
+
+//    @Override
+//    public Result<Business, Error> updateProperties(int id, String name, String description) {
+//        return this.businessRepository.findById(id)
+//                .flatMap(business -> {
+//                    business.setName(name);
+//                    business.setDescription(description);
+//                    return this.businessRepository.update(business);
+//                })
+//                .flatMap(businessSaved ->
+//                        this.businessMessagePublisher.sendBusiness(businessSaved)
+//                                .map(v -> businessSaved)
+//                );
+//    }
+
+    @Override
+    public Result<Business, Error> updateProperties(int id, String name, String description) {
+        return this.businessRepository.findById(id)
+                .flatMap(business -> {
+                    var business2 = new Business();
+                    business2.setName(name);
+                    business2.setDescription(description);
+                    business2.setId(id);
+                    return this.businessRepository.update(business2);
+                })
                 .flatMap(businessSaved ->
                         this.businessMessagePublisher.sendBusiness(businessSaved)
-                                .map(v -> businessSaved));
+                                .map(v -> businessSaved)
+                );
     }
+
+
 }
