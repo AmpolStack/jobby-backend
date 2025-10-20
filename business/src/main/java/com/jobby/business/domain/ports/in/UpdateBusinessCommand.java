@@ -5,5 +5,6 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 
 public interface UpdateBusinessCommand {
-    Result<Business, Error> updateProperties(Business business);
+    Result<Business, Error> updatePictures(int id, String bannerImageUrl, String profileImageUrl);
+    Result<Business, Error> updateProperties(int id, String name, String description);
 }
