@@ -22,23 +22,34 @@ public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepo
 
     @Override
     public Result<Business, Error> save(Business business) {
-        return this.jpaRepositoryOrchestrator.modification(business,
+        return this.jpaRepositoryOrchestrator.onModify(business,
                         (jpaBusiness)
                                 -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId())
                 .flatMap((savedBusinessId)
-                        -> this.jpaRepositoryOrchestrator.selection(
+                        -> this.jpaRepositoryOrchestrator.onSelect(
                         ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
     }
 
+
     @Override
-    public Result<Business, Error> update(Business business, int id) {
-        return this.jpaRepositoryOrchestrator.exist(
-                ()-> this.springDataJpaBusinessRepository.existsById(id), "business")
-                .flatMap(v -> this.jpaRepositoryOrchestrator.modification(business,
-                        (jpaBusiness)
-                                -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId()))
-                .flatMap((savedBusinessId)
-                        -> this.jpaRepositoryOrchestrator.selection(
-                        ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
+    public Result<Business, Error> findById(int id) {
+        return this.jpaRepositoryOrchestrator.onSelect(
+                () -> this.springDataJpaBusinessRepository.findById(id));
+    }
+
+    @Override
+    public Result<Void, Error> delete(Business business) {
+        return this.jpaRepositoryOrchestrator.onModify(business,
+                (v) -> {
+                    this.springDataJpaBusinessRepository.delete(v);
+                    return null;
+                });
+    }
+
+    @Override
+    public Result<Business, Error> update(Business business) {
+        return this.jpaRepositoryOrchestrator.onModify(business,
+                        this.springDataJpaBusinessRepository::save)
+                .map(v -> business);
     }
 }
