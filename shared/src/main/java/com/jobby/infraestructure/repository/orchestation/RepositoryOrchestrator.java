@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 
 public interface RepositoryOrchestrator<Infra,Domain> {
     Result<Domain, Error> onSelect(Supplier<Optional<Infra>> supplier);
-    Result<Domain, Error> onSelectNoMutate(Supplier<Optional<Infra>> supplier);
+    Result<Infra, Error> onRawSelect(Supplier<Optional<Infra>> supplier);
     <T> Result<T, Error> onModify(Domain domain, Function<Infra, T> function);
     <T> Result<T, Error> onOperation(Supplier<T> supplier);
-
+    <T> Result<Domain, Error> onRawModify(Infra infra, Function<Infra, T> function);
 }

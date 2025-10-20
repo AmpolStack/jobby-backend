@@ -1,7 +1,5 @@
 package com.jobby.infraestructure.repository.orchestation;
 
-import com.jobby.domain.mobility.error.ErrorType;
-import com.jobby.domain.mobility.error.Field;
 import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
 import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
 import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
@@ -42,19 +40,11 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
     }
 
     @Override
-    public Result<Domain, Error> onSelectNoMutate(Supplier<Optional<Infra>> supplier){
+    public Result<Infra, Error> onRawSelect(Supplier<Optional<Infra>> supplier){
         return this.persistenceTransactionHandler.executeInRead(() ->
                 this.persistenceErrorHandler.handleReading(supplier)
-                        .flatMap(this.afterPersistProcess::exist)
-                        .map(this.afterPersistProcess::map));
+                        .flatMap(this.afterPersistProcess::exist));
     }
-
-//    @Override
-//    public Result<Void, Error> exist(Supplier<Boolean> supplier, String name){
-//        return this.persistenceTransactionHandler.executeInRead(() ->
-//                this.persistenceErrorHandler.handleReading(supplier))
-//                .flatMap(this.afterPersistProcess::exist);
-//    }
 
     @Override
     public <T> Result<T, Error> onModify(Domain domain,
@@ -62,6 +52,14 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
         var mapped = this.beforePersistProcess.map(domain);
         return this.beforePersistProcess.mutate(mapped)
                 .flatMap(v -> this.persistenceErrorHandler.handleWriting(function, mapped));
+    }
+
+    @Override
+    public <T> Result<Domain, Error> onRawModify(Infra infra,
+                                         Function<Infra, T> function){
+        return this.persistenceErrorHandler.handleWriting(function, infra)
+                .flatMap(v -> this.afterPersistProcess.mutate(infra))
+                .map(v -> this.afterPersistProcess.map(infra));
     }
 
     @Override
