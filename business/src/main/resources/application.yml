@@ -13,7 +13,10 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     properties:
-      jakarta.persistence.validation.mode: none
+      javax:
+        persistence:
+          validation:
+            mode=none
     show-sql: true
     open-in-view: false
 encrypt:
