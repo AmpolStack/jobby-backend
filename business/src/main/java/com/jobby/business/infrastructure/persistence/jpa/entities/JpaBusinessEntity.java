@@ -6,11 +6,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.Instant;
 
 @Getter
 @Setter
+@DynamicUpdate
 @Entity(name = "business")
 public class JpaBusinessEntity {
     @Id

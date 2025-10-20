@@ -10,7 +10,7 @@ import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.ports.out.EmployeeRepository;
 import com.jobby.employee.infraestructure.persistence.jpa.mappers.JpaEmployeeMapper;
 import com.jobby.employee.infraestructure.persistence.jpa.repositories.SpringDataJpaEmployeeRepository;
-import com.jobby.infraestructure.common.security.mac.MacPropertyInitializer;
+import com.jobby.infraestructure.enrichment.mac.MacPropertyInitializer;
 import org.springframework.stereotype.Component;
 
 @Component("writeEmployeeRepository")

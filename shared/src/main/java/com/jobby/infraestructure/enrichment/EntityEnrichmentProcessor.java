@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common.security;
+package com.jobby.infraestructure.enrichment;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
@@ -46,6 +46,9 @@ public abstract class EntityEnrichmentProcessor<A extends Annotation>
         }
 
         for (Object element : this.elements) {
+            if(element == null){
+                continue;
+            }
             var result = apply(element, annotationClass);
             if (result.isFailure()) {
                 return result;

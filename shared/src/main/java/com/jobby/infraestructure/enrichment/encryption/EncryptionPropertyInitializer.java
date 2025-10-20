@@ -1,11 +1,11 @@
-package com.jobby.infraestructure.common.security.encryption;
+package com.jobby.infraestructure.enrichment.encryption;
 
 import com.jobby.domain.configurations.EncryptConfig;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.ports.encrypt.EncryptionService;
-import com.jobby.infraestructure.common.security.EntityEnrichmentProcessor;
+import com.jobby.infraestructure.enrichment.EntityEnrichmentProcessor;
 
 public class EncryptionPropertyInitializer extends EntityEnrichmentProcessor<Encrypted> {
 

@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.domain.ports.out.ReadOnlyBusinessRepository;
+import com.jobby.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
 import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
 import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDataMongoBusinessRepository;
@@ -23,7 +23,7 @@ public class GenericReadOnlyBusinessRepository implements ReadOnlyBusinessReposi
 
     @Override
     public Result<Void, Error> save(Business business) {
-        return this.mongoRepositoryOrchestrator.modification(business,
+        return this.mongoRepositoryOrchestrator.onModify(business,
                 (jpaBusiness) ->
                     {
                         this.springDataMongoBusinessRepository.save(jpaBusiness);
@@ -33,14 +33,24 @@ public class GenericReadOnlyBusinessRepository implements ReadOnlyBusinessReposi
     }
 
     @Override
+    public Result<Void, Error> update(Business business) {
+        return this.mongoRepositoryOrchestrator.onModify(business,
+                (mongoBusiness) -> {
+                    this.springDataMongoBusinessRepository.save(mongoBusiness);
+                    return null;
+                });
+    }
+
+
+    @Override
     public Result<Business, Error> findById(int id) {
         return this.mongoRepositoryOrchestrator
-                .selection(()-> this.springDataMongoBusinessRepository.findById(id));
+                .onSelect(()-> this.springDataMongoBusinessRepository.findById(id));
     }
 
     @Override
     public Result<Boolean, Error> existByUsername(String name) {
         return this.mongoRepositoryOrchestrator
-                .operation(()-> this.springDataMongoBusinessRepository.existsByName(name));
+                .onOperation(()-> this.springDataMongoBusinessRepository.existsByName(name));
     }
 }

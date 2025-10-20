@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.domain.ports.out.WriteOnlyBusinessRepository;
+import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.jpa.repositories.SpringDataJpaBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
@@ -22,11 +22,34 @@ public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepo
 
     @Override
     public Result<Business, Error> save(Business business) {
-        return this.jpaRepositoryOrchestrator.modification(business,
+        return this.jpaRepositoryOrchestrator.onModify(business,
                         (jpaBusiness)
                                 -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId())
                 .flatMap((savedBusinessId)
-                        -> this.jpaRepositoryOrchestrator.selection(
+                        -> this.jpaRepositoryOrchestrator.onSelect(
                         ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
+    }
+
+
+    @Override
+    public Result<Business, Error> findById(int id) {
+        return this.jpaRepositoryOrchestrator.onSelect(
+                () -> this.springDataJpaBusinessRepository.findById(id));
+    }
+
+    @Override
+    public Result<Void, Error> delete(Business business) {
+        return this.jpaRepositoryOrchestrator.onModify(business,
+                (v) -> {
+                    this.springDataJpaBusinessRepository.delete(v);
+                    return null;
+                });
+    }
+
+    @Override
+    public Result<Business, Error> update(Business business) {
+        return this.jpaRepositoryOrchestrator.onModify(business,
+                        this.springDataJpaBusinessRepository::save)
+                .map(v -> business);
     }
 }

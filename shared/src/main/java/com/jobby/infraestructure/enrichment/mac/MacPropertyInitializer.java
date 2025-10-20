@@ -1,11 +1,11 @@
-package com.jobby.infraestructure.common.security.mac;
+package com.jobby.infraestructure.enrichment.mac;
 
 import com.jobby.domain.configurations.MacConfig;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.ports.hashing.mac.MacService;
-import com.jobby.infraestructure.common.security.EntityEnrichmentProcessor;
+import com.jobby.infraestructure.enrichment.EntityEnrichmentProcessor;
 
 import java.lang.reflect.Field;
 

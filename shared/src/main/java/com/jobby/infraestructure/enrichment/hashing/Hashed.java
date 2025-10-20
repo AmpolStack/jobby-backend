@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common.security.encryption;
+package com.jobby.infraestructure.enrichment.hashing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Encrypted {
+public @interface Hashed {
 }

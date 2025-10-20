@@ -6,8 +6,8 @@ import com.jobby.employee.infraestructure.adapters.in.rest.dto.created.EmployeeC
 import com.jobby.employee.infraestructure.adapters.in.rest.mappers.EmployeeCreatedMapper;
 import com.jobby.employee.infraestructure.persistence.jpa.entities.JpaAppUserEntity;
 import com.jobby.employee.infraestructure.persistence.jpa.entities.JpaEmployeeEntity;
-import com.jobby.infraestructure.common.security.encryption.EncryptionPropertyInitializer;
-import com.jobby.infraestructure.common.security.mac.MacPropertyInitializer;
+import com.jobby.infraestructure.enrichment.encryption.EncryptionPropertyInitializer;
+import com.jobby.infraestructure.enrichment.mac.MacPropertyInitializer;
 import com.jobby.infraestructure.response.definition.ApiResponseMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

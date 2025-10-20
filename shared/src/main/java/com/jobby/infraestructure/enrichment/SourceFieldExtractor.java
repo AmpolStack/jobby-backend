@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.common.security;
+package com.jobby.infraestructure.enrichment;
 
 import java.lang.reflect.Field;
 

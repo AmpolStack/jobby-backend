@@ -1,7 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import com.jobby.infraestructure.common.security.encryption.Encrypted;
-import com.jobby.infraestructure.common.security.mac.MacGenerated;
+import com.jobby.infraestructure.enrichment.encryption.Encrypted;
+import com.jobby.infraestructure.enrichment.mac.MacGenerated;
 import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
