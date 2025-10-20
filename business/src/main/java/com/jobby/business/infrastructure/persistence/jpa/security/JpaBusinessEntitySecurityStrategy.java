@@ -36,7 +36,7 @@ public class JpaBusinessEntitySecurityStrategy implements
     @Override
     public Result<Void, Error> revert(JpaBusinessEntity jpaBusinessEntity) {
         return this.decryptionPropertyInitializer
-                .addElement(jpaBusinessEntity)
+                .addElement(jpaBusinessEntity.getAddress())
                 .processAll();
     }
 }
