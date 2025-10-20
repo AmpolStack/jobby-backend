@@ -4,9 +4,10 @@ import com.jobby.business.domain.entities.Business;
 import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
 import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrationFactory;
 import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
-import com.jobby.infraestructure.repository.pipeline.PipelinePersistenceProcess;
 import com.jobby.business.infrastructure.persistence.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
+import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
+import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
 import com.jobby.infraestructure.repository.transaction.PersistenceTransactionHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -17,12 +18,16 @@ public class RepositoryAutoconfiguration {
 
     @Bean
     public RepositoryOrchestrator<JpaBusinessEntity, Business> getJpaRepositoryOrchestration(
-            PipelinePersistenceProcess<JpaBusinessEntity, Business> pipelinePersistenceProcess,
+            AfterPersistProcess<JpaBusinessEntity, Business> afterPersistProcess,
+            BeforePersistProcess<JpaBusinessEntity, Business> beforePersistProcess,
             @Qualifier("JpaPersistenceErrorHandler") PersistenceErrorHandler persistenceErrorHandler,
             PersistenceTransactionHandler persistenceTransactionHandler) {
 
         return new RepositoryOrchestrationFactory<JpaBusinessEntity, Business>()
-                .setPipelinePersistenceProcess(pipelinePersistenceProcess)
+                .setProcessPipeline(
+                        afterPersistProcess,
+                        beforePersistProcess
+                )
                 .setPersistenceErrorHandler(persistenceErrorHandler)
                 .setPersistenceTransactionHandler(persistenceTransactionHandler)
                 .build();
@@ -30,12 +35,16 @@ public class RepositoryAutoconfiguration {
 
     @Bean
     public RepositoryOrchestrator<MongoBusinessEntity, Business> getMongoRepositoryOrchestration(
-            PipelinePersistenceProcess<MongoBusinessEntity, Business> pipelinePersistenceProcess,
+            AfterPersistProcess<MongoBusinessEntity, Business> afterPersistProcess,
+            BeforePersistProcess<MongoBusinessEntity, Business> beforePersistProcess,
             @Qualifier("MongoPersistenceErrorHandler") PersistenceErrorHandler persistenceErrorHandler,
             PersistenceTransactionHandler persistenceTransactionHandler) {
 
         return new RepositoryOrchestrationFactory<MongoBusinessEntity, Business>()
-                .setPipelinePersistenceProcess(pipelinePersistenceProcess)
+                .setProcessPipeline(
+                        afterPersistProcess,
+                        beforePersistProcess
+                )
                 .setPersistenceErrorHandler(persistenceErrorHandler)
                 .setPersistenceTransactionHandler(persistenceTransactionHandler)
                 .build();
