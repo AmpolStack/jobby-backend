@@ -53,11 +53,9 @@ public class UpdateBusinessCommandImpl implements UpdateBusinessCommand {
     public Result<Business, Error> updateProperties(int id, String name, String description) {
         return this.businessRepository.findById(id)
                 .flatMap(business -> {
-                    var business2 = new Business();
-                    business2.setName(name);
-                    business2.setDescription(description);
-                    business2.setId(id);
-                    return this.businessRepository.update(business2);
+                    business.setName(name);
+                    business.setDescription(description);
+                    return this.businessRepository.update(business);
                 })
                 .flatMap(businessSaved ->
                         this.businessMessagePublisher.sendBusiness(businessSaved)
