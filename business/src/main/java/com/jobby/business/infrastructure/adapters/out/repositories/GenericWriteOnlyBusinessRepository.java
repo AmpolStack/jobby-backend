@@ -38,10 +38,10 @@ public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepo
     }
 
     @Override
-    public Result<Void, Error> delete(Business business) {
-        return this.jpaRepositoryOrchestrator.onModify(business,
-                (v) -> {
-                    this.springDataJpaBusinessRepository.delete(v);
+    public Result<Void, Error> delete(int id) {
+        return this.jpaRepositoryOrchestrator.onModify(
+                () -> {
+                    this.springDataJpaBusinessRepository.deleteById(id);
                     return null;
                 });
     }
@@ -51,5 +51,37 @@ public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepo
         return this.jpaRepositoryOrchestrator.onModify(business,
                         this.springDataJpaBusinessRepository::save)
                 .map(v -> business);
+    }
+
+    @Override
+    public Result<Business, Error> updatePictures(int id, String bannerImageUrl, String profileImageUrl) {
+        return this.jpaRepositoryOrchestrator.onModify(() -> {
+            this.springDataJpaBusinessRepository.updatePictures(id, bannerImageUrl, profileImageUrl);
+            return null;
+        }).flatMap(v -> this.findById(id));
+    }
+
+    @Override
+    public Result<Business, Error> updateName(int id, String name) {
+        return this.jpaRepositoryOrchestrator.onModify(() -> {
+            this.springDataJpaBusinessRepository.updateName(id, name);
+            return null;
+        }).flatMap(v -> this.findById(id));
+    }
+
+    @Override
+    public Result<Business, Error> updateDescription(int id, String description) {
+        return this.jpaRepositoryOrchestrator.onModify(() -> {
+            this.springDataJpaBusinessRepository.updateDescription(id, description);
+            return null;
+        }).flatMap(v -> this.findById(id));
+    }
+
+    @Override
+    public Result<Business, Error> updateNameAndDescription(int id, String name, String description) {
+        return this.jpaRepositoryOrchestrator.onModify(() -> {
+            this.springDataJpaBusinessRepository.updateNameAndDescription(id, name, description);
+            return null;
+        }).flatMap(v -> this.findById(id));
     }
 }
