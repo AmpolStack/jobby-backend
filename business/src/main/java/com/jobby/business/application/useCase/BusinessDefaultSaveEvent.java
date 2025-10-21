@@ -1,6 +1,6 @@
 package com.jobby.business.application.useCase;
 
-import com.jobby.business.domain.commands.BusinessSaveEvent;
+import com.jobby.business.domain.operations.BusinessSaveEvent;
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
