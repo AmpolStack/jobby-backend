@@ -40,13 +40,6 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
     }
 
     @Override
-    public Result<Infra, Error> onRawSelect(Supplier<Optional<Infra>> supplier){
-        return this.persistenceTransactionHandler.executeInRead(() ->
-                this.persistenceErrorHandler.handleReading(supplier)
-                        .flatMap(this.afterPersistProcess::exist));
-    }
-
-    @Override
     public <T> Result<T, Error> onModify(Domain domain,
                                              Function<Infra, T> function){
         var mapped = this.beforePersistProcess.map(domain);
@@ -55,12 +48,12 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
     }
 
     @Override
-    public <T> Result<Domain, Error> onRawModify(Infra infra,
-                                         Function<Infra, T> function){
-        return this.persistenceErrorHandler.handleWriting(function, infra)
-                .flatMap(v -> this.afterPersistProcess.mutate(infra))
-                .map(v -> this.afterPersistProcess.map(infra));
+    public <T> Result<T, Error> onModify(Supplier<T> supplier) {
+        return this.persistenceTransactionHandler.execute(() ->
+                this.persistenceErrorHandler.handleReading(supplier)
+        );
     }
+
 
     @Override
     public <T> Result<T, Error> onOperation(Supplier<T> supplier) {
