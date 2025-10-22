@@ -8,7 +8,7 @@ import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.ports.MessagingPublisher;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("byMessaging")
 public class BusinessEventMessagePublisher implements BusinessMessagePublisher {
 
     private final MessagingPublisher messagingPublisher;
