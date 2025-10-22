@@ -1,0 +1,46 @@
+{
+  "name": "mariadb-outbox-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "tasks.max": "1",
+
+    "database.hostname": "mariadb",
+    "database.port": "3306",
+    "database.user": "root",
+    "database.password": "VNa4Vb08ZCERQyFQl0Y1",
+    "database.server.id": "1",
+    "database.server.name": "jobby",
+
+    "database.include.list": "jobbydata",
+    "table.include.list": "jobbydata.outbox_event",
+    "topic.prefix": "com.jobby.outbox",
+
+    "schema.history.internal.kafka.bootstrap.servers": "first-broker:9093,second-broker:9094,third-broker:9095",
+    "schema.history.internal.kafka.topic": "com.jobby.debezium.schema.history",
+    "include.schema.changes": "false",
+
+    "snapshot.mode": "schema_only",
+
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "key.converter.schemas.enable": "false",
+
+    "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+    "value.converter.schemas.enable": "false",
+
+    "transforms": "convertBytes,outbox",
+
+    "transforms.convertBytes.type": "com.jobby.ByteBufferToBytesTransform",
+    "transforms.convertBytes.fields": "payload",
+
+    "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+    "transforms.outbox.route.by.field": "topic",
+    "transforms.outbox.route.topic.replacement": "${routedByValue}",
+    "transforms.outbox.add.headers": "eventType:event_type",
+    "transforms.outbox.table.fields.additional.placement": "topic:header:eventTopic",
+    "transforms.outbox.table.field.event.id": "id",
+    "transforms.outbox.table.field.event.key": "aggregate_id",
+    "transforms.outbox.table.field.event.type": "event_type",
+    "transforms.outbox.table.field.event.payload": "payload",
+    "transforms.outbox.table.expand.json.payload": "false"
+  }
+}
