@@ -3,6 +3,7 @@ services:
     image: mariadb:latest
     restart: always
     container_name: mariadb
+    command: --log-bin=mysql-bin --binlog-format=ROW --server-id=1
     environment:
       MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
@@ -15,6 +16,7 @@ services:
       - mariadb-data:/var/lib/mysql
     networks:
       - mariadb-net
+      - messaging-net
 
   mongodb:
     image: mongo:latest
@@ -43,7 +45,11 @@ volumes:
 networks:
   mariadb-net:
     name: jobby-mariadb-net
+    driver: bridge
   mongodb-net:
     name: jobby-mongodb-net
   redis-net:
     name: jobby-redis-net
+  messaging-net:
+    name: jobby-messaging-net
+    external: true

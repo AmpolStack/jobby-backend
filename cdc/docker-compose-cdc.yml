@@ -1,0 +1,35 @@
+services:
+  kafka-connect:
+    build: .
+    container_name: kafka-connect
+    restart: always
+#    depends_on:
+#      - mariadb
+    ports:
+      - "8083:8083"
+    environment:
+      BOOTSTRAP_SERVERS: first-broker:9093,second-broker:9094,third-broker:9095
+      GROUP_ID: debezium-connect-cluster
+      CONFIG_STORAGE_TOPIC: com.jobby.debezium.connect.configs
+      OFFSET_STORAGE_TOPIC: com.jobby.debezium.connect.offsets
+      STATUS_STORAGE_TOPIC: com.jobby.debezium.connect.statuses
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+      KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.converters.ByteArrayConverter
+      KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
+      CONNECT_PLUGIN_PATH: /kafka/connect
+    networks:
+      - mariadb-net
+      - messaging-net
+
+networks:
+  messaging-net:
+    external: true
+    name: jobby-messaging-net
+  mariadb-net:
+    external: true
+    name: jobby-mariadb-net
