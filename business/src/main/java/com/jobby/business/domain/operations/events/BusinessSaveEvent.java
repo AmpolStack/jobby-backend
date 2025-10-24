@@ -1,4 +1,4 @@
-package com.jobby.business.domain.operations;
+package com.jobby.business.domain.operations.events;
 
 import com.jobby.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;

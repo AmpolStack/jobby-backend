@@ -1,4 +1,4 @@
-package com.jobby.business.domain.operations;
+package com.jobby.business.domain.operations.commands;
 
 import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;

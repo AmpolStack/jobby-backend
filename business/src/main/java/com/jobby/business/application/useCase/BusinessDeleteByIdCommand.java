@@ -1,6 +1,6 @@
 package com.jobby.business.application.useCase;
 
-import com.jobby.business.domain.operations.BusinessDeleteCommand;
+import com.jobby.business.domain.operations.commands.BusinessDeleteCommand;
 import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;

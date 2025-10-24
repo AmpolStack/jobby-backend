@@ -1,6 +1,6 @@
 package com.jobby.business.application.useCase;
 
-import com.jobby.business.domain.operations.BusinessCreateCommand;
+import com.jobby.business.domain.operations.commands.BusinessCreateCommand;
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;

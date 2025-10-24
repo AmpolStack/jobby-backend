@@ -1,8 +1,8 @@
 package com.jobby.business.application.services;
 
-import com.jobby.business.domain.operations.BusinessCreateCommand;
-import com.jobby.business.domain.operations.BusinessDeleteCommand;
-import com.jobby.business.domain.operations.BusinessUpdateCommand;
+import com.jobby.business.domain.operations.commands.BusinessCreateCommand;
+import com.jobby.business.domain.operations.commands.BusinessDeleteCommand;
+import com.jobby.business.domain.operations.commands.BusinessUpdateCommand;
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
