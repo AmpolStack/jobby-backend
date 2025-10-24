@@ -2,10 +2,13 @@ package com.jobby.business.application.services;
 
 import com.jobby.business.domain.operations.BusinessQuery;
 import com.jobby.business.domain.entities.Business;
+import com.jobby.business.domain.operations.BusinessSetQuery;
 import com.jobby.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class BusinessQueryExecutor {
@@ -17,6 +20,9 @@ public class BusinessQueryExecutor {
     }
 
     public Result<Business, Error> execute(BusinessQuery query) {
+        return query.execute(this.repository);
+    }
+    public Result<Set<Business>, Error> execute(BusinessSetQuery query) {
         return query.execute(this.repository);
     }
 }

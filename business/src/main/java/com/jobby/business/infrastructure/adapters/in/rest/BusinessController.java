@@ -44,6 +44,20 @@ public class BusinessController {
         return apiResponseMapper.map(resp);
     }
 
+    @GetMapping("byCity/{cityId}")
+    public ResponseEntity<?> getByCityId(@PathVariable int cityId){
+        var query = new BusinessSetQueryByCityId(cityId);
+        var resp = this.businessQueryExecutor.execute(query);
+        return apiResponseMapper.map(resp);
+    }
+
+    @GetMapping("byCountry/{countryId}")
+    public ResponseEntity<?> getByCountryId(@PathVariable int countryId){
+        var query = new BusinessSetQueryByCountryId(countryId);
+        var resp = this.businessQueryExecutor.execute(query);
+        return apiResponseMapper.map(resp);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable int id){
         var query = new BusinessQueryById(id);

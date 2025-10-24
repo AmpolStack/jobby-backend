@@ -7,6 +7,7 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.infraestructure.repository.transaction.PersistenceTransactionHandler;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -38,6 +39,19 @@ public class GenericRepositoryOrchestrator<Infra, Domain>  implements Repository
                                     .map(v -> this.afterPersistProcess.map(infra))
                         ));
     }
+
+    @Override
+    public Result<Set<Domain>, Error> onSelectSet(Supplier<Set<Infra>> supplier){
+        return this.persistenceTransactionHandler.executeInRead(() ->
+                this.persistenceErrorHandler.handleReading(supplier)
+                        .flatMap(v -> {
+                            Set<Domain> mapped = v.stream()
+                                    .map(this.afterPersistProcess::map)
+                                    .collect(java.util.stream.Collectors.toSet());
+                            return Result.success(mapped);
+                        }));
+    }
+
 
     @Override
     public <T> Result<T, Error> onModify(Domain domain,
