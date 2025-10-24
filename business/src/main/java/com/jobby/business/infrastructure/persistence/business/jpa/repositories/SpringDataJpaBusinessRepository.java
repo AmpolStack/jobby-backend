@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface SpringDataJpaBusinessRepository extends JpaRepository<JpaBusinessEntity, Integer> {
@@ -38,4 +39,18 @@ public interface SpringDataJpaBusinessRepository extends JpaRepository<JpaBusine
     @Modifying
     @Query("UPDATE business b SET b.name = :name, b.description = :description WHERE b.id = :id")
     void updateNameAndDescription(@Param("id") int id, @Param("name") String name, @Param("description") String description);
+
+    @EntityGraph(attributePaths = {
+            "address",
+            "address.city",
+            "address.city.country"
+    })
+    Set<JpaBusinessEntity> findByAddressCityId(Integer addressCityId);
+
+    @EntityGraph(attributePaths = {
+            "address",
+            "address.city",
+            "address.city.country"
+    })
+    Set<JpaBusinessEntity> findByAddressCityCountryId(Integer addressCityCountryId);
 }
