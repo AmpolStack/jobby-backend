@@ -2,9 +2,9 @@ package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
-import com.jobby.business.infrastructure.persistence.mongo.entities.MongoBusinessEntity;
+import com.jobby.business.infrastructure.persistence.business.mongo.entities.MongoBusinessEntity;
 import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
-import com.jobby.business.infrastructure.persistence.mongo.repositories.SpringDataMongoBusinessRepository;
+import com.jobby.business.infrastructure.persistence.business.mongo.repositories.SpringDataMongoBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.stereotype.Repository;
