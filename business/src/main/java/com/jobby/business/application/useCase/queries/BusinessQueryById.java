@@ -1,4 +1,4 @@
-package com.jobby.business.application.useCase;
+package com.jobby.business.application.useCase.queries;
 
 import com.jobby.business.domain.operations.queries.BusinessQuery;
 import com.jobby.business.domain.entities.Business;

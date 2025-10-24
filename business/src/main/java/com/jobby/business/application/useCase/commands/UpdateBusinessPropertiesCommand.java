@@ -1,4 +1,4 @@
-package com.jobby.business.application.useCase;
+package com.jobby.business.application.useCase.commands;
 
 import com.jobby.business.domain.operations.commands.BusinessUpdateCommand;
 import com.jobby.business.domain.entities.Business;
