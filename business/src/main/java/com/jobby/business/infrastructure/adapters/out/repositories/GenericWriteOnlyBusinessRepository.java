@@ -1,6 +1,7 @@
 package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
+import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
 import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.business.jpa.repositories.SpringDataJpaBusinessRepository;
@@ -9,15 +10,19 @@ import com.jobby.domain.mobility.result.Result;
 import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 @Repository
 public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepository {
 
     private final SpringDataJpaBusinessRepository springDataJpaBusinessRepository;
     private final RepositoryOrchestrator<JpaBusinessEntity, Business> jpaRepositoryOrchestrator;
+    private final BusinessMessagePublisher businessMessagePublisher;
 
-    public GenericWriteOnlyBusinessRepository(SpringDataJpaBusinessRepository springDataJpaBusinessRepository, RepositoryOrchestrator<JpaBusinessEntity, Business> jpaRepositoryOrchestrator) {
+    public GenericWriteOnlyBusinessRepository(SpringDataJpaBusinessRepository springDataJpaBusinessRepository, RepositoryOrchestrator<JpaBusinessEntity, Business> jpaRepositoryOrchestrator, BusinessMessagePublisher businessMessagePublisher) {
         this.springDataJpaBusinessRepository = springDataJpaBusinessRepository;
         this.jpaRepositoryOrchestrator = jpaRepositoryOrchestrator;
+        this.businessMessagePublisher = businessMessagePublisher;
     }
 
     @Override
@@ -52,6 +57,7 @@ public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepo
                         this.springDataJpaBusinessRepository::save)
                 .map(v -> business);
     }
+
 
     @Override
     public Result<Business, Error> updatePictures(int id, String bannerImageUrl, String profileImageUrl) {

@@ -9,6 +9,8 @@ import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import org.springframework.stereotype.Repository;
 
+import java.util.Set;
+
 @Repository
 public class GenericReadOnlyBusinessRepository implements ReadOnlyBusinessRepository {
 
@@ -53,4 +55,17 @@ public class GenericReadOnlyBusinessRepository implements ReadOnlyBusinessReposi
         return this.mongoRepositoryOrchestrator
                 .onOperation(()-> this.springDataMongoBusinessRepository.existsByName(name));
     }
+
+    @Override
+    public Result<Set<Business>, Error> findByCityId(int cityId) {
+        return this.mongoRepositoryOrchestrator.onSelectSet(
+                () -> this.springDataMongoBusinessRepository.findByAddressCityId((cityId)));
+    }
+
+    @Override
+    public Result<Set<Business>, Error> findByCountryId(int countryId) {
+        return this.mongoRepositoryOrchestrator.onSelectSet(
+                () -> this.springDataMongoBusinessRepository.findByAddressCityCountryId((countryId)));
+    }
+
 }
