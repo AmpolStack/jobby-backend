@@ -1,6 +1,5 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.error;
+package com.jobby.infraestructure.repository.error;
 
-import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;

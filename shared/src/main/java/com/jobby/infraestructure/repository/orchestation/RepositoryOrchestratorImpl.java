@@ -11,13 +11,13 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class GenericRepositoryOrchestrator<Infra, Domain>  implements RepositoryOrchestrator<Infra,Domain> {
+public class RepositoryOrchestratorImpl<Infra, Domain>  implements RepositoryOrchestrator<Infra,Domain> {
     private final AfterPersistProcess<Infra, Domain> afterPersistProcess;
     private final BeforePersistProcess<Infra, Domain> beforePersistProcess;
     private final PersistenceErrorHandler persistenceErrorHandler;
     private final PersistenceTransactionHandler persistenceTransactionHandler;
 
-    public GenericRepositoryOrchestrator(
+    public RepositoryOrchestratorImpl(
             AfterPersistProcess<Infra, Domain> afterPersistProcess,
             BeforePersistProcess<Infra, Domain> beforePersistProcess,
             PersistenceErrorHandler persistenceErrorHandler,

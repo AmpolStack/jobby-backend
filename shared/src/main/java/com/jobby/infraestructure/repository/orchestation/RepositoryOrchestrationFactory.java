@@ -31,8 +31,8 @@ public class RepositoryOrchestrationFactory<Infra, Domain> {
         return this;
     }
 
-    public GenericRepositoryOrchestrator<Infra, Domain> build(){
-        return new GenericRepositoryOrchestrator<>(
+    public RepositoryOrchestratorImpl<Infra, Domain> build(){
+        return new RepositoryOrchestratorImpl<>(
                 this.afterPersistProcess,
                 this.beforePersistProcess,
                 this.persistenceErrorHandler,
