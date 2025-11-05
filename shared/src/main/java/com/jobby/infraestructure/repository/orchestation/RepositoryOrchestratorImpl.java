@@ -1,6 +1,6 @@
 package com.jobby.infraestructure.repository.orchestation;
 
-import com.jobby.infraestructure.repository.error.TransactionalPipeline;
+import com.jobby.infraestructure.repository.error.TransactionalProxy;
 import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
 import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
 import com.jobby.domain.mobility.error.Error;
@@ -14,13 +14,13 @@ import java.util.function.Supplier;
 public class RepositoryOrchestratorImpl<Infra, Domain>  implements RepositoryOrchestrator<Infra,Domain> {
     private final AfterPersistProcess<Infra, Domain> afterPersistProcess;
     private final BeforePersistProcess<Infra, Domain> beforePersistProcess;
-    private final TransactionalPipeline persistenceErrorHandler;
+    private final TransactionalProxy persistenceErrorHandler;
     private final PersistenceTransactionHandler persistenceTransactionHandler;
 
     public RepositoryOrchestratorImpl(
             AfterPersistProcess<Infra, Domain> afterPersistProcess,
             BeforePersistProcess<Infra, Domain> beforePersistProcess,
-            TransactionalPipeline persistenceErrorHandler,
+            TransactionalProxy persistenceErrorHandler,
             PersistenceTransactionHandler persistenceTransactionHandler) {
 
         this.afterPersistProcess = afterPersistProcess;

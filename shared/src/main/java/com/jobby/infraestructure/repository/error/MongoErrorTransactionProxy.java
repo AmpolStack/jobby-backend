@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component("MongoPersistenceErrorHandler")
-public class MongoErrorTransactionPipeline implements TransactionalPipeline {
+public class MongoErrorTransactionProxy implements TransactionalProxy {
     @Override
     public <Entity, R> Result<R, Error> handleWriting(Function<Entity, R> function, Entity entity) {
         try {

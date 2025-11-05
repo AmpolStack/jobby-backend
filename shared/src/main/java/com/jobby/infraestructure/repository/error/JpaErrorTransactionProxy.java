@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component("JpaPersistenceErrorHandler")
-public class JpaPersistenceErrorHandler implements TransactionalPipeline {
+public class JpaErrorTransactionProxy implements TransactionalProxy {
     @Override
     public <Entity, R> Result<R, Error> handleWriting(Function<Entity, R> function, Entity entity) {
         try {
