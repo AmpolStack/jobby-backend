@@ -1,6 +1,6 @@
 package com.jobby.infraestructure.repository.orchestation;
 
-import com.jobby.infraestructure.repository.error.PersistenceErrorHandler;
+import com.jobby.infraestructure.repository.error.TransactionalPipeline;
 import com.jobby.infraestructure.repository.pipeline.AfterPersistProcess;
 import com.jobby.infraestructure.repository.pipeline.BeforePersistProcess;
 import com.jobby.infraestructure.repository.transaction.PersistenceTransactionHandler;
@@ -8,7 +8,7 @@ import com.jobby.infraestructure.repository.transaction.PersistenceTransactionHa
 public class RepositoryOrchestrationFactory<Infra, Domain> {
     private AfterPersistProcess<Infra, Domain> afterPersistProcess;
     private BeforePersistProcess<Infra, Domain> beforePersistProcess;
-    private PersistenceErrorHandler persistenceErrorHandler;
+    private TransactionalPipeline persistenceErrorHandler;
     private PersistenceTransactionHandler persistenceTransactionHandler;
 
     public RepositoryOrchestrationFactory<Infra, Domain> setProcessPipeline(
@@ -20,7 +20,7 @@ public class RepositoryOrchestrationFactory<Infra, Domain> {
     }
 
     public RepositoryOrchestrationFactory<Infra, Domain> setPersistenceErrorHandler
-            (PersistenceErrorHandler persistenceErrorHandler) {
+            (TransactionalPipeline persistenceErrorHandler) {
         this.persistenceErrorHandler = persistenceErrorHandler;
         return this;
     }

@@ -5,7 +5,7 @@ import com.jobby.domain.mobility.result.Result;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface PersistenceErrorHandler {
+public interface TransactionalPipeline {
     <Entity, R> Result<R, Error> handleWriting(Function<Entity, R> function, Entity entity);
     <Entity> Result<Entity, Error> handleReading(Supplier<Entity> supplier);
 }
