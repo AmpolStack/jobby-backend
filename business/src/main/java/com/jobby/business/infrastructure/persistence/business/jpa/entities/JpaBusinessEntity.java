@@ -43,11 +43,22 @@ public class JpaBusinessEntity {
     private String description;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at", insertable = false, updatable = false)
+    @Column(name = "modified_at")
     private Instant modifiedAt;
+
+    @PrePersist
+    public void prePersist(){
+        this.setCreatedAt(Instant.now());
+        this.setModifiedAt(Instant.now());
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.setModifiedAt(Instant.now());
+    }
 
 }
