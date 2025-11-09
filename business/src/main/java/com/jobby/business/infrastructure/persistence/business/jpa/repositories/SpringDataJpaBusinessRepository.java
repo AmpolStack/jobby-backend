@@ -18,7 +18,8 @@ public interface SpringDataJpaBusinessRepository extends JpaRepository<JpaBusine
             "address.city",
             "address.city.country"
     })
-    Optional<JpaBusinessEntity> findById(int id);
+    @Override
+    Optional<JpaBusinessEntity> findById(Integer id);
 
     boolean existsByName(String name);
 
