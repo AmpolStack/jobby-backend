@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.persistence.business.jpa.entities;
 
+import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredProperty;
 import com.jobby.infraestructure.enrichment.encryption.Encrypted;
-import com.jobby.infraestructure.enrichment.mac.MacGenerated;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -25,17 +25,12 @@ public class JpaAddressEntity {
     @JoinColumn(name = "city_id", nullable = false)
     private JpaCityEntity city;
 
-    @Size(max = 600)
-    @NotNull
-    @Column(name = "value", nullable = false, length = 600)
-    @Encrypted
-    private String value;
-
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "value_searchable", nullable = false, length = 32)
-    @MacGenerated(name = "value")
-    private byte[] valueSearchable;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "value", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "value_searchable", length = 32, nullable = false))
+    })
+    private SecuredProperty value;
 
     @Size(max = 1200)
     @Column(name = "description", length = 1200)
@@ -43,11 +38,21 @@ public class JpaAddressEntity {
     private String description;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at", insertable = false, updatable = false)
+    @Column(name = "modified_at")
     private Instant modifiedAt;
 
+    @PrePersist
+    public void prePersist(){
+        this.setCreatedAt(Instant.now());
+        this.setModifiedAt(Instant.now());
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.setModifiedAt(Instant.now());
+    }
 }

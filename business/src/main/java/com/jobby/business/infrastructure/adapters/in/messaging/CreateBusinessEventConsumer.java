@@ -1,7 +1,7 @@
 package com.jobby.business.infrastructure.adapters.in.messaging;
 
 import com.jobby.business.application.services.BusinessEventExecutor;
-import com.jobby.business.application.useCase.BusinessDefaultSaveEvent;
+import com.jobby.business.application.useCase.events.BusinessDefaultSaveEvent;
 import com.jobby.business.infrastructure.adapters.in.messaging.mappers.SchemaBusinessMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

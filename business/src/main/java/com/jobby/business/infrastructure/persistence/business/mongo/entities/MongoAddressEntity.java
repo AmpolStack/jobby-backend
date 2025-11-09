@@ -1,11 +1,11 @@
 package com.jobby.business.infrastructure.persistence.business.mongo.entities;
 
-import com.jobby.infraestructure.enrichment.mac.MacGenerated;
+import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredProperty;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
-
-import java.util.Date;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -13,13 +13,28 @@ public class MongoAddressEntity {
     @Name("address_id")
     private int id;
     private MongoCityEntity city;
-    private String value;
-    @Name("value_searchable")
-    @MacGenerated(name = "value")
-    private byte[] valueSearchable;
-    private String description;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "value", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "value_searchable", length = 32, nullable = false))
+    })
+    private SecuredProperty value;
+
     @Name("created_at")
-    private Date createdAt;
+    private Instant createdAt;
+
     @Name("modified_at")
-    private Date modifiedAt;
+    private Instant modifiedAt;
+
+    @PrePersist
+    public void prePersist(){
+        this.setCreatedAt(Instant.now());
+        this.setModifiedAt(Instant.now());
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.setModifiedAt(Instant.now());
+    }
 }

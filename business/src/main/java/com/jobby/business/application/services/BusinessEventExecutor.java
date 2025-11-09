@@ -1,6 +1,6 @@
 package com.jobby.business.application.services;
 
-import com.jobby.business.domain.operations.BusinessSaveEvent;
+import com.jobby.business.domain.operations.events.BusinessSaveEvent;
 import com.jobby.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
