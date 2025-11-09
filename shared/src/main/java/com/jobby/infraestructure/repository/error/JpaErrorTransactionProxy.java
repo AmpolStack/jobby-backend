@@ -12,6 +12,46 @@ import java.util.function.Supplier;
 @Component("JpaPersistenceErrorHandler")
 public class JpaErrorTransactionProxy implements TransactionalProxy {
     @Override
+    public <T> Result<T, Error> handleWriting(Supplier<T> supplier) {
+        try {
+            var applied = supplier.get();
+            return Result.success(applied);
+        } catch (DuplicateKeyException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("unique constraint", "Duplicate key or unique constraint violation"));
+        } catch (DataIntegrityViolationException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("constraint violation", "Referential integrity or constraint violation"));
+        } catch (OptimisticLockingFailureException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("optimistic lock", "Optimistic locking failure: record was modified by another transaction"));
+        } catch (CannotAcquireLockException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("deadlock", "Transaction deadlock detected while acquiring lock"));
+        } catch (PessimisticLockingFailureException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("pessimistic lock", "Pessimistic locking failure: could not acquire lock on the record"));
+        } catch (QueryTimeoutException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("timeout", "Query or transaction execution time exceeded the allowed limit"));
+        } catch (DataAccessResourceFailureException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("database access", "Database connection or resource failure"));
+        } catch (TransientDataAccessException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("transient error", "Temporary data access error occurred, please retry"));
+        } catch (NonTransientDataAccessException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("persistent error", "Permanent data access error occurred, cannot recover automatically"));
+        } catch (DataAccessException ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("generic database", "Unclassified database access error"));
+        } catch (Exception ex) {
+            return Result.failure(ErrorType.VALIDATION_ERROR,
+                    new Field("unexpected", "Unexpected error: " + ex.getMessage()));
+        }
+    }
+
     public <Entity, R> Result<R, Error> handleWriting(Function<Entity, R> function, Entity entity) {
         try {
             var applied = function.apply(entity);

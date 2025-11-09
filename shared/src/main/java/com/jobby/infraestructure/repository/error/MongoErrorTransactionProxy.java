@@ -13,9 +13,9 @@ import java.util.function.Supplier;
 @Component("MongoPersistenceErrorHandler")
 public class MongoErrorTransactionProxy implements TransactionalProxy {
     @Override
-    public <Entity, R> Result<R, Error> handleWriting(Function<Entity, R> function, Entity entity) {
+    public <T> Result<T, Error> handleWriting(Supplier<T> supplier) {
         try {
-            var applied = function.apply(entity);
+            var applied = supplier.get();
             return Result.success(applied);
         } catch (DuplicateKeyException ex) {
             return Result.failure(ErrorType.VALIDATION_ERROR,
