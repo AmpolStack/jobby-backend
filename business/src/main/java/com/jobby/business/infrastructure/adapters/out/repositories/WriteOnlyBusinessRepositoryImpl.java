@@ -4,7 +4,7 @@ import com.jobby.business.domain.entities.Business;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
 import com.jobby.business.infrastructure.persistence.business.internal.BusinessCacheFinder;
 import com.jobby.business.infrastructure.persistence.business.internal.BusinessPublisher;
-import com.jobby.business.infrastructure.persistence.business.transaction.TransactionalOrchestrator;
+import com.jobby.infraestructure.transaction.orchetration.TransactionalOrchestrator;
 import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.business.jpa.mappers.JpaBusinessMapper;
 import com.jobby.business.infrastructure.persistence.business.jpa.repositories.SpringDataJpaBusinessRepository;

@@ -1,4 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.transaction;
+package com.jobby.infraestructure.transaction.trigger;
+
+import com.jobby.infraestructure.transaction.orchetration.TransactionalOrchestrator;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

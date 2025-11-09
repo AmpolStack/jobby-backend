@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.persistence.business.transaction;
+package com.jobby.infraestructure.transaction.trigger;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;

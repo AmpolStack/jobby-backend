@@ -1,9 +1,10 @@
-package com.jobby.business.infrastructure.persistence.business.transaction;
+package com.jobby.infraestructure.transaction.orchetration;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.infraestructure.transaction.proxy.TransactionalProxy;
 import com.jobby.infraestructure.transaction.PersistenceTransactionalContext;
+import com.jobby.infraestructure.transaction.trigger.TransactionalTriggerComposer;
+import com.jobby.infraestructure.transaction.proxy.TransactionalProxy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
