@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.repository.error;
+package com.jobby.infraestructure.transaction.proxy;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
@@ -7,7 +7,7 @@ import com.jobby.domain.mobility.result.Result;
 import org.springframework.dao.*;
 import org.springframework.data.mongodb.MongoTransactionException;
 import org.springframework.stereotype.Component;
-import java.util.function.Function;
+
 import java.util.function.Supplier;
 
 @Component("MongoPersistenceErrorHandler")

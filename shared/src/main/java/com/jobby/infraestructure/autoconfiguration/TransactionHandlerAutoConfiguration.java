@@ -1,8 +1,8 @@
 package com.jobby.infraestructure.autoconfiguration;
 
-import com.jobby.infraestructure.repository.error.JpaErrorTransactionProxy;
-import com.jobby.infraestructure.repository.error.TransactionalProxy;
-import com.jobby.infraestructure.repository.transaction.PersistenceTransactionalContext;
+import com.jobby.infraestructure.transaction.proxy.JpaErrorTransactionProxy;
+import com.jobby.infraestructure.transaction.proxy.TransactionalProxy;
+import com.jobby.infraestructure.transaction.PersistenceTransactionalContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

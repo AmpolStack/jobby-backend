@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.repository.error;
+package com.jobby.infraestructure.transaction.proxy;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
