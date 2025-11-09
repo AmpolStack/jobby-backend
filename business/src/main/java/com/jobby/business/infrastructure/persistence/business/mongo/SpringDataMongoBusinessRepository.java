@@ -1,6 +1,5 @@
-package com.jobby.business.infrastructure.persistence.business.mongo.repositories;
+package com.jobby.business.infrastructure.persistence.business.mongo;
 
-import com.jobby.business.infrastructure.persistence.business.mongo.entities.MongoBusinessEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;

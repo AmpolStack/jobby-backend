@@ -1,5 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.entities;
+package com.jobby.business.infrastructure.persistence.address.jpa;
 
+import com.jobby.business.infrastructure.persistence.city.jpa.JpaCityEntity;
 import com.jobby.infraestructure.security.SecuredProperty;
 import com.jobby.infraestructure.enrichment.encryption.Encrypted;
 import jakarta.persistence.*;

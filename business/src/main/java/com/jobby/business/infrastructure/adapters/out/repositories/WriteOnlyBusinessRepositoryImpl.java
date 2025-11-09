@@ -5,9 +5,9 @@ import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessReposit
 import com.jobby.business.infrastructure.persistence.business.internal.BusinessCacheFinder;
 import com.jobby.business.infrastructure.persistence.business.internal.BusinessPublisher;
 import com.jobby.infraestructure.transaction.orchetration.TransactionalOrchestrator;
-import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaBusinessEntity;
-import com.jobby.business.infrastructure.persistence.business.jpa.mappers.JpaBusinessMapper;
-import com.jobby.business.infrastructure.persistence.business.jpa.repositories.SpringDataJpaBusinessRepository;
+import com.jobby.business.infrastructure.persistence.business.jpa.JpaBusinessEntity;
+import com.jobby.business.infrastructure.persistence.business.jpa.JpaBusinessMapper;
+import com.jobby.business.infrastructure.persistence.business.jpa.SpringDataJpaBusinessRepository;
 import com.jobby.infraestructure.security.SecuredPropertyTransformer;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;

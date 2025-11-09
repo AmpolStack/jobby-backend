@@ -1,5 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.entities;
+package com.jobby.business.infrastructure.persistence.business.jpa;
 
+import com.jobby.business.infrastructure.persistence.address.jpa.JpaAddressEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

@@ -1,5 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.mongo.entities;
+package com.jobby.business.infrastructure.persistence.city.mongo;
 
+import com.jobby.business.infrastructure.persistence.country.mongo.MongoCountryEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;

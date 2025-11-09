@@ -1,5 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.entities;
+package com.jobby.business.infrastructure.persistence.city.jpa;
 
+import com.jobby.business.infrastructure.persistence.country.jpa.JpaCountryEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

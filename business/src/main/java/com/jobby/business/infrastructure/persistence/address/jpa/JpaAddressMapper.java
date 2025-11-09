@@ -1,19 +1,19 @@
-package com.jobby.business.infrastructure.persistence.business.mongo.mappers;
+package com.jobby.business.infrastructure.persistence.address.jpa;
 
 import com.jobby.business.domain.entities.Address;
-import com.jobby.business.infrastructure.persistence.business.mongo.entities.MongoAddressEntity;
+import com.jobby.business.infrastructure.persistence.city.jpa.JpaCityMapper;
 import com.jobby.infraestructure.security.SecuredProperty;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring", uses = {MongoCityMapper.class})
-public interface MongoAddressMapper {
+@Mapper(componentModel = "spring", uses = {JpaCityMapper.class})
+public interface JpaAddressMapper {
     @Mapping(target = "value", source = "value.rawValue")
-    Address toDomain(MongoAddressEntity mongoAddressEntity);
+    Address toDomain(JpaAddressEntity jpaAddressEntity);
 
     @Mapping(target = "value", source = "value", qualifiedByName = "toSecuredProperty")
-    MongoAddressEntity toDocument(Address address);
+    JpaAddressEntity toJpa(Address address);
 
     @Named("toSecuredProperty")
     default SecuredProperty toSecuredProperty(String value){

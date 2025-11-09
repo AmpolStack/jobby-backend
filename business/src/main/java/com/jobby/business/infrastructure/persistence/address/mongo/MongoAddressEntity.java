@@ -1,5 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.mongo.entities;
+package com.jobby.business.infrastructure.persistence.address.mongo;
 
+import com.jobby.business.infrastructure.persistence.city.mongo.MongoCityEntity;
 import com.jobby.infraestructure.security.SecuredProperty;
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -1,7 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.mappers;
+package com.jobby.business.infrastructure.persistence.country.jpa;
 
 import com.jobby.business.domain.entities.Country;
-import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaCountryEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

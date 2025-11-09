@@ -1,7 +1,6 @@
-package com.jobby.business.infrastructure.persistence.business.mongo.mappers;
+package com.jobby.business.infrastructure.persistence.country.mongo;
 
 import com.jobby.business.domain.entities.Country;
-import com.jobby.business.infrastructure.persistence.business.mongo.entities.MongoCountryEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

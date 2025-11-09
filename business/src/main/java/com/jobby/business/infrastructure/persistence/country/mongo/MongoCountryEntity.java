@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.persistence.business.mongo.entities;
+package com.jobby.business.infrastructure.persistence.country.mongo;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
-package com.jobby.business.infrastructure.persistence.business.mongo.mappers;
+package com.jobby.business.infrastructure.persistence.business.mongo;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.infrastructure.persistence.business.mongo.entities.MongoBusinessEntity;
+import com.jobby.business.infrastructure.persistence.address.mongo.MongoAddressMapper;
 import org.mapstruct.Mapper;
 
 import java.util.Set;

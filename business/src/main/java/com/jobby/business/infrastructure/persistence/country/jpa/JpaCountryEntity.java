@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.entities;
+package com.jobby.business.infrastructure.persistence.country.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

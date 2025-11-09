@@ -1,6 +1,5 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.repositories;
+package com.jobby.business.infrastructure.persistence.business.jpa;
 
-import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaBusinessEntity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
