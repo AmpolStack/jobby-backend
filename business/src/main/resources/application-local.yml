@@ -5,6 +5,9 @@ spring:
     url: jdbc:mariadb://localhost:3307/jobbydata
     username: root
   data:
+    redis:
+      host: localhost
+      port: 6380
     mongodb:
       host: localhost
       port: 27018
