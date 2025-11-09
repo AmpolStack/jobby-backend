@@ -2,7 +2,7 @@ package com.jobby.infraestructure.autoconfiguration;
 
 import com.jobby.infraestructure.repository.error.JpaErrorTransactionProxy;
 import com.jobby.infraestructure.repository.error.TransactionalProxy;
-import com.jobby.infraestructure.repository.transaction.PersistenceTransactionHandler;
+import com.jobby.infraestructure.repository.transaction.PersistenceTransactionalContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class TransactionHandlerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    public PersistenceTransactionHandler persistenceTransactionHandler() {
-        return new PersistenceTransactionHandler();
+    public PersistenceTransactionalContext persistenceTransactionHandler() {
+        return new PersistenceTransactionalContext();
     }
 
     @Bean

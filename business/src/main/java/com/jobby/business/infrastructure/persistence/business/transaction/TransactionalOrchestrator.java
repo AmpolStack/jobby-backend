@@ -3,7 +3,7 @@ package com.jobby.business.infrastructure.persistence.business.transaction;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 import com.jobby.infraestructure.repository.error.TransactionalProxy;
-import com.jobby.infraestructure.repository.transaction.PersistenceTransactionHandler;
+import com.jobby.infraestructure.repository.transaction.PersistenceTransactionalContext;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
@@ -15,10 +15,10 @@ public class TransactionalOrchestrator {
     private final Queue<Runnable> triggers = new ArrayDeque<>();
     private Result<Runnable, Error> errorResult = null;
 
-    private final PersistenceTransactionHandler transactionHandler;
+    private final PersistenceTransactionalContext transactionHandler;
     private final TransactionalProxy transactionalProxy;
 
-    public TransactionalOrchestrator(PersistenceTransactionHandler transactionHandler, TransactionalProxy transactionalProxy) {
+    public TransactionalOrchestrator(PersistenceTransactionalContext transactionHandler, TransactionalProxy transactionalProxy) {
         this.transactionHandler = transactionHandler;
         this.transactionalProxy = transactionalProxy;
     }
