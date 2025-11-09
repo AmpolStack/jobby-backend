@@ -8,7 +8,7 @@ import com.jobby.infraestructure.transaction.orchetration.TransactionalOrchestra
 import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaBusinessEntity;
 import com.jobby.business.infrastructure.persistence.business.jpa.mappers.JpaBusinessMapper;
 import com.jobby.business.infrastructure.persistence.business.jpa.repositories.SpringDataJpaBusinessRepository;
-import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredPropertyTransformer;
+import com.jobby.infraestructure.security.SecuredPropertyTransformer;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;

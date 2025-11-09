@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.persistence.business.jpa.entities;
 
-import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredProperty;
+import com.jobby.infraestructure.security.SecuredProperty;
 import com.jobby.infraestructure.enrichment.encryption.Encrypted;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

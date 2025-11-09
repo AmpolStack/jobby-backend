@@ -2,7 +2,7 @@ package com.jobby.business.infrastructure.persistence.business.jpa.mappers;
 
 import com.jobby.business.domain.entities.Address;
 import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaAddressEntity;
-import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredProperty;
+import com.jobby.infraestructure.security.SecuredProperty;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

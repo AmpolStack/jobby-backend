@@ -5,7 +5,7 @@ import com.jobby.business.domain.ports.out.repositories.ReadOnlyBusinessReposito
 import com.jobby.infraestructure.transaction.orchetration.TransactionalOrchestrator;
 import com.jobby.business.infrastructure.persistence.business.mongo.entities.MongoBusinessEntity;
 import com.jobby.business.infrastructure.persistence.business.mongo.mappers.MongoBusinessMapper;
-import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredPropertyTransformer;
+import com.jobby.infraestructure.security.SecuredPropertyTransformer;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.ports.SafeResultValidator;
