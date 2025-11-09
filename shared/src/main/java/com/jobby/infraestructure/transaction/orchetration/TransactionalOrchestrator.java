@@ -2,7 +2,7 @@ package com.jobby.infraestructure.transaction.orchetration;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.infraestructure.transaction.PersistenceTransactionalContext;
+import com.jobby.infraestructure.transaction.context.PersistenceTransactionalContext;
 import com.jobby.infraestructure.transaction.trigger.TransactionalTriggerComposer;
 import com.jobby.infraestructure.transaction.proxy.TransactionalProxy;
 import org.springframework.stereotype.Component;
