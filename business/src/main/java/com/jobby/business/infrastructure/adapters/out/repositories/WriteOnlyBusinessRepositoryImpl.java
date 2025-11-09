@@ -1,93 +1,138 @@
 package com.jobby.business.infrastructure.adapters.out.repositories;
 
 import com.jobby.business.domain.entities.Business;
-import com.jobby.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
+import com.jobby.business.infrastructure.persistence.business.internal.BusinessCacheFinder;
+import com.jobby.business.infrastructure.persistence.business.internal.BusinessPublisher;
+import com.jobby.business.infrastructure.persistence.business.transaction.TransactionalOrchestrator;
 import com.jobby.business.infrastructure.persistence.business.jpa.entities.JpaBusinessEntity;
+import com.jobby.business.infrastructure.persistence.business.jpa.mappers.JpaBusinessMapper;
 import com.jobby.business.infrastructure.persistence.business.jpa.repositories.SpringDataJpaBusinessRepository;
+import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredPropertyTransformer;
 import com.jobby.domain.mobility.error.Error;
+import com.jobby.domain.mobility.error.ErrorType;
+import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.infraestructure.repository.orchestation.RepositoryOrchestrator;
+import com.jobby.domain.ports.SafeResultValidator;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.Set;
+import java.util.function.Consumer;
 
 @Repository
-public class GenericWriteOnlyBusinessRepository implements WriteOnlyBusinessRepository {
+@AllArgsConstructor
+public class WriteOnlyBusinessRepositoryImpl implements WriteOnlyBusinessRepository {
 
-    private final SpringDataJpaBusinessRepository springDataJpaBusinessRepository;
-    private final RepositoryOrchestrator<JpaBusinessEntity, Business> jpaRepositoryOrchestrator;
-    private final BusinessMessagePublisher businessMessagePublisher;
-
-    public GenericWriteOnlyBusinessRepository(SpringDataJpaBusinessRepository springDataJpaBusinessRepository, RepositoryOrchestrator<JpaBusinessEntity, Business> jpaRepositoryOrchestrator, BusinessMessagePublisher businessMessagePublisher) {
-        this.springDataJpaBusinessRepository = springDataJpaBusinessRepository;
-        this.jpaRepositoryOrchestrator = jpaRepositoryOrchestrator;
-        this.businessMessagePublisher = businessMessagePublisher;
-    }
+    private final SpringDataJpaBusinessRepository repository;
+    private final BusinessCacheFinder cache;
+    private final BusinessPublisher publisher;
+    private final TransactionalOrchestrator transaction;
+    private final SecuredPropertyTransformer transformer;
+    private final JpaBusinessMapper mapper;
+    private final SafeResultValidator validator;
 
     @Override
     public Result<Business, Error> save(Business business) {
-        return this.jpaRepositoryOrchestrator.onModify(business,
-                        (jpaBusiness)
-                                -> this.springDataJpaBusinessRepository.save(jpaBusiness).getId())
-                .flatMap((savedBusinessId)
-                        -> this.jpaRepositoryOrchestrator.onSelect(
-                        ()-> this.springDataJpaBusinessRepository.findById(savedBusinessId)));
-    }
-
-
-    @Override
-    public Result<Business, Error> findById(int id) {
-        return this.jpaRepositoryOrchestrator.onSelect(
-                () -> this.springDataJpaBusinessRepository.findById(id));
+        var mapped = this.mapper.toJpa(business);
+        return this.transformer
+                    .addProperty(mapped.getAddress().getValue())
+                .apply()
+                .flatMap(v -> this.validator.validate(mapped))
+                .flatMap(v -> this.transaction
+                        .write(() -> this.repository.save(mapped)))
+                .flatMap(entity -> this.transaction.read(()-> this.repository.findById(entity.getId())))
+                .flatMap(op -> {
+                    @SuppressWarnings("OptionalGetWithoutIsPresent")
+                    var entity = op.get();
+                    return this.transformer.addProperty(entity.getAddress().getValue())
+                            .revert()
+                            .flatMap(v -> {
+                                var businessFounded = this.mapper.toDomain(entity);
+                                return this.publisher.prepare(businessFounded)
+                                        .map(bytes -> {
+                                            this.publisher.send(bytes, businessFounded);
+                                            return businessFounded;
+                                        });
+                            });
+                });
     }
 
     @Override
     public Result<Void, Error> delete(int id) {
-        return this.jpaRepositoryOrchestrator.onModify(
-                () -> {
-                    this.springDataJpaBusinessRepository.deleteById(id);
+        return this.transaction
+                .read(()-> this.repository.findById(id))
+                .flatMap((op)-> op
+                            .map(Result::<JpaBusinessEntity, Error>success)
+                            .orElseGet(()-> Result.failure(ErrorType.NOT_FOUND, new Field("business", "business not found")))
+                )
+                .flatMap(v -> this.transaction
+                        .write(()-> {
+                            this.repository.deleteById(id);
+                            return null;
+                        }))
+                .map(v -> {
+                    this.cache.deleteRegistry(id);
                     return null;
                 });
     }
 
     @Override
-    public Result<Business, Error> update(Business business) {
-        return this.jpaRepositoryOrchestrator.onModify(business,
-                        this.springDataJpaBusinessRepository::save)
-                .map(v -> business);
-    }
-
-
-    @Override
     public Result<Business, Error> updatePictures(int id, String bannerImageUrl, String profileImageUrl) {
-        return this.jpaRepositoryOrchestrator.onModify(() -> {
-            this.springDataJpaBusinessRepository.updatePictures(id, bannerImageUrl, profileImageUrl);
-            return null;
-        }).flatMap(v -> this.findById(id));
+        return update(id,
+                (jpa)-> {
+                    jpa.setBannerImageUrl(bannerImageUrl);
+                    jpa.setProfileImageUrl(profileImageUrl);
+                });
     }
 
     @Override
     public Result<Business, Error> updateName(int id, String name) {
-        return this.jpaRepositoryOrchestrator.onModify(() -> {
-            this.springDataJpaBusinessRepository.updateName(id, name);
-            return null;
-        }).flatMap(v -> this.findById(id));
+        return update(id,
+                (jpa)-> jpa.setName(name));
     }
 
     @Override
     public Result<Business, Error> updateDescription(int id, String description) {
-        return this.jpaRepositoryOrchestrator.onModify(() -> {
-            this.springDataJpaBusinessRepository.updateDescription(id, description);
-            return null;
-        }).flatMap(v -> this.findById(id));
+        return update(id,
+                (jpa)-> jpa.setDescription(description));
     }
 
     @Override
     public Result<Business, Error> updateNameAndDescription(int id, String name, String description) {
-        return this.jpaRepositoryOrchestrator.onModify(() -> {
-            this.springDataJpaBusinessRepository.updateNameAndDescription(id, name, description);
-            return null;
-        }).flatMap(v -> this.findById(id));
+        return update(id,
+                (jpa)-> {
+                    jpa.setName(name);
+                    jpa.setDescription(description);
+                });
     }
+
+    private Result<Business,Error> update(
+            int id,
+            Consumer<JpaBusinessEntity> consumer)
+    {
+        return this.transaction
+                .read(()-> this.repository.findById(id))
+                .flatMap((op)-> op
+                        .map(Result::<JpaBusinessEntity, Error>success)
+                        .orElseGet(()-> Result.failure(ErrorType.NOT_FOUND, new Field("business", "business not found")))
+                )
+                .flatMap(entityFounded -> {
+                    consumer.accept(entityFounded);
+                    return this.transformer
+                            .addProperty(entityFounded.getAddress().getValue())
+                            .revert()
+                            .flatMap((v)-> {
+                                var mapped = this.mapper.toDomain(entityFounded);
+
+                                return this.transaction
+                                        .triggers()
+                                        .add(this.publisher, mapped)
+                                        .add(()-> this.cache.deleteRegistry(id))
+                                        .build()
+                                        .write(()-> this.repository.save(entityFounded))
+                                        .map(this.mapper::toDomain);
+                            });
+
+                });
+    }
+
 }
