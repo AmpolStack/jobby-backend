@@ -19,10 +19,12 @@ spring:
             mode=none
     show-sql: true
     open-in-view: false
-encrypt:
-  iv:
-    length: 12
-    t-len: 128
-hashing:
-  mac:
-    algorithm: HmacSHA256
+app:
+  security:
+    encryption:
+      iv:
+        length: 12
+        t-len: 128
+    hashing:
+      mac:
+        algorithm: HmacSHA256
