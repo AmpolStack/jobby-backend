@@ -8,7 +8,6 @@ import java.util.Set;
 
 public interface ReadOnlyBusinessRepository {
     Result<Business, Error> findById(int id);
-    Result<Boolean, Error> existByUsername(String name);
     Result<Void, Error> save(Business business);
     Result<Void, Error> update(Business business);
     Result<Set<Business>, Error> findByCityId(int cityId);
