@@ -1,4 +1,4 @@
-package com.jobby.business.infrastructure.persistence.business.jpa.security;
+package com.jobby.infraestructure.security;
 
 import com.jobby.domain.configurations.EncryptConfig;
 import com.jobby.domain.configurations.MacConfig;

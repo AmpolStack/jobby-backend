@@ -1,4 +1,4 @@
-package com.jobby.infraestructure.repository.transaction;
+package com.jobby.infraestructure.transaction.context;
 
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
@@ -7,7 +7,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.function.Supplier;
 
-public class PersistenceTransactionHandler {
+public class PersistenceTransactionalContext {
         @Transactional
         public <E> Result<E, com.jobby.domain.mobility.error.Error> execute(Supplier<Result<E, com.jobby.domain.mobility.error.Error>> supplier) {
             var response = supplier.get();

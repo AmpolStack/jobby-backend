@@ -2,7 +2,7 @@ package com.jobby.business.infrastructure.persistence.business.internal;
 
 import com.jobby.business.domain.entities.Business;
 import com.jobby.business.infrastructure.adapters.in.messaging.mappers.SchemaBusinessMapper;
-import com.jobby.business.infrastructure.persistence.business.transaction.TransactionalTrigger;
+import com.jobby.infraestructure.transaction.trigger.TransactionalTrigger;
 import com.jobby.business.infrastructure.persistence.outbox.entities.OutboxEventEntity;
 import com.jobby.business.infrastructure.persistence.outbox.repositories.SpringDataOutboxEventEntity;
 import com.jobby.domain.mobility.error.Error;

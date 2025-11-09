@@ -1,6 +1,6 @@
 package com.jobby.business.infrastructure.persistence.business.mongo.entities;
 
-import com.jobby.business.infrastructure.persistence.business.jpa.security.SecuredProperty;
+import com.jobby.infraestructure.security.SecuredProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
