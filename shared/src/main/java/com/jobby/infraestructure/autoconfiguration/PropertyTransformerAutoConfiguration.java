@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
         MacService.class,
         MacConfig.class,
         SafeResultValidator.class})
-public class SecurityTransformerAutoConfiguration {
+public class PropertyTransformerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public SecuredPropertyTransformer securedPropertyTransformer(
