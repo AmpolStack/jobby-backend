@@ -19,58 +19,50 @@ public class JpaAppUserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(max = 600)
-    @NotNull
-    @Column(name = "first_name", nullable = false, length = 600)
-    @Encrypted
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "first_name", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "first_name_searchable", length = 32, nullable = false))
+    })
     private String firstName;
 
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "first_name_searchable", nullable = false, length = 32)
-    @MacGenerated(name = "firstName")
-    private byte[] firstNameSearchable;
-
-    @Size(max = 600)
-    @NotNull
-    @Column(name = "last_name", nullable = false, length = 600)
-    @Encrypted
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "last_name", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "last_name_searchable", length = 32, nullable = false))
+    })
     private String lastName;
 
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "last_name_searchable", nullable = false, length = 32)
-    @MacGenerated(name = "lastName")
-    private byte[] lastNameSearchable;
-
-    @Size(max = 600)
-    @Column(name = "email", length = 600)
-    @Encrypted
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "email", length = 600, nullable = true)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "email_searchable", length = 32, nullable = true))
+    })
     private String email;
 
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "email_searchable", length = 32)
-    @MacGenerated(name = "email")
-    private byte[] emailSearchable;
-
-    @Size(max = 350)
-    @Column(name = "phone", length = 350)
-    @Encrypted
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "phone", length = 350, nullable = true)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "phone_searchable", length = 32, nullable = true))
+    })
     private String phone;
 
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "phone_searchable", length = 32)
-    @MacGenerated(name = "phone")
-    private byte[] phoneSearchable;
-
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at", insertable = false, updatable = false)
+    @Column(name = "modified_at")
     private Instant modifiedAt;
+
+    @PrePersist
+    public void prePersist(){
+        this.setCreatedAt(Instant.now());
+        this.setModifiedAt(Instant.now());
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.setModifiedAt(Instant.now());
+    }
 
 }

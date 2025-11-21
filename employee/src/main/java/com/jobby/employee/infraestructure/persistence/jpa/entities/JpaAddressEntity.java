@@ -1,8 +1,6 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
 import com.jobby.infraestructure.enrichment.encryption.Encrypted;
-import com.jobby.infraestructure.enrichment.mac.MacGenerated;
-import com.jobby.infraestructure.entitytransformers.EntityEncryptorTransformer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -31,23 +29,27 @@ public class JpaAddressEntity {
     @Encrypted
     private String value;
 
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "value_searchable", nullable = false, length = 32)
-    @MacGenerated(name = "value")
-    private byte[] valueSearchable;
-
     @Size(max = 1200)
     @Column(name = "description", length = 1200)
-    @Convert(converter = EntityEncryptorTransformer.class)
     private String description;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at", insertable = false, updatable = false)
+    @Column(name = "modified_at")
     private Instant modifiedAt;
+
+    @PrePersist
+    public void prePersist(){
+        this.setCreatedAt(Instant.now());
+        this.setModifiedAt(Instant.now());
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.setModifiedAt(Instant.now());
+    }
 
 }
