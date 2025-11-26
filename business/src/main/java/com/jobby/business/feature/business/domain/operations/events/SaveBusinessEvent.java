@@ -4,6 +4,6 @@ import com.jobby.business.feature.business.domain.ports.out.repositories.ReadOnl
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 
-public abstract class BusinessSaveEvent {
+public abstract class SaveBusinessEvent {
     public abstract Result<Void, Error> execute(ReadOnlyBusinessRepository readBusinessRepository);
 }

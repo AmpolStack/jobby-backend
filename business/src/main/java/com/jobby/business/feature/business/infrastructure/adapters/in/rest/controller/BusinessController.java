@@ -3,9 +3,9 @@ package com.jobby.business.feature.business.infrastructure.adapters.in.rest.cont
 import com.jobby.business.feature.business.application.services.BusinessCommandExecutor;
 import com.jobby.business.feature.business.application.services.BusinessQueryExecutor;
 import com.jobby.business.feature.business.application.useCase.commands.BusinessDefaultCreateCommand;
-import com.jobby.business.feature.business.application.useCase.commands.BusinessDeleteByIdCommand;
-import com.jobby.business.feature.business.application.useCase.commands.UpdateBusinessPicturesCommand;
-import com.jobby.business.feature.business.application.useCase.commands.UpdateBusinessPropertiesCommand;
+import com.jobby.business.feature.business.application.useCase.commands.DeleteByIdBusinessCommand;
+import com.jobby.business.feature.business.application.useCase.commands.UpdatePicturesBusinessCommand;
+import com.jobby.business.feature.business.application.useCase.commands.UpdatePropertiesBusinessCommand;
 import com.jobby.business.feature.business.application.useCase.queries.BusinessQueryById;
 import com.jobby.business.feature.business.application.useCase.queries.BusinessSetQueryByCityId;
 import com.jobby.business.feature.business.application.useCase.queries.BusinessSetQueryByCountryId;
@@ -45,7 +45,7 @@ public class BusinessController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteById(@PathVariable int id){
-        var command = new BusinessDeleteByIdCommand(id);
+        var command = new DeleteByIdBusinessCommand(id);
         var resp = this.businessCommandExecutor.execute(command);
         return apiResponseMapper.map(resp);
     }
@@ -73,14 +73,14 @@ public class BusinessController {
 
     @PatchMapping("/{id}/updateProperties")
     public ResponseEntity<?> updateProperties(@PathVariable int id, @RequestBody UpdateBusinessPropertiesDto dto){
-        var command = new UpdateBusinessPropertiesCommand(id, dto.getName(), dto.getDescription());
+        var command = new UpdatePropertiesBusinessCommand(id, dto.getName(), dto.getDescription());
         var resp = this.businessCommandExecutor.execute(command);
         return apiResponseMapper.map(resp);
     }
 
     @PatchMapping("/{id}/updatePictures")
     public ResponseEntity<?> updatePics(@PathVariable int id, @RequestBody UpdateBusinessPicturesDto dto){
-        var command = new UpdateBusinessPicturesCommand(id, dto.getBannerImageUrl(), dto.getProfileImageUrl());
+        var command = new UpdatePicturesBusinessCommand(id, dto.getBannerImageUrl(), dto.getProfileImageUrl());
         var resp = this.businessCommandExecutor.execute(command);
         return apiResponseMapper.map(resp);
     }

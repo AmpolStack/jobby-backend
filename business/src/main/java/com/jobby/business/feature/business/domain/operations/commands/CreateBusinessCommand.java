@@ -6,6 +6,6 @@ import com.jobby.business.feature.business.domain.ports.out.repositories.WriteOn
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
 
-public abstract class BusinessCreateCommand{
+public abstract class CreateBusinessCommand {
     public abstract Result<Business, Error> execute(WriteOnlyBusinessRepository repository, BusinessMessagePublisher publisher);
 }
