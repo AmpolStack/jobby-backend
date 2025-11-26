@@ -1,56 +1,74 @@
 package com.jobby.employee.infraestructure.adapters.out;
 
-import com.jobby.domain.configurations.MacConfig;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
 import com.jobby.domain.mobility.result.Result;
-import com.jobby.domain.ports.hashing.mac.MacService;
 import com.jobby.employee.domain.model.Employee;
 import com.jobby.employee.domain.ports.out.EmployeeRepository;
 import com.jobby.employee.infraestructure.persistence.jpa.mappers.JpaEmployeeMapper;
 import com.jobby.employee.infraestructure.persistence.jpa.repositories.SpringDataJpaEmployeeRepository;
-import com.jobby.infraestructure.enrichment.mac.MacPropertyInitializer;
+import com.jobby.employee.infraestructure.persistence.outbox.EmployeePublisher;
+import com.jobby.infraestructure.security.SecuredPasswordTransformer;
+import com.jobby.infraestructure.security.SecuredPropertyTransformer;
+import com.jobby.infraestructure.transaction.orchetration.TransactionalOrchestrator;
 import org.springframework.stereotype.Component;
 
 @Component("writeEmployeeRepository")
 public class WriteEmployeeRepository implements EmployeeRepository {
-    private final SpringDataJpaEmployeeRepository employeeRepository;
-    private final JpaEmployeeMapper jpaEmployeeMapper;
-    private final MacPropertyInitializer macPropertyInitializer;
+    private final SpringDataJpaEmployeeRepository repository;
+    private final JpaEmployeeMapper mapper;
+    private final TransactionalOrchestrator transaction;
+    private final SecuredPropertyTransformer propertyTransformer;
+    private final SecuredPasswordTransformer passwordTransformer;
+    private final EmployeePublisher publisher;
 
-    public WriteEmployeeRepository(SpringDataJpaEmployeeRepository employeeRepository, JpaEmployeeMapper jpaEmployeeMapper, MacConfig macConfig, MacService macService, MacPropertyInitializer macPropertyInitializer) {
-        this.employeeRepository = employeeRepository;
-        this.jpaEmployeeMapper = jpaEmployeeMapper;
-        this.macPropertyInitializer = macPropertyInitializer;
+    public WriteEmployeeRepository(SpringDataJpaEmployeeRepository employeeRepository,
+                                   JpaEmployeeMapper jpaEmployeeMapper, TransactionalOrchestrator transaction, SecuredPropertyTransformer propertyTransformer, SecuredPasswordTransformer passwordTransformer, EmployeePublisher publisher) {
+        this.repository = employeeRepository;
+        this.mapper = jpaEmployeeMapper;
+        this.transaction = transaction;
+        this.propertyTransformer = propertyTransformer;
+        this.passwordTransformer = passwordTransformer;
+        this.publisher = publisher;
     }
 
     @Override
     public Result<Employee, Error> save(Employee employee) {
-        var jpaEmployeeEntity = this.jpaEmployeeMapper.toJpa(employee);
-        return this.macPropertyInitializer.addElement(jpaEmployeeEntity)
-                .processAll()
-                .flatMap(v ->{
-                    try{
-                        var resp = this.employeeRepository.save(jpaEmployeeEntity);
-                        return Result.success(this.jpaEmployeeMapper.toDomain(resp));
-                    }
-                    catch (Exception ex){
-                        return Result.failure(ErrorType.ITS_EXTERNAL_SERVICE_FAILURE,
-                                new Field("jpa database", ex.getMessage()));
-                    }
+        var mapped = this.mapper.toJpa(employee);
+        return this.propertyTransformer
+                .addProperty(mapped.getAddress().getValue())
+                .apply()
+                .flatMap(v -> this.passwordTransformer.apply(mapped.getPassword()))
+                .flatMap(v -> this.transaction
+                        .write(() -> this.repository.save(mapped)))
+                .flatMap(entity -> {
+                    var domain = this.mapper.toDomain(entity);
+                    return this.transaction
+                            .triggers()
+                            .add(publisher, domain)
+                            .build()
+                            .read(()-> this.repository.findById(entity.getId()));
+                })
+                .flatMap(op -> {
+                    @SuppressWarnings("OptionalGetWithoutIsPresent")
+                    var entity = op.get();
+                    return this.propertyTransformer.addProperty(entity.getAddress().getValue())
+                            .revert()
+                            .map(v -> this.mapper.toDomain(entity));
                 });
     }
 
     @Override
     public Result<Employee, Error> getEmployeeById(int id) {
-        return this.employeeRepository
-                .findById(id)
-                .map(this.jpaEmployeeMapper::toDomain)
-                .map(Result::<Employee, Error>success)
-                .orElseGet(()-> Result.failure(
-                        ErrorType.USER_NOT_FOUND,
-                        new Field("employee", "No employee found with given id")
+        return transaction.
+                read(()-> this.repository.findById(id))
+                .flatMap(op ->
+                    op.map(this.mapper::toDomain)
+                            .map(Result::<Employee, Error>success)
+                            .orElseGet(()-> Result.failure(
+                                    ErrorType.USER_NOT_FOUND,
+                                    new Field("employee", "No employee found with given id"))
                 ));
     }
 
