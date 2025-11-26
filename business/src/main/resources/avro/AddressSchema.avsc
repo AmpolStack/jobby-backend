@@ -5,6 +5,7 @@
   "fields": [
     {"name": "id", "type": "int"},
     {"name": "value", "type": "string"},
+    {"name":  "value_searchable", "type": "string"},
     {"name": "description", "type": ["null", "string"], "default": null},
     {"name":  "city", "type":  "com.jobby.messaging.schemas.City"},
     {"name": "createdAt",
