@@ -1,10 +1,7 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import com.jobby.infraestructure.enrichment.encryption.Encrypted;
-import com.jobby.infraestructure.enrichment.mac.MacGenerated;
+import com.jobby.infraestructure.security.SecuredProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -19,58 +16,51 @@ public class JpaAppUserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(max = 600)
-    @NotNull
-    @Column(name = "first_name", nullable = false, length = 600)
-    @Encrypted
-    private String firstName;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "first_name", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "first_name_searchable", length = 32, nullable = false))
+    })
+    private SecuredProperty firstName;
 
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "first_name_searchable", nullable = false, length = 32)
-    @MacGenerated(name = "firstName")
-    private byte[] firstNameSearchable;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "last_name", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "last_name_searchable", length = 32, nullable = false))
+    })
+    private SecuredProperty lastName;
 
-    @Size(max = 600)
-    @NotNull
-    @Column(name = "last_name", nullable = false, length = 600)
-    @Encrypted
-    private String lastName;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "email", length = 600, nullable = true)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "email_searchable", length = 32, nullable = true))
+    })
+    private SecuredProperty email;
 
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "last_name_searchable", nullable = false, length = 32)
-    @MacGenerated(name = "lastName")
-    private byte[] lastNameSearchable;
-
-    @Size(max = 600)
-    @Column(name = "email", length = 600)
-    @Encrypted
-    private String email;
-
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "email_searchable", length = 32)
-    @MacGenerated(name = "email")
-    private byte[] emailSearchable;
-
-    @Size(max = 350)
-    @Column(name = "phone", length = 350)
-    @Encrypted
-    private String phone;
-
-    @Size(max = 32)
-    @NotNull
-    @Column(name = "phone_searchable", length = 32)
-    @MacGenerated(name = "phone")
-    private byte[] phoneSearchable;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "phone", length = 350, nullable = true)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "phone_searchable", length = 32, nullable = true))
+    })
+    private SecuredProperty phone;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at", insertable = false, updatable = false)
+    @Column(name = "modified_at")
     private Instant modifiedAt;
+
+    @PrePersist
+    public void prePersist(){
+        this.setCreatedAt(Instant.now());
+        this.setModifiedAt(Instant.now());
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        this.setModifiedAt(Instant.now());
+    }
 
 }

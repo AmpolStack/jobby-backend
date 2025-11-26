@@ -1,8 +1,8 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
+import com.jobby.infraestructure.security.SecuredProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -22,14 +22,19 @@ public class Contact {
     @JoinColumn(name = "contact_type_id", nullable = false)
     private ContactType contactType;
 
-    @Size(max = 1200)
-    @NotNull
-    @Column(name = "value", nullable = false, length = 1200)
-    private String value;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "value", length = 1200, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "value_searchable", length = 32, nullable = false))
+    })
+    private SecuredProperty value;
 
-    @Size(max = 600)
-    @Column(name = "name", length = 600)
-    private String name;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "name", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "name_searchable", length = 32, nullable = false))
+    })
+    private SecuredProperty name;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "created_at")

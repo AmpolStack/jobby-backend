@@ -2,13 +2,13 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6379
+      port: 6380
     #      password: yourPassword
     mongodb:
       host: localhost
-      port: 27017
+      port: 27018
       username: jobbyadmin
-      password: jobbysecret
+      password: 2TTdlRGJY7ByqAk1kaWi
       authentication-database: admin
       database: jobby
 #  kafka:
