@@ -2,13 +2,12 @@ package com.jobby.business.feature.business.infrastructure.adapters.out.reposito
 
 import com.jobby.business.feature.business.domain.entities.Business;
 import com.jobby.business.feature.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
+import com.jobby.infraestructure.security.SecuredPropertyComposer;
 import com.jobby.infraestructure.transaction.orchetration.TransactionalOrchestrator;
 import com.jobby.business.feature.business.infrastructure.persistence.mongo.MongoBusinessEntity;
 import com.jobby.business.feature.business.infrastructure.persistence.mongo.MongoBusinessMapper;
-import com.jobby.infraestructure.security.SecuredPropertyTransformer;
 import com.jobby.domain.mobility.error.ErrorType;
 import com.jobby.domain.mobility.error.Field;
-import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.business.feature.business.infrastructure.persistence.mongo.SpringDataMongoBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
@@ -25,21 +24,17 @@ public class ReadOnlyBusinessRepositoryImpl implements ReadOnlyBusinessRepositor
     private final SpringDataMongoBusinessRepository springDataMongoBusinessRepository;
     private final TransactionalOrchestrator transactionalOrchestrator;
     private final MongoBusinessMapper mapper;
-    private final SecuredPropertyTransformer transformer;
-    private final SafeResultValidator validator;
+    private final SecuredPropertyComposer composer;
+
 
     @Override
     public Result<Void, Error> save(Business business) {
         var mapped = this.mapper.toDocument(business);
-        return this.transformer
-                .addProperty(mapped.getAddress().getValue())
-                .apply()
-                .flatMap(v -> this.validator.validate(mapped))
-                .flatMap(v -> this.transactionalOrchestrator
+        return this.transactionalOrchestrator
                         .write(() -> {
                             this.springDataMongoBusinessRepository.save(mapped);
                             return null;
-                        }));
+                        });
     }
 
     @Override
@@ -50,14 +45,11 @@ public class ReadOnlyBusinessRepositoryImpl implements ReadOnlyBusinessRepositor
                         .map(Result::<MongoBusinessEntity, Error>success)
                         .orElseGet(()-> Result.failure(ErrorType.NOT_FOUND, new Field("business", "business not found")))
                 )
-                .flatMap(entityFounded -> this.transformer
-                        .addProperty(entityFounded.getAddress().getValue())
-                        .revert()
-                        .flatMap((v)-> this.transactionalOrchestrator
+                .flatMap(entityFounded -> this.transactionalOrchestrator
                                 .write(()-> {
                                     this.springDataMongoBusinessRepository.save(entityFounded);
                                     return null;
-                                })));
+                                }));
     }
 
 
@@ -81,10 +73,9 @@ public class ReadOnlyBusinessRepositoryImpl implements ReadOnlyBusinessRepositor
         return this.transactionalOrchestrator
                 .read(supplier)
                 .flatMap(op ->
-                        op.map((entity)->
-                                        transformer
-                                                .addProperty(entity.getAddress().getValue())
-                                                .revert()
+                        op.map((entity)-> this.composer
+                                                .revert(entity.getAddress().getValue(), (decrypted) -> entity.getAddress().setValue(decrypted))
+                                                        .build()
                                                 .map((v)-> this.mapper.toDomain(entity)))
                                 .orElseGet(()-> Result.failure(
                                                 ErrorType.NOT_FOUND,
@@ -98,9 +89,9 @@ public class ReadOnlyBusinessRepositoryImpl implements ReadOnlyBusinessRepositor
                 .read(supplier)
                 .flatMap(set ->{
                     for (MongoBusinessEntity businessEntity : set) {
-                        var transform = transformer
-                                .addProperty(businessEntity.getAddress().getValue())
-                                .revert();
+                        var transform = this.composer
+                                .revert(businessEntity.getAddress().getValue(), (decrypted) -> businessEntity.getAddress().setValue(decrypted))
+                                .build();
 
                         if(transform.isFailure()){
                             return Result.renewFailure(transform);
