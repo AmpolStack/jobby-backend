@@ -1,6 +1,6 @@
 package com.jobby.employee.infraestructure.persistence.mongo.entities;
 
-import com.jobby.infraestructure.enrichment.mac.MacGenerated;
+import com.jobby.infraestructure.security.SecuredPassword;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.bind.Name;
@@ -20,16 +20,16 @@ public class MongoEmployeeEntity {
     private MongoUserEntity user;
     private MongoSectionalEntity sectional;
     private MongoEmployeeStatusEntity status;
+    private String password;
+    @Name("username")
     private String username;
     @Name("username_searchable")
-    @MacGenerated(name = "username")
     private byte[] usernameSearchable;
-    private String password;
     @Name("position_name")
     private String positionName;
     @Name("position_name_searchable")
-    @MacGenerated(name = "username")
     private byte[] positionNameSearchable;
+
     @Name("profile_image_url")
     private String profileImageUrl;
     @Name("created_at")
