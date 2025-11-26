@@ -12,10 +12,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultGetEmployeeByIdUseCase implements GetEmployeeByIdUseCase {
 
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository writeonlyRepository;
+    private final EmployeeRepository readonlyRepository;
 
-    public DefaultGetEmployeeByIdUseCase(@Qualifier("writeEmployeeRepository") EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public DefaultGetEmployeeByIdUseCase(@Qualifier("writeEmployeeRepository") EmployeeRepository write,
+                                         @Qualifier("readEmployeeRepository") EmployeeRepository read) {
+        this.writeonlyRepository = write;
+        this.readonlyRepository = read;
     }
 
     @Override
@@ -24,6 +27,6 @@ public class DefaultGetEmployeeByIdUseCase implements GetEmployeeByIdUseCase {
                 .create()
                 .validateGreaterThan(id, 0, "employee-id")
                 .build()
-                .flatMap(v -> this.employeeRepository.getEmployeeById(id));
+                .flatMap(v -> this.readonlyRepository.getEmployeeById(id));
     }
 }
