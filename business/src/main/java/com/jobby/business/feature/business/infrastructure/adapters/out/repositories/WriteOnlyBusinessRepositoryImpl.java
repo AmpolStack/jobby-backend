@@ -43,15 +43,10 @@ public class WriteOnlyBusinessRepositoryImpl implements WriteOnlyBusinessReposit
                 .flatMap(op -> {
                     @SuppressWarnings("OptionalGetWithoutIsPresent")
                     var entity = op.get();
-                    return this.transformer.addProperty(entity.getAddress().getValue())
-                            .revert()
-                            .flatMap(v -> {
-                                var businessFounded = this.mapper.toDomain(entity);
-                                return this.publisher.prepare(businessFounded)
-                                        .map(bytes -> {
-                                            this.publisher.send(bytes, businessFounded);
-                                            return businessFounded;
-                                        });
+                    return this.publisher.prepare(entity)
+                            .map(bytes -> {
+                                this.publisher.send(bytes, entity);
+                                return this.mapper.toDomain(entity);
                             });
                 });
     }
@@ -117,21 +112,13 @@ public class WriteOnlyBusinessRepositoryImpl implements WriteOnlyBusinessReposit
                 )
                 .flatMap(entityFounded -> {
                     consumer.accept(entityFounded);
-                    return this.transformer
-                            .addProperty(entityFounded.getAddress().getValue())
-                            .revert()
-                            .flatMap((v)-> {
-                                var mapped = this.mapper.toDomain(entityFounded);
-
-                                return this.transaction
-                                        .triggers()
-                                        .add(this.publisher, mapped)
-                                        .add(()-> this.cache.deleteRegistry(id))
-                                        .build()
-                                        .write(()-> this.repository.save(entityFounded))
-                                        .map(this.mapper::toDomain);
-                            });
-
+                    return this.transaction
+                            .triggers()
+                            .add(this.publisher, entityFounded)
+                            .add(()-> this.cache.deleteRegistry(id))
+                            .build()
+                            .write(()-> this.repository.save(entityFounded))
+                            .map(this.mapper::toDomain);
                 });
     }
 

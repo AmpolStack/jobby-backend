@@ -3,16 +3,16 @@ package com.jobby.business.feature.business.infrastructure.adapters.in.rest.cont
 import com.jobby.business.feature.business.application.services.BusinessCommandExecutor;
 import com.jobby.business.feature.business.application.services.BusinessQueryExecutor;
 import com.jobby.business.feature.business.application.useCase.commands.BusinessDefaultCreateCommand;
-import com.jobby.business.feature.business.application.useCase.commands.BusinessDeleteByIdCommand;
-import com.jobby.business.feature.business.application.useCase.commands.UpdateBusinessPicturesCommand;
-import com.jobby.business.feature.business.application.useCase.commands.UpdateBusinessPropertiesCommand;
+import com.jobby.business.feature.business.application.useCase.commands.DeleteByIdBusinessCommand;
+import com.jobby.business.feature.business.application.useCase.commands.UpdatePicturesBusinessCommand;
+import com.jobby.business.feature.business.application.useCase.commands.UpdatePropertiesBusinessCommand;
 import com.jobby.business.feature.business.application.useCase.queries.BusinessQueryById;
 import com.jobby.business.feature.business.application.useCase.queries.BusinessSetQueryByCityId;
 import com.jobby.business.feature.business.application.useCase.queries.BusinessSetQueryByCountryId;
 import com.jobby.business.feature.business.domain.entities.Business;
-import com.jobby.business.feature.business.domain.operations.commands.BusinessCreateCommand;
-import com.jobby.business.feature.business.domain.operations.commands.BusinessDeleteCommand;
-import com.jobby.business.feature.business.domain.operations.commands.BusinessUpdateCommand;
+import com.jobby.business.feature.business.domain.operations.commands.CreateBusinessCommand;
+import com.jobby.business.feature.business.domain.operations.commands.DeleteBusinessCommand;
+import com.jobby.business.feature.business.domain.operations.commands.UpdateBusinessCommand;
 import com.jobby.business.feature.business.domain.operations.queries.BusinessQuery;
 import com.jobby.business.feature.business.domain.operations.queries.BusinessSetQuery;
 import com.jobby.business.feature.business.infrastructure.adapters.in.rest.dto.CreateBusinessDto;
@@ -70,13 +70,13 @@ class BusinessControllerTest {
         Result<Business, Error> result = Result.success(business);
 
         when(createBusinessMapper.toDomain(dto)).thenReturn(business);
-        when(businessCommandExecutor.execute(any(BusinessCreateCommand.class))).thenReturn(result);
+        when(businessCommandExecutor.execute(any(CreateBusinessCommand.class))).thenReturn(result);
         doReturn(response).when(apiResponseMapper).map(result);
 
         var actual = controller.create(dto);
 
         assertEquals(response, actual);
-        ArgumentCaptor<BusinessCreateCommand> captor = ArgumentCaptor.forClass(BusinessCreateCommand.class);
+        ArgumentCaptor<CreateBusinessCommand> captor = ArgumentCaptor.forClass(CreateBusinessCommand.class);
         verify(businessCommandExecutor).execute(captor.capture());
         assertInstanceOf(BusinessDefaultCreateCommand.class, captor.getValue());
         verify(createBusinessMapper).toDomain(dto);
@@ -88,16 +88,16 @@ class BusinessControllerTest {
         int id = 9;
         Result<Void, Error> result = Result.success(null);
 
-        when(businessCommandExecutor.execute(any(BusinessDeleteCommand.class))).thenReturn(result);
+        when(businessCommandExecutor.execute(any(DeleteBusinessCommand.class))).thenReturn(result);
         doReturn(response).when(apiResponseMapper).map(result);
 
 
         var actual = controller.deleteById(id);
 
         assertEquals(response, actual);
-        ArgumentCaptor<BusinessDeleteCommand> captor = ArgumentCaptor.forClass(BusinessDeleteCommand.class);
+        ArgumentCaptor<DeleteBusinessCommand> captor = ArgumentCaptor.forClass(DeleteBusinessCommand.class);
         verify(businessCommandExecutor).execute(captor.capture());
-        assertInstanceOf(BusinessDeleteByIdCommand.class, captor.getValue());
+        assertInstanceOf(DeleteByIdBusinessCommand.class, captor.getValue());
         verify(apiResponseMapper).map(result);
     }
 
@@ -163,16 +163,16 @@ class BusinessControllerTest {
         dto.setDescription("desc");
         Result<Business, Error> result = Result.success(business);
 
-        when(businessCommandExecutor.execute(any(BusinessUpdateCommand.class))).thenReturn(result);
+        when(businessCommandExecutor.execute(any(UpdateBusinessCommand.class))).thenReturn(result);
         doReturn(response).when(apiResponseMapper).map(result);
 
 
         var actual = controller.updateProperties(id, dto);
 
         assertEquals(response, actual);
-        ArgumentCaptor<BusinessUpdateCommand> captor = ArgumentCaptor.forClass(BusinessUpdateCommand.class);
+        ArgumentCaptor<UpdateBusinessCommand> captor = ArgumentCaptor.forClass(UpdateBusinessCommand.class);
         verify(businessCommandExecutor).execute(captor.capture());
-        assertInstanceOf(UpdateBusinessPropertiesCommand.class, captor.getValue());
+        assertInstanceOf(UpdatePropertiesBusinessCommand.class, captor.getValue());
         verify(apiResponseMapper).map(result);
     }
 
@@ -184,16 +184,16 @@ class BusinessControllerTest {
         dto.setProfileImageUrl("profile");
         Result<Business, Error> result = Result.success(business);
 
-        when(businessCommandExecutor.execute(any(BusinessUpdateCommand.class))).thenReturn(result);
+        when(businessCommandExecutor.execute(any(UpdateBusinessCommand.class))).thenReturn(result);
         doReturn(response).when(apiResponseMapper).map(result);
 
 
         var actual = controller.updatePics(id, dto);
 
         assertEquals(response, actual);
-        ArgumentCaptor<BusinessUpdateCommand> captor = ArgumentCaptor.forClass(BusinessUpdateCommand.class);
+        ArgumentCaptor<UpdateBusinessCommand> captor = ArgumentCaptor.forClass(UpdateBusinessCommand.class);
         verify(businessCommandExecutor).execute(captor.capture());
-        assertInstanceOf(UpdateBusinessPicturesCommand.class, captor.getValue());
+        assertInstanceOf(UpdatePicturesBusinessCommand.class, captor.getValue());
         verify(apiResponseMapper).map(result);
     }
 }

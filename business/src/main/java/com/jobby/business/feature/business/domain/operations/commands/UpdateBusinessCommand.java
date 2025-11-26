@@ -8,10 +8,10 @@ import com.jobby.domain.mobility.result.Result;
 import lombok.Getter;
 
 @Getter
-public abstract class BusinessUpdateCommand {
+public abstract class UpdateBusinessCommand {
     private final int businessId;
     
-    public BusinessUpdateCommand(int businessId) {
+    public UpdateBusinessCommand(int businessId) {
         this.businessId = businessId;
     }
 

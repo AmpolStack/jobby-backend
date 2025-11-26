@@ -7,10 +7,10 @@ import com.jobby.domain.mobility.result.Result;
 import lombok.Getter;
 
 @Getter
-public abstract class BusinessDeleteCommand {
+public abstract class DeleteBusinessCommand {
     private final int businessId;
 
-    public BusinessDeleteCommand(int businessId) {
+    public DeleteBusinessCommand(int businessId) {
         this.businessId = businessId;
     }
 

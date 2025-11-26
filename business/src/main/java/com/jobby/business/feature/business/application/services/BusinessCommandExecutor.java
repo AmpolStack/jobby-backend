@@ -1,8 +1,8 @@
 package com.jobby.business.feature.business.application.services;
 
-import com.jobby.business.feature.business.domain.operations.commands.BusinessCreateCommand;
-import com.jobby.business.feature.business.domain.operations.commands.BusinessDeleteCommand;
-import com.jobby.business.feature.business.domain.operations.commands.BusinessUpdateCommand;
+import com.jobby.business.feature.business.domain.operations.commands.CreateBusinessCommand;
+import com.jobby.business.feature.business.domain.operations.commands.DeleteBusinessCommand;
+import com.jobby.business.feature.business.domain.operations.commands.UpdateBusinessCommand;
 import com.jobby.business.feature.business.domain.entities.Business;
 import com.jobby.business.feature.business.domain.ports.out.messaging.BusinessMessagePublisher;
 import com.jobby.business.feature.business.domain.ports.out.repositories.WriteOnlyBusinessRepository;
@@ -22,15 +22,15 @@ public class BusinessCommandExecutor {
         this.businessMessagePublisher = businessMessagePublisher;
     }
     
-    public Result<Business, Error> execute(BusinessUpdateCommand command) {
+    public Result<Business, Error> execute(UpdateBusinessCommand command) {
         return command.execute(businessRepository, businessMessagePublisher);
     }
 
-    public Result<Business, Error> execute(BusinessCreateCommand command) {
+    public Result<Business, Error> execute(CreateBusinessCommand command) {
         return command.execute(businessRepository, businessMessagePublisher);
     }
 
-    public Result<Void, Error> execute(BusinessDeleteCommand command) {
+    public Result<Void, Error> execute(DeleteBusinessCommand command) {
         return command.execute(businessRepository, businessMessagePublisher);
     }
 }

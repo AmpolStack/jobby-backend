@@ -1,6 +1,6 @@
 package com.jobby.business.feature.business.application.services;
 
-import com.jobby.business.feature.business.domain.operations.events.BusinessSaveEvent;
+import com.jobby.business.feature.business.domain.operations.events.SaveBusinessEvent;
 import com.jobby.business.feature.business.domain.ports.out.repositories.ReadOnlyBusinessRepository;
 import com.jobby.domain.mobility.error.Error;
 import com.jobby.domain.mobility.result.Result;
@@ -15,7 +15,7 @@ public class BusinessEventExecutor {
         this.repository = repository;
     }
 
-    public Result<Void, Error> execute(BusinessSaveEvent event) {
+    public Result<Void, Error> execute(SaveBusinessEvent event) {
         return event.execute(this.repository);
     }
 }

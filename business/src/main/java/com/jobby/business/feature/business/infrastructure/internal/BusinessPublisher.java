@@ -2,6 +2,7 @@ package com.jobby.business.feature.business.infrastructure.internal;
 
 import com.jobby.business.feature.business.domain.entities.Business;
 import com.jobby.business.feature.business.infrastructure.adapters.in.messaging.mappers.SchemaBusinessMapper;
+import com.jobby.business.feature.business.infrastructure.persistence.jpa.JpaBusinessEntity;
 import com.jobby.business.feature.outbox.infrastructure.entities.OutboxEventType;
 import com.jobby.infraestructure.transaction.trigger.TransactionalTrigger;
 import com.jobby.business.feature.outbox.infrastructure.entities.JpaOutboxEventEntity;
@@ -14,7 +15,7 @@ import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BusinessPublisher implements TransactionalTrigger<Business, byte[]> {
+public class BusinessPublisher implements TransactionalTrigger<JpaBusinessEntity, byte[]> {
     private final SchemaBusinessMapper schemaBusinessMapper;
     private final KafkaAvroSerializer kafkaAvroSerializer;
     private final SpringDataJpaOutboxEventEntity springDataOutboxEventEntity;
@@ -32,7 +33,7 @@ public class BusinessPublisher implements TransactionalTrigger<Business, byte[]>
     }
 
     @Override
-    public Result<byte[], Error> prepare(Business input) {
+    public Result<byte[], Error> prepare(JpaBusinessEntity input) {
         var businessSchema = this.schemaBusinessMapper.toSchema(input);
 
         try {
@@ -45,7 +46,7 @@ public class BusinessPublisher implements TransactionalTrigger<Business, byte[]>
     }
 
     @Override
-    public void send(byte[] payload, Business business){
+    public void send(byte[] payload, JpaBusinessEntity business){
         JpaOutboxEventEntity event = JpaOutboxEventEntity.builder()
                 .aggregateType(AGGREGATED_TYPE)
                 .aggregateId(String.valueOf(business.getId()))
