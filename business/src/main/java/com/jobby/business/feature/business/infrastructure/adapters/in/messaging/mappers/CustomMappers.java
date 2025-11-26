@@ -8,8 +8,8 @@ public class CustomMappers {
         return value == null ? null : value.toString();
     }
 
-
     public CharSequence toCharSequence(String value) {
         return value;
     }
+
 }
