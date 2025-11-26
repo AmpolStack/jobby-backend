@@ -1,6 +1,6 @@
 package com.jobby.employee.infraestructure.persistence.jpa.entities;
 
-import com.jobby.infraestructure.enrichment.encryption.Encrypted;
+import com.jobby.infraestructure.security.SecuredProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,11 +23,12 @@ public class JpaAddressEntity {
     @JoinColumn(name = "city_id", nullable = false)
     private JpaCityEntity city;
 
-    @Size(max = 600)
-    @NotNull
-    @Column(name = "value", nullable = false, length = 600)
-    @Encrypted
-    private String value;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "encryptedValue", column = @Column(name = "value", length = 600, nullable = false)),
+            @AttributeOverride(name = "hashedValue", column = @Column(name = "value_searchable", length = 32, nullable = false))
+    })
+    private SecuredProperty value;
 
     @Size(max = 1200)
     @Column(name = "description", length = 1200)

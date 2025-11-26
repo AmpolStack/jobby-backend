@@ -3,6 +3,7 @@ package com.jobby.employee.infraestructure.persistence.jpa.entities;
 import com.jobby.infraestructure.enrichment.encryption.Encrypted;
 import com.jobby.infraestructure.enrichment.hashing.Hashed;
 import com.jobby.infraestructure.security.SecuredPassword;
+import com.jobby.infraestructure.security.SecuredProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -56,14 +57,14 @@ public class JpaEmployeeEntity {
             @AttributeOverride(name = "encryptedValue", column = @Column(name = "username", length = 600, nullable = false)),
             @AttributeOverride(name = "hashedValue", column = @Column(name = "username_searchable", length = 32, nullable = false))
     })
-    private String username;
+    private SecuredProperty username;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "encryptedValue", column = @Column(name = "position_name", length = 600, nullable = true)),
             @AttributeOverride(name = "hashedValue", column = @Column(name = "position_name_searchable", length = 32, nullable = true))
     })
-    private String positionName;
+    private SecuredProperty positionName;
 
     @Size(max = 250)
     @Column(name = "profile_image_url", length = 250)
