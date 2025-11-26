@@ -7,12 +7,10 @@ import com.jobby.domain.mobility.result.Result;
 import com.jobby.domain.ports.SafeResultValidator;
 import com.jobby.domain.ports.encrypt.EncryptionService;
 import com.jobby.domain.ports.hashing.mac.MacService;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class SecuredPropertyTransformer {
     private final EncryptionService encryptionService;
     private final EncryptConfig encryptConfig;
